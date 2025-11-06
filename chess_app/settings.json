@@ -1,0 +1,13 @@
+{
+    "window_width": 800,
+    "window_height": 600,
+    "board_theme": "classic",
+    "sound_enabled": false,
+    "auto_save": true,
+    "difficulty": "medium",
+    "piece_color_white": "#00FFFF",
+    "piece_color_black": "#0000FF",
+    "piece_bold": true,
+    "use_unicode_only": true,
+    "piece_size_factor": 93
+}

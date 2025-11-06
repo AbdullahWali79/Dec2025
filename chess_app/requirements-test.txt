@@ -1,0 +1,14 @@
+# Testing dependencies for Chess Desktop Application
+
+# Core testing framework
+pytest>=7.0.0
+
+# PyQt5 testing support
+pytest-qt>=4.0.0
+
+# Code coverage
+pytest-cov>=4.0.0
+
+# Additional testing utilities
+pytest-timeout>=2.1.0
+
