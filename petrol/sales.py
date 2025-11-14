@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QTableWidgetItem, QDateEdit, QTextEdit, QRadioButton,
                              QButtonGroup, QHeaderView, QMessageBox, QFrame, QDialog)
 from PyQt5.QtCore import Qt, QDate
-from PyQt5.QtGui import QFont, QPrinter, QPainter
-from PyQt5.QtPrintSupport import QPrintDialog
+from PyQt5.QtGui import QFont, QPainter
+from PyQt5.QtPrintSupport import QPrintDialog, QPrinter
 from datetime import datetime
 from database import Database
 
