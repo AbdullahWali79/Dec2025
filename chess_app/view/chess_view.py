@@ -681,6 +681,10 @@ class ChessView(QMainWindow):
     def _create_status_bar(self):
         """Create the status bar."""
         self.statusBar().showMessage("White to move")
+        # Add developer credit to status bar
+        developer_label = QLabel("Developed by M Abdullah")
+        developer_label.setStyleSheet("color: #95a5a6; font-size: 10px; padding: 0 5px;")
+        self.statusBar().addPermanentWidget(developer_label)
     
     def resizeEvent(self, event):
         """

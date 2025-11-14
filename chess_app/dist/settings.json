@@ -1,0 +1,7 @@
+{
+    "piece_color_white": "#FFFF00",
+    "piece_color_black": "#0000FF",
+    "piece_bold": true,
+    "use_unicode_only": true,
+    "piece_size_factor": 100
+}

@@ -47,7 +47,7 @@ DEVELOPER INSTRUCTIONS:
 
 import sys
 import chess
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QMessageBox
 from controller.chess_controller import ChessController
 from model.chess_model import ChessModel
 from model.ai_engine import AIEngine
@@ -68,6 +68,14 @@ def main():
     # Set application properties
     app.setApplicationName("Chess Desktop Application")
     app.setOrganizationName("Chess App")
+    
+    # Show developer credit popup
+    msg = QMessageBox()
+    msg.setWindowTitle("Chess Application")
+    msg.setText("Developed by Muhammad Abdullah")
+    msg.setIcon(QMessageBox.Information)
+    msg.setStandardButtons(QMessageBox.Ok)
+    msg.exec_()
     
     # Initialize MVC components
     print("Initializing Chess Model...")
