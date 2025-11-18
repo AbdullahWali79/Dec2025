@@ -2077,10 +2077,10 @@
       .campaign-popup {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
         border-radius: 20px;
-        padding: 10px;
-        max-width: 1200px;
-        max-height: 96vh;
-        width: 98%;
+        padding: 20px;
+        max-width: 1000px;
+        max-height: 92vh;
+        width: 95%;
         position: relative;
         box-shadow: 0 25px 70px rgba(30, 64, 175, 0.4), 0 0 50px rgba(59, 130, 246, 0.2);
         border: 3px solid #1e40af;
@@ -2173,8 +2173,6 @@
         display: flex;
         flex-direction: column;
         min-height: 0;
-        height: 100%;
-        justify-content: center;
       }
       
       .campaign-card-header {
@@ -2281,13 +2279,11 @@
       .campaign-popup-images-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        margin-bottom: 0;
+        gap: 12px;
+        margin-bottom: 15px;
         opacity: 0;
         animation: imageFadeIn 0.6s ease 0.3s forwards;
         min-height: 0;
-        width: 100%;
-        align-items: stretch;
       }
       
       .campaign-popup-image-left,
@@ -2296,58 +2292,46 @@
         display: flex;
         align-items: stretch;
         min-height: 0;
-        height: 85vh;
-        min-height: 550px;
       }
       
       .campaign-popup-image-left .campaign-card-image-container,
       .campaign-popup-image-right .campaign-card-image-container {
         width: 100%;
-        height: 100%;
+        height: 50vh;
         margin-bottom: 0;
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: center;
-        min-height: 550px;
+        min-height: 320px;
+        max-height: 50vh;
         overflow: hidden;
-        border: 3px solid rgba(59, 130, 246, 0.5);
-        border-radius: 15px;
-        padding: 10px;
-        background: rgba(15, 23, 42, 0.3);
-        box-sizing: border-box;
-        position: relative;
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        border-radius: 12px;
+        padding: 4px;
       }
       
       .campaign-popup-image-left-img {
-        width: auto;
+        width: 100%;
         height: 100%;
-        max-width: 100%;
         object-fit: contain;
         object-position: center top;
-        border-radius: 10px;
+        border-radius: 8px;
         display: block;
         position: relative;
         z-index: 2;
         transition: transform 0.3s ease;
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
-        margin: 0 auto;
       }
       
       .campaign-popup-image-right-img {
-        width: auto;
+        width: 100%;
         height: 100%;
-        max-width: 100%;
-        object-fit: contain;
-        object-position: center top;
-        border-radius: 10px;
+        object-fit: cover;
+        object-position: center center;
+        border-radius: 8px;
         display: block;
         position: relative;
         z-index: 2;
         transition: transform 0.3s ease;
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
-        margin: 0 auto;
       }
       
       .campaign-popup-image-left-img:hover,
@@ -2615,14 +2599,15 @@
           gap: 10px;
         }
         
-        .campaign-popup-image-left,
-        .campaign-popup-image-right {
-          height: 75vh;
-          min-height: 500px;
-        }
-        
         .campaign-popup-image-left .campaign-card-image-container,
         .campaign-popup-image-right .campaign-card-image-container {
+          height: 40vh;
+          min-height: 280px;
+          max-height: 40vh;
+        }
+        
+        .campaign-popup-image-left-img,
+        .campaign-popup-image-right-img {
           height: 100%;
         }
         
@@ -2698,14 +2683,15 @@
           gap: 8px;
         }
         
-        .campaign-popup-image-left,
-        .campaign-popup-image-right {
-          height: 70vh;
-          min-height: 450px;
-        }
-        
         .campaign-popup-image-left .campaign-card-image-container,
         .campaign-popup-image-right .campaign-card-image-container {
+          height: 35vh;
+          min-height: 240px;
+          max-height: 35vh;
+        }
+        
+        .campaign-popup-image-left-img,
+        .campaign-popup-image-right-img {
           height: 100%;
         }
         
@@ -2769,20 +2755,39 @@
       <div class='campaign-popup'>
         <button class='campaign-popup-close' id='campaign-popup-close' aria-label='Close'>&#215;</button>
         
-        <!-- Images Only Layout -->
+        <!-- Catchy Campaign Card -->
         <div class='campaign-card-wrapper'>
+          <div class='campaign-card-header'>
+            <div class='campaign-card-badge'>ELECT</div>
+            <div class='campaign-card-header-text'>TOGETHER WE ARE STRONG</div>
+            <div class='campaign-card-year'>2026</div>
+          </div>
+          
           <!-- Two Column Image Layout -->
           <div class='campaign-popup-images-grid'>
             <div class='campaign-popup-image-left'>
               <div class='campaign-card-image-container'>
                 <img class='campaign-popup-image-left-img' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/Adam%20Azam%20Points.jpeg' alt='Adam Azam Campaign Points'/>
+                <div class='campaign-card-overlay'></div>
               </div>
             </div>
             
             <div class='campaign-popup-image-right'>
               <div class='campaign-card-image-container'>
                 <img class='campaign-popup-image-right-img' src='https://github.com/adamazam2749-cmyk/adam-azam-imagess/raw/main/Adam-General-secretary--614x1024.webp' alt='Adam Azam - General Secretary'/>
+                <div class='campaign-card-overlay'></div>
               </div>
+            </div>
+          </div>
+          
+          <div class='campaign-popup-content'>
+            <div class='campaign-card-name'>
+              <span class='name-highlight'>ADAM AZAM</span>
+            </div>
+            
+            <div class='campaign-popup-actions'>
+              <a href='#volunteer' class='campaign-popup-btn primary' onclick='document.getElementById(&quot;campaign-popup-overlay&quot;).classList.remove(&quot;active&quot;);'><span>VOLUNTEER NOW</span></a>
+              <a href='#contact' class='campaign-popup-btn secondary' onclick='document.getElementById(&quot;campaign-popup-overlay&quot;).classList.remove(&quot;active&quot;);'><span>GET INVOLVED</span></a>
             </div>
           </div>
         </div>
