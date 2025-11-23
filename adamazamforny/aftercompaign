@@ -2228,7 +2228,7 @@
       
       /* Shine effect on popup */
       .campaign-popup::before {
-        content: &#39;&#39;;
+        content: '';
         position: absolute;
         top: -50%;
         left: -50%;
@@ -2329,7 +2329,7 @@
       }
       
       .campaign-card-badge::before {
-        content: &#39;&#39;;
+        content: '';
         position: absolute;
         top: -50%;
         left: -50%;
@@ -2528,7 +2528,7 @@
       }
       
       .campaign-popup-title {
-        font: bold 24px &#39;Times New Roman&#39;, serif;
+        font: bold 24px 'Times New Roman', serif;
         color: #ffffff;
         margin: 0 0 8px 0;
         text-shadow: 2px 2px 6px rgba(0,0,0,0.7), 0 0 20px rgba(96, 165, 250, 0.3);
@@ -2550,7 +2550,7 @@
       }
       
       .campaign-popup-subtitle {
-        font: bold 16px &#39;Arial&#39;, sans-serif;
+        font: bold 16px 'Arial', sans-serif;
         color: #60a5fa;
         margin: 0 0 10px 0;
         text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
@@ -2639,7 +2639,7 @@
       }
       
       .campaign-popup-btn::before {
-        content: &#39;&#39;;
+        content: '';
         position: absolute;
         top: 50%;
         left: 50%;
@@ -2688,7 +2688,7 @@
         font-size: 11px;
       }
       
-      .campaign-popup-dont-show input[type=&quot;checkbox&quot;] {
+      .campaign-popup-dont-show input[type="checkbox"] {
         width: 18px;
         height: 18px;
         cursor: pointer;
@@ -2880,7 +2880,7 @@
     <!-- Campaign Popup Modal - Catchy Card Design -->
     <div class='campaign-popup-overlay' id='campaign-popup-overlay'>
       <div class='campaign-popup'>
-        <button aria-label='Close' class='campaign-popup-close' id='campaign-popup-close'>&#215;</button>
+        <button class='campaign-popup-close' id='campaign-popup-close' aria-label='Close'>&#215;</button>
         
         <!-- Images Only Layout -->
         <div class='campaign-card-wrapper'>
@@ -2888,13 +2888,13 @@
           <div class='campaign-popup-images-grid'>
             <div class='campaign-popup-image-left'>
               <div class='campaign-card-image-container'>
-                <img alt='Adam Azam Campaign Points' class='campaign-popup-image-left-img' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/Adam%20Azam%20Points.jpeg'/>
+                <img class='campaign-popup-image-left-img' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/1.png' alt='Adam Azam Campaign Points'/>
               </div>
             </div>
             
             <div class='campaign-popup-image-right'>
               <div class='campaign-card-image-container'>
-                <img alt='Adam Azam - General Secretary' class='campaign-popup-image-right-img' src='https://github.com/adamazam2749-cmyk/adam-azam-imagess/raw/main/Adam-General-secretary--614x1024.webp'/>
+                <img class='campaign-popup-image-right-img' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/adamazamcompaign.jpeg' alt='Adam Azam Campaign'/>
               </div>
             </div>
           </div>
@@ -2935,7 +2935,7 @@
       <!-- Political Hero Section -->
       <section class='political-hero' id='home'>
         <!-- Animated Flag Image -->
-        <img alt='VOTE Flag' class='flag-animation' src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%2280%22 viewBox=%220 0 120 80%22%3E%3Cdefs%3E%3ClinearGradient id=%22flagGrad%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%220%25%22%3E%3Cstop offset=%220%25%22 style=%22stop-color:%23DC143C;stop-opacity:1%22 /%3E%3Cstop offset=%2233%25%22 style=%22stop-color:%23FFFFFF;stop-opacity:1%22 /%3E%3Cstop offset=%2266%25%22 style=%22stop-color:%23DC143C;stop-opacity:1%22 /%3E%3Cstop offset=%22100%25%22 style=%22stop-color:%23DC143C;stop-opacity:1%22 /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%22120%22 height=%2280%22 fill=%22url(%23flagGrad)%22/%3E%3Crect width=%2240%22 height=%2280%22 fill=%22%23000080%22/%3E%3Ccircle cx=%2220%22 cy=%2240%22 r=%228%22 fill=%22%23FFFFFF%22/%3E%3Crect x=%2245%22 y=%2232%22 width=%2250%22 height=%2226%22 fill=%22%231e40af%22 rx=%223%22/%3E%3Ctext x=%2270%22 y=%2245%22 font-family=%22Arial%22 font-size=%2216%22 font-weight=%22bold%22 fill=%22white%22 text-anchor=%22middle%22%3EVOTE%3C/text%3E%3C/svg%3E'/>
+        <img class='flag-animation' src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%2280%22 viewBox=%220 0 120 80%22%3E%3Cdefs%3E%3ClinearGradient id=%22flagGrad%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%220%25%22%3E%3Cstop offset=%220%25%22 style=%22stop-color:%23DC143C;stop-opacity:1%22 /%3E%3Cstop offset=%2233%25%22 style=%22stop-color:%23FFFFFF;stop-opacity:1%22 /%3E%3Cstop offset=%2266%25%22 style=%22stop-color:%23DC143C;stop-opacity:1%22 /%3E%3Cstop offset=%22100%25%22 style=%22stop-color:%23DC143C;stop-opacity:1%22 /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%22120%22 height=%2280%22 fill=%22url(%23flagGrad)%22/%3E%3Crect width=%2240%22 height=%2280%22 fill=%22%23000080%22/%3E%3Ccircle cx=%2220%22 cy=%2240%22 r=%228%22 fill=%22%23FFFFFF%22/%3E%3Crect x=%2245%22 y=%2232%22 width=%2250%22 height=%2226%22 fill=%22%231e40af%22 rx=%223%22/%3E%3Ctext x=%2270%22 y=%2245%22 font-family=%22Arial%22 font-size=%2216%22 font-weight=%22bold%22 fill=%22white%22 text-anchor=%22middle%22%3EVOTE%3C/text%3E%3C/svg%3E' alt='VOTE Flag'/>
         <div class='political-hero-content'>
           <div class='typing-container'>
             <h1>Adam Azam</h1>
@@ -4099,7 +4099,7 @@
       <!-- Floating Donation Container with QR Code -->
       <div class='floating-donation-container'>
         <div class='floating-donation-qr'>
-          <img alt='Donation QR Code' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/Donate.png'/>
+          <img src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/Donate.png' alt='Donation QR Code'/>
         </div>
         <a class='floating-donation-btn' href='https://secure.actblue.com/donate/adam-azam-1?refcode=directory' target='_blank'>
           DONATE NOW
@@ -4304,12 +4304,12 @@
       <!-- Campaign Popup Script -->
       <script type='text/javascript'>
         (function() {
-          &#39;use strict&#39;;
+          'use strict';
           
           var popupShown = false;
           
           function showPopup() {
-            var popupOverlay = document.getElementById(&#39;campaign-popup-overlay&#39;);
+            var popupOverlay = document.getElementById('campaign-popup-overlay');
             if (!popupOverlay) {
               // Retry after a short delay if element not found
               setTimeout(showPopup, 100);
@@ -4317,53 +4317,53 @@
             }
             
             // Check localStorage
-            var dontShowAgain = localStorage.getItem(&#39;campaign-popup-dont-show&#39;);
+            var dontShowAgain = localStorage.getItem('campaign-popup-dont-show');
             
-            if (dontShowAgain !== &#39;true&#39;) {
+            if (dontShowAgain !== 'true') {
               if (!popupShown) {
                 // Show popup - use multiple methods to ensure it shows
-                popupOverlay.style.display = &#39;flex&#39;;
-                popupOverlay.style.opacity = &#39;1&#39;;
-                popupOverlay.style.visibility = &#39;visible&#39;;
-                popupOverlay.classList.add(&#39;active&#39;);
-                document.body.style.overflow = &#39;hidden&#39;;
+                popupOverlay.style.display = 'flex';
+                popupOverlay.style.opacity = '1';
+                popupOverlay.style.visibility = 'visible';
+                popupOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
                 popupShown = true;
               }
-            } else if (dontShowAgain === &#39;true&#39;) {
+            } else if (dontShowAgain === 'true') {
               // Hide if disabled
-              popupOverlay.style.display = &#39;none&#39;;
+              popupOverlay.style.display = 'none';
             }
           }
           
           function setupPopupHandlers() {
-            var popupOverlay = document.getElementById(&#39;campaign-popup-overlay&#39;);
-            var closeBtn = document.getElementById(&#39;campaign-popup-close&#39;);
+            var popupOverlay = document.getElementById('campaign-popup-overlay');
+            var closeBtn = document.getElementById('campaign-popup-close');
             
             if (!popupOverlay) return;
             
             function closePopup() {
-              popupOverlay.classList.remove(&#39;active&#39;);
-              popupOverlay.style.opacity = &#39;0&#39;;
-              popupOverlay.style.visibility = &#39;hidden&#39;;
-              document.body.style.overflow = &#39;&#39;;
+              popupOverlay.classList.remove('active');
+              popupOverlay.style.opacity = '0';
+              popupOverlay.style.visibility = 'hidden';
+              document.body.style.overflow = '';
             }
             
             // Close button
             if (closeBtn) {
-              closeBtn.addEventListener(&#39;click&#39;, closePopup);
+              closeBtn.addEventListener('click', closePopup);
             }
             
             // Close on overlay click
-            popupOverlay.addEventListener(&#39;click&#39;, function(e) {
+            popupOverlay.addEventListener('click', function(e) {
               if (e.target === popupOverlay) {
                 closePopup();
               }
             });
             
             // Close on Escape key
-            document.addEventListener(&#39;keydown&#39;, function(e) {
-              if (e.key === &#39;Escape&#39;) {
-                if (popupOverlay.classList.contains(&#39;active&#39;)) {
+            document.addEventListener('keydown', function(e) {
+              if (e.key === 'Escape') {
+                if (popupOverlay.classList.contains('active')) {
                   closePopup();
                 }
               }
@@ -4377,15 +4377,15 @@
           }
           
           // Method 1: DOMContentLoaded
-          if (document.readyState === &#39;loading&#39;) {
-            document.addEventListener(&#39;DOMContentLoaded&#39;, initPopup);
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initPopup);
           } else {
             // DOM already loaded
             initPopup();
           }
           
           // Method 2: Window load (fallback)
-          window.addEventListener(&#39;load&#39;, function() {
+          window.addEventListener('load', function() {
             setTimeout(function() {
               if (!popupShown) {
                 showPopup();
@@ -4396,7 +4396,7 @@
           // Method 3: Immediate check after a delay
           setTimeout(function() {
             if (!popupShown) {
-              var popupOverlay = document.getElementById(&#39;campaign-popup-overlay&#39;);
+              var popupOverlay = document.getElementById('campaign-popup-overlay');
               if (popupOverlay) {
                 showPopup();
               }
