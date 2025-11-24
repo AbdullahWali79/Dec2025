@@ -16,6 +16,7 @@ class SecureMachineValidator:
             "B1D1FC64C865533F",  # Your main development machine
             "63962CB948526976",  # Client machine 1
             "AC090693E5",        # MacBook Client (ac:c9:06:09:93:e5)
+            "75B43D8506B99408",  # Current machine
             # Add more machine IDs here as needed
             # "MACHINE_ID_3",
             # "MACHINE_ID_4",
@@ -92,7 +93,7 @@ def validate_machine_access():
     if not validator.is_machine_authorized():
         current_machine_id = validator.get_machine_id()
         print("=" * 60)
-        print("🚫 UNAUTHORIZED MACHINE ACCESS")
+        print("UNAUTHORIZED MACHINE ACCESS")
         print("=" * 60)
         print(f"Machine ID: {current_machine_id}")
         print("This application is not authorized to run on this machine.")

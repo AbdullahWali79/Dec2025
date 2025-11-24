@@ -22,9 +22,9 @@ def install_requirements():
     for package in requirements:
         try:
             subprocess.run([sys.executable, '-m', 'pip', 'install', package], check=True)
-            print(f"✓ Installed {package}")
+            print(f"[OK] Installed {package}")
         except subprocess.CalledProcessError as e:
-            print(f"✗ Failed to install {package}: {e}")
+            print(f"[ERROR] Failed to install {package}: {e}")
             return False
     return True
 
@@ -40,7 +40,7 @@ a = Analysis(
     binaries=[],
     datas=[
         ('medicines.xlsx', '.'),
-        ('machine_id_validator.py', '.'),
+        ('secure_machine_validator.py', '.'),
     ],
     hiddenimports=[
         'pandas',
@@ -50,6 +50,7 @@ a = Analysis(
         'tkinter.ttk',
         'tkinter.messagebox',
         'tkinter.simpledialog',
+        'secure_machine_validator',
     ],
     hookspath=[],
     hooksconfig={},
@@ -89,7 +90,7 @@ exe = EXE(
     
     with open('PharmacyInvoiceGenerator.spec', 'w') as f:
         f.write(spec_content)
-    print("✓ Created PyInstaller spec file")
+    print("[OK] Created PyInstaller spec file")
 
 def build_executable():
     """Build the executable using PyInstaller"""
@@ -110,11 +111,11 @@ def build_executable():
             'PharmacyInvoiceGenerator.spec'
         ], check=True)
         
-        print("✓ Executable built successfully!")
+        print("[OK] Executable built successfully!")
         return True
         
     except subprocess.CalledProcessError as e:
-        print(f"✗ Build failed: {e}")
+        print(f"[ERROR] Build failed: {e}")
         return False
 
 def create_requirements_txt():
@@ -128,7 +129,7 @@ def create_requirements_txt():
     
     with open('requirements.txt', 'w') as f:
         f.write('\n'.join(requirements))
-    print("✓ Created requirements.txt")
+    print("[OK] Created requirements.txt")
 
 def create_build_instructions():
     """Create build instructions file"""
@@ -180,26 +181,26 @@ python build_exe.py
     
     with open('BUILD_INSTRUCTIONS.md', 'w') as f:
         f.write(instructions)
-    print("✓ Created build instructions")
+    print("[OK] Created build instructions")
 
 def main():
     """Main build process"""
     print("=" * 60)
-    print("🏥 Pharmacy Invoice Generator - Build Script")
+    print("Pharmacy Invoice Generator - Build Script")
     print("=" * 60)
     
     # Check if main files exist
     if not os.path.exists('invoicegeneratorforphramacy'):
-        print("✗ Main application file not found!")
+        print("[ERROR] Main application file not found!")
         return False
     
-    if not os.path.exists('machine_id_validator.py'):
-        print("✗ Machine ID validator not found!")
+    if not os.path.exists('secure_machine_validator.py'):
+        print("[ERROR] Machine ID validator not found!")
         return False
     
     # Install requirements
     if not install_requirements():
-        print("✗ Failed to install requirements!")
+        print("[ERROR] Failed to install requirements!")
         return False
     
     # Create spec file
@@ -214,7 +215,7 @@ def main():
     # Build executable
     if build_executable():
         print("\n" + "=" * 60)
-        print("🎉 BUILD SUCCESSFUL!")
+        print("BUILD SUCCESSFUL!")
         print("=" * 60)
         print("Executable location: dist/PharmacyInvoiceGenerator.exe")
         print("Copy the entire 'dist' folder to distribute the application")
@@ -222,7 +223,7 @@ def main():
         return True
     else:
         print("\n" + "=" * 60)
-        print("❌ BUILD FAILED!")
+        print("BUILD FAILED!")
         print("=" * 60)
         return False
 
