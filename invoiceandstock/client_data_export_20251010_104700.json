@@ -1,0 +1,21 @@
+{
+    "export_info": {
+        "export_date": "2025-10-10 10:47:00",
+        "total_clients": 2,
+        "exported_by": "Pharmacy System"
+    },
+    "clients": [
+        {
+            "machine_id": "B1D1FC64C865533F",
+            "machine_name": "Main Development Machine",
+            "export_date": "2025-10-10 10:47:00",
+            "status": "Authorized"
+        },
+        {
+            "machine_id": "63962CB948526976",
+            "machine_name": "Client Laptop",
+            "export_date": "2025-10-10 10:47:00",
+            "status": "Authorized"
+        }
+    ]
+}

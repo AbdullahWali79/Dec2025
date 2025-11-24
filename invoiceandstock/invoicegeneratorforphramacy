@@ -1,0 +1,1374 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+import pandas as pd
+from tkinter import simpledialog
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
+from datetime import datetime
+import os  # For optional file opening
+import subprocess  # For printing
+import tempfile  # For temporary files
+from secure_machine_validator import validate_machine_access
+
+class PharmacyInvoiceApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("🏥 Pharmacy Invoice Generator - Professional")
+        
+        # Full screen configuration
+        self.root.state('zoomed')  # Windows full screen
+        self.root.configure(bg='#0f172a')  # Modern dark gradient base
+        
+        # Alternative for other systems
+        try:
+            self.root.attributes('-zoomed', True)
+        except:
+            # Fallback for systems that don't support zoomed
+            self.root.geometry("1200x800")
+        
+        # Configure style
+        self.setup_styles()
+        
+        # Load medicines from Excel
+        self.medicines_df = self.load_medicines()
+        self.medicines = {}  # Dict for quick lookup: name -> {'price': float, 'stock': int}
+        self.update_medicines_dict()
+        
+        # Invoice items list
+        self.invoice_items = []
+        
+        self.setup_ui()
+    
+    def load_medicines(self):
+        try:
+            df = pd.read_excel('medicines.xlsx')
+            if 'Medicine_Name' not in df.columns or 'Price' not in df.columns or 'Stock' not in df.columns:
+                raise ValueError("Excel must have columns: Medicine_Name, Price, Stock")
+            return df
+        except FileNotFoundError:
+            # Create sample Excel if not found
+            sample_df = pd.DataFrame({
+                'Medicine_Name': ['Paracetamol', 'Kaifa', 'Kaiga'],
+                'Price': [10.5, 25.0, 15.0],
+                'Stock': [100, 50, 30]
+            })
+            sample_df.to_excel('medicines.xlsx', index=False)
+            messagebox.showinfo("Info", "Sample medicines.xlsx created. Add your data and restart.")
+            return sample_df
+    
+    def update_medicines_dict(self):
+        self.medicines = {row['Medicine_Name'].lower(): {'price': row['Price'], 'stock': row['Stock']} 
+                          for _, row in self.medicines_df.iterrows()}
+        # Debug: Print loaded medicines
+        print("Loaded medicines:", list(self.medicines.keys())[:5])  # Show first 5
+    
+    def save_medicines(self):
+        self.medicines_df.to_excel('medicines.xlsx', index=False)
+        messagebox.showinfo("Success", "Medicines saved to Excel!")
+    
+    def setup_ui(self):
+        # Configure grid weights for responsive layout
+        self.root.grid_rowconfigure(0, weight=1)
+        self.root.grid_columnconfigure(0, weight=1)
+        
+        # Main container with modern gradient background
+        main_container = tk.Frame(self.root, bg='#0f172a', relief='flat')
+        main_container.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        main_container.grid_rowconfigure(1, weight=1)
+        main_container.grid_columnconfigure(0, weight=1)
+        main_container.grid_columnconfigure(1, weight=1)
+        
+        # Title with modern gradient styling
+        title_frame = tk.Frame(main_container, bg='#1e293b', height=80, relief='flat', bd=0)
+        title_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(20, 20))
+        title_frame.grid_propagate(False)
+        
+        title_label = tk.Label(title_frame, text="🏥 Pharmacy Invoice Generator", 
+                              font=('Segoe UI', 24, 'bold'), 
+                              fg='#f8fafc', bg='#1e293b',
+                              pady=20)
+        title_label.pack(expand=True)
+        
+        # Left Panel - Medicine Search & Management with modern card styling
+        left_panel = tk.Frame(main_container, bg='#1e293b', relief='flat', bd=0)
+        left_panel.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(20, 10), pady=(0, 20))
+        left_panel.grid_columnconfigure(1, weight=1)
+        
+        # Add shadow effect using a background frame
+        shadow_frame = tk.Frame(main_container, bg='#334155', height=2)
+        shadow_frame.grid(row=1, column=0, sticky=(tk.W, tk.E), padx=(22, 8), pady=(2, 18))
+        
+        # Medicine Search Section with modern gradient styling
+        search_frame = tk.Frame(left_panel, bg='#334155', relief='flat', bd=1)
+        search_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(20, 15), padx=20)
+        search_frame.grid_columnconfigure(1, weight=1)
+        
+        # Search section header
+        search_header = tk.Label(search_frame, text="🔍 Medicine Search", 
+                                font=('Segoe UI', 14, 'bold'), 
+                                fg='#f8fafc', bg='#334155')
+        search_header.grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(15, 10), padx=15)
+        
+        # Search label with modern gradient styling
+        search_label = tk.Label(search_frame, text="Search Medicine:", 
+                               font=('Segoe UI', 11, 'bold'), 
+                               fg='#e2e8f0', bg='#334155')
+        search_label.grid(row=1, column=0, sticky=tk.W, pady=5, padx=15)
+        
+        self.search_var = tk.StringVar()
+        self.search_entry = tk.Entry(search_frame, textvariable=self.search_var, 
+                                   width=35, font=('Segoe UI', 11),
+                                   relief='flat', bd=1, bg='#1e293b', fg='#f8fafc',
+                                   highlightthickness=2, highlightcolor='#3b82f6',
+                                   insertbackground='#f8fafc')
+        self.search_entry.grid(row=1, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 15))
+        self.search_entry.bind('<KeyRelease>', self.on_search_type)
+        self.search_entry.bind('<Down>', self.on_search_down)
+        self.search_entry.bind('<Up>', self.on_search_up)
+        self.search_entry.bind('<Return>', self.on_search_enter_or_add)
+        self.search_entry.bind('<Tab>', self.on_search_tab)
+        
+        # Suggestions listbox with modern gradient styling
+        self.suggestions_listbox = tk.Listbox(search_frame, height=5, width=35, 
+                                             font=('Segoe UI', 10), bg='#1e293b', fg='#f8fafc',
+                                             selectbackground='#3b82f6', selectforeground='white',
+                                             relief='flat', bd=1, highlightthickness=0)
+        self.suggestions_listbox.grid(row=2, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 15))
+        self.suggestions_listbox.bind('<<ListboxSelect>>', self.on_suggestion_select)
+        self.suggestions_listbox.bind('<Return>', self.on_suggestion_enter)
+        self.suggestions_listbox.bind('<Up>', self.on_suggestion_up)
+        self.suggestions_listbox.bind('<Down>', self.on_suggestion_down)
+        self.suggestions_listbox.bind('<Escape>', self.on_suggestion_escape)
+        
+        # Quantity and Add Section with modern gradient styling
+        qty_frame = tk.Frame(search_frame, bg='#334155')
+        qty_frame.grid(row=3, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=10, padx=15)
+        qty_frame.grid_columnconfigure(1, weight=1)
+        
+        qty_label = tk.Label(qty_frame, text="Quantity:", 
+                            font=('Segoe UI', 11, 'bold'), 
+                            fg='#e2e8f0', bg='#334155')
+        qty_label.grid(row=0, column=0, sticky=tk.W, pady=5)
+        
+        self.qty_var = tk.StringVar(value="1")
+        self.qty_entry = tk.Entry(qty_frame, textvariable=self.qty_var, width=10, 
+                                font=('Segoe UI', 11), relief='flat', bd=1, bg='#1e293b', fg='#f8fafc',
+                                highlightthickness=2, highlightcolor='#3b82f6',
+                                insertbackground='#f8fafc')
+        self.qty_entry.grid(row=0, column=1, sticky=tk.W, pady=5, padx=(10, 0))
+        self.qty_entry.bind('<Return>', self.add_to_invoice)
+        self.qty_entry.bind('<Tab>', self.focus_add_button)
+        self.qty_entry.bind('<Up>', self.increase_quantity)
+        self.qty_entry.bind('<Down>', self.decrease_quantity)
+        
+        # Modern gradient button for Add to Invoice
+        self.add_button = tk.Button(qty_frame, text="➕ Add to Invoice (F1)", 
+                                   command=self.add_to_invoice,
+                                   font=('Segoe UI', 10, 'bold'),
+                                   bg='#3b82f6', fg='white',
+                                   relief='flat', bd=0,
+                                   padx=20, pady=8,
+                                   cursor='hand2',
+                                   activebackground='#2563eb',
+                                   activeforeground='white')
+        self.add_button.grid(row=0, column=2, padx=(20, 0), pady=5)
+        self.add_button.bind('<Return>', lambda e: self.add_to_invoice())
+        self.add_button.bind('<Tab>', self.focus_invoice_tree)
+        
+        # Stock Management Section with modern gradient styling
+        stock_frame = tk.Frame(left_panel, bg='#334155', relief='flat', bd=1)
+        stock_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 15), padx=20)
+        
+        stock_header = tk.Label(stock_frame, text="📦 Stock Management", 
+                               font=('Segoe UI', 14, 'bold'), 
+                               fg='#f8fafc', bg='#334155')
+        stock_header.grid(row=0, column=0, sticky=tk.W, pady=(15, 10), padx=15)
+        
+        self.stock_button = tk.Button(stock_frame, text="➕ Add/Update Stock (F2)", 
+                                     command=self.add_stock,
+                                     font=('Segoe UI', 10, 'bold'),
+                                     bg='#10b981', fg='white',
+                                     relief='flat', bd=0,
+                                     padx=20, pady=8,
+                                     cursor='hand2',
+                                     activebackground='#059669',
+                                     activeforeground='white')
+        self.stock_button.grid(row=1, column=0, pady=(0, 15), padx=15)
+        
+        # Currency Selection with modern gradient styling
+        currency_frame = tk.Frame(left_panel, bg='#334155', relief='flat', bd=1)
+        currency_frame.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=20, pady=(0, 20))
+        currency_frame.grid_columnconfigure(1, weight=1)
+        
+        currency_header = tk.Label(currency_frame, text="💰 Currency", 
+                                 font=('Segoe UI', 14, 'bold'), 
+                                 fg='#f8fafc', bg='#334155')
+        currency_header.grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(15, 10), padx=15)
+        
+        currency_label = tk.Label(currency_frame, text="Select Currency:", 
+                                 font=('Segoe UI', 11, 'bold'), 
+                                 fg='#e2e8f0', bg='#334155')
+        currency_label.grid(row=1, column=0, sticky=tk.W, pady=5, padx=15)
+        
+        self.currency_var = tk.StringVar(value="PKR")
+        self.currency_combo = ttk.Combobox(currency_frame, textvariable=self.currency_var, 
+                                         values=["PKR", "USD", "EUR", "GBP"], 
+                                         width=15, state="readonly", font=('Segoe UI', 11),
+                                         style='Modern.TCombobox')
+        self.currency_combo.grid(row=1, column=1, sticky=tk.W, pady=5, padx=(10, 15))
+        self.currency_combo.bind('<<ComboboxSelected>>', self.on_currency_change)
+        
+        # Right Panel - Invoice & Customer with modern gradient styling
+        right_panel = tk.Frame(main_container, bg='#1e293b', relief='flat', bd=0)
+        right_panel.grid(row=1, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(10, 20), pady=(0, 20))
+        right_panel.grid_columnconfigure(0, weight=1)
+        right_panel.grid_rowconfigure(1, weight=1)
+        
+        # Add shadow effect for right panel
+        right_shadow_frame = tk.Frame(main_container, bg='#334155', height=2)
+        right_shadow_frame.grid(row=1, column=1, sticky=(tk.W, tk.E), padx=(12, 18), pady=(2, 18))
+        
+        # Invoice Items Section with modern gradient styling
+        invoice_frame = tk.Frame(right_panel, bg='#334155', relief='flat', bd=1)
+        invoice_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(20, 15), padx=20)
+        invoice_frame.grid_columnconfigure(0, weight=1)
+        invoice_frame.grid_rowconfigure(1, weight=1)
+        
+        # Invoice header
+        invoice_header = tk.Label(invoice_frame, text="🧾 Invoice Items", 
+                                 font=('Segoe UI', 14, 'bold'), 
+                                 fg='#f8fafc', bg='#334155')
+        invoice_header.grid(row=0, column=0, sticky=tk.W, pady=(15, 10), padx=15)
+        
+        # Invoice tree with modern styling
+        columns = ('Medicine', 'Qty', 'Price', 'Total')
+        self.invoice_tree = ttk.Treeview(invoice_frame, columns=columns, show='headings', height=10,
+                                        style='Modern.Treeview')
+        
+        # Configure columns
+        self.invoice_tree.heading('Medicine', text='Medicine Name')
+        self.invoice_tree.heading('Qty', text='Quantity')
+        self.invoice_tree.heading('Price', text='Price')
+        self.invoice_tree.heading('Total', text='Total')
+        
+        self.invoice_tree.column('Medicine', width=200, anchor='w')
+        self.invoice_tree.column('Qty', width=80, anchor='center')
+        self.invoice_tree.column('Price', width=100, anchor='e')
+        self.invoice_tree.column('Total', width=100, anchor='e')
+        
+        self.invoice_tree.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=15, pady=(0, 15))
+        self.invoice_tree.bind('<Delete>', self.delete_selected_item)
+        self.invoice_tree.bind('<Up>', self.on_invoice_up)
+        self.invoice_tree.bind('<Down>', self.on_invoice_down)
+        self.invoice_tree.bind('<Return>', self.on_invoice_enter)
+        self.invoice_tree.bind('<BackSpace>', self.delete_selected_item)
+        self.invoice_tree.bind('<Double-1>', lambda e: self.edit_selected_item())  # Double-click to edit
+        self.invoice_tree.bind('<Button-3>', self.show_context_menu)  # Right-click context menu
+        
+        # Scrollbar for treeview with modern styling
+        scrollbar = ttk.Scrollbar(invoice_frame, orient="vertical", command=self.invoice_tree.yview,
+                                 style='Modern.Vertical.TScrollbar')
+        scrollbar.grid(row=1, column=1, sticky=(tk.N, tk.S), padx=(0, 15), pady=(0, 15))
+        self.invoice_tree.configure(yscrollcommand=scrollbar.set)
+        
+        # Total and Customer Section with modern gradient styling
+        total_customer_frame = tk.Frame(right_panel, bg='#334155', relief='flat', bd=1)
+        total_customer_frame.grid(row=1, column=0, sticky=(tk.W, tk.E), padx=20, pady=(0, 20))
+        total_customer_frame.grid_columnconfigure(1, weight=1)
+        
+        # Customer & Total header
+        customer_header = tk.Label(total_customer_frame, text="💳 Customer & Total", 
+                                  font=('Segoe UI', 14, 'bold'), 
+                                  fg='#f8fafc', bg='#334155')
+        customer_header.grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(15, 10), padx=15)
+        
+        # Total display with modern gradient styling
+        self.total_var = tk.StringVar(value="Total: ₨0.00")
+        total_label = tk.Label(total_customer_frame, textvariable=self.total_var, 
+                              font=('Segoe UI', 16, 'bold'), 
+                              fg='#f59e0b', bg='#334155')
+        total_label.grid(row=1, column=0, columnspan=2, pady=(0, 15), padx=15)
+        
+        # Customer name with modern gradient styling
+        customer_label = tk.Label(total_customer_frame, text="Customer Name:", 
+                                 font=('Segoe UI', 11, 'bold'), 
+                                 fg='#e2e8f0', bg='#334155')
+        customer_label.grid(row=2, column=0, sticky=tk.W, pady=5, padx=15)
+        
+        self.customer_var = tk.StringVar()
+        self.customer_entry = tk.Entry(total_customer_frame, textvariable=self.customer_var, 
+                                      width=25, font=('Segoe UI', 11),
+                                      relief='flat', bd=1, bg='#1e293b', fg='#f8fafc',
+                                      highlightthickness=2, highlightcolor='#3b82f6',
+                                      insertbackground='#f8fafc')
+        self.customer_entry.grid(row=2, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 15))
+        self.customer_entry.bind('<Return>', self.generate_receipt)
+        self.customer_entry.bind('<Tab>', self.focus_generate)
+        
+        # Action buttons with modern gradient styling
+        button_frame = tk.Frame(total_customer_frame, bg='#334155')
+        button_frame.grid(row=3, column=0, columnspan=2, pady=15, padx=15)
+        
+        # Generate PDF button with modern gradient
+        self.generate_button = tk.Button(button_frame, text="📄 Generate PDF (F3)", 
+                                        command=self.generate_receipt,
+                                        font=('Segoe UI', 10, 'bold'),
+                                        bg='#3b82f6', fg='white',
+                                        relief='flat', bd=0,
+                                        padx=15, pady=8,
+                                        cursor='hand2',
+                                        activebackground='#2563eb',
+                                        activeforeground='white')
+        self.generate_button.grid(row=0, column=0, padx=(0, 5))
+        
+        # Thermal Print button
+        self.thermal_button = tk.Button(button_frame, text="🖨️ Thermal Print (F5)", 
+                                       command=self.thermal_print,
+                                       font=('Segoe UI', 10, 'bold'),
+                                       bg='#10b981', fg='white',
+                                       relief='flat', bd=0,
+                                       padx=15, pady=8,
+                                       cursor='hand2',
+                                       activebackground='#059669',
+                                       activeforeground='white')
+        self.thermal_button.grid(row=0, column=1, padx=(0, 5))
+        
+        # Preview button
+        self.preview_button = tk.Button(button_frame, text="👁️ Preview (F6)", 
+                                       command=self.preview_receipt,
+                                       font=('Segoe UI', 10, 'bold'),
+                                       bg='#06b6d4', fg='white',
+                                       relief='flat', bd=0,
+                                       padx=15, pady=8,
+                                       cursor='hand2',
+                                       activebackground='#0891b2',
+                                       activeforeground='white')
+        self.preview_button.grid(row=0, column=2, padx=(0, 5))
+        
+        # Clear button
+        self.clear_button = tk.Button(button_frame, text="🗑️ Clear (F4)", 
+                                     command=self.clear_invoice,
+                                     font=('Segoe UI', 10, 'bold'),
+                                     bg='#ef4444', fg='white',
+                                     relief='flat', bd=0,
+                                     padx=15, pady=8,
+                                     cursor='hand2',
+                                     activebackground='#dc2626',
+                                     activeforeground='white')
+        self.clear_button.grid(row=0, column=3, padx=(0, 5))
+        
+        # Export Client Data button
+        self.export_button = tk.Button(button_frame, text="📊 Export Clients (F7)", 
+                                     command=self.export_client_data,
+                                     font=('Segoe UI', 10, 'bold'),
+                                     bg='#8b5cf6', fg='white',
+                                     relief='flat', bd=0,
+                                     padx=15, pady=8,
+                                     cursor='hand2',
+                                     activebackground='#7c3aed',
+                                     activeforeground='white')
+        self.export_button.grid(row=0, column=4)
+        
+        # Global keyboard shortcuts
+        self.root.bind('<F1>', lambda e: self.add_to_invoice())
+        self.root.bind('<F2>', lambda e: self.add_stock())
+        self.root.bind('<F3>', lambda e: self.generate_receipt())
+        self.root.bind('<F4>', lambda e: self.clear_invoice())
+        self.root.bind('<F5>', lambda e: self.thermal_print())
+        self.root.bind('<F6>', lambda e: self.preview_receipt())
+        self.root.bind('<F7>', lambda e: self.export_client_data())
+        self.root.bind('<F11>', self.toggle_fullscreen)  # Toggle fullscreen
+        self.root.bind('<Escape>', self.exit_fullscreen)  # Exit fullscreen
+        self.root.bind('<Control-n>', lambda e: self.add_stock())
+        self.root.bind('<Control-s>', lambda e: self.save_medicines())
+        self.root.bind('<Control-q>', lambda e: self.root.quit())  # Quit application
+        
+        # Focus management
+        self.current_suggestion_index = -1
+        self.suggestions_listbox.selection_clear(0, tk.END)
+        
+        # Bind total update
+        self.update_total()
+    
+    def setup_styles(self):
+        """Setup modern styling for the application"""
+        style = ttk.Style()
+        
+        # Configure modern theme
+        style.theme_use('clam')
+        
+        # Configure modern treeview style with gradient colors
+        style.configure('Modern.Treeview',
+                       background='#1e293b',
+                       foreground='#f8fafc',
+                       fieldbackground='#1e293b',
+                       font=('Segoe UI', 10))
+        
+        style.configure('Modern.Treeview.Heading',
+                       background='#3b82f6',
+                       foreground='white',
+                       font=('Segoe UI', 10, 'bold'),
+                       relief='flat')
+        
+        style.map('Modern.Treeview.Heading',
+                 background=[('active', '#2563eb')])
+        
+        # Configure modern scrollbar with gradient colors
+        style.configure('Modern.Vertical.TScrollbar',
+                       background='#334155',
+                       troughcolor='#1e293b',
+                       borderwidth=0,
+                       arrowcolor='#3b82f6',
+                       darkcolor='#334155',
+                       lightcolor='#334155')
+        
+        # Configure modern combobox with gradient colors
+        style.configure('Modern.TCombobox',
+                       fieldbackground='#1e293b',
+                       background='#1e293b',
+                       foreground='#f8fafc',
+                       font=('Segoe UI', 11),
+                       borderwidth=1,
+                       relief='flat')
+        
+        # Configure button styles with modern gradient colors
+        style.configure('Modern.TButton', 
+                       font=('Segoe UI', 10, 'bold'),
+                       padding=(15, 8),
+                       background='#3b82f6',
+                       foreground='white')
+        
+        style.configure('Primary.TButton',
+                       font=('Segoe UI', 10, 'bold'),
+                       padding=(15, 8),
+                       background='#3b82f6',
+                       foreground='white')
+        
+        style.configure('Danger.TButton',
+                       font=('Segoe UI', 10, 'bold'),
+                       padding=(15, 8),
+                       background='#ef4444',
+                       foreground='white')
+        
+        # Configure frame styles with modern gradient colors
+        style.configure('Card.TFrame', 
+                       background='#1e293b',
+                       relief='flat',
+                       borderwidth=0)
+        
+        # Configure label styles with gradient colors
+        style.configure('Title.TLabel',
+                       font=('Segoe UI', 14, 'bold'),
+                       background='#3b82f6',
+                       foreground='white')
+        
+        style.configure('Header.TLabel',
+                       font=('Segoe UI', 12, 'bold'),
+                       background='#334155',
+                       foreground='#f8fafc')
+    
+    def on_search_type(self, event=None):
+        query = self.search_var.get().lower()
+        self.suggestions_listbox.delete(0, tk.END)
+        self.current_suggestion_index = -1
+        if query:
+            matches = [name.capitalize() for name in self.medicines.keys() if query in name]
+            for match in matches[:10]:  # Limit to 10 suggestions
+                self.suggestions_listbox.insert(tk.END, match)
+            # Auto-select first suggestion
+            if matches:
+                self.suggestions_listbox.selection_set(0)
+                self.current_suggestion_index = 0
+    
+    def on_search_down(self, event):
+        if self.suggestions_listbox.size() > 0:
+            self.suggestions_listbox.focus_set()
+            self.suggestions_listbox.selection_set(0)
+            self.current_suggestion_index = 0
+        return "break"
+    
+    def on_search_up(self, event):
+        if self.suggestions_listbox.size() > 0:
+            self.suggestions_listbox.focus_set()
+            self.suggestions_listbox.selection_set(0)
+            self.current_suggestion_index = 0
+        return "break"
+    
+    def on_search_enter_or_add(self, event):
+        """Handle Enter in search field - select medicine or add to invoice"""
+        if self.suggestions_listbox.size() > 0 and self.current_suggestion_index >= 0:
+            # First Enter: Select medicine from suggestions
+            selected = self.suggestions_listbox.get(self.current_suggestion_index)
+            self.search_var.set(selected)
+            self.suggestions_listbox.delete(0, tk.END)
+            # Stay in search field for second Enter
+        else:
+            # Second Enter: Add medicine to invoice
+            self.add_to_invoice()
+        return "break"
+    
+    def on_search_enter(self, event):
+        if self.suggestions_listbox.size() > 0 and self.current_suggestion_index >= 0:
+            selected = self.suggestions_listbox.get(self.current_suggestion_index)
+            self.search_var.set(selected)
+            self.suggestions_listbox.delete(0, tk.END)
+            # Don't focus quantity yet, stay in search field
+            # User can press Enter again to add to invoice
+        return "break"
+    
+    def on_search_tab(self, event):
+        if self.suggestions_listbox.size() > 0 and self.current_suggestion_index >= 0:
+            selected = self.suggestions_listbox.get(self.current_suggestion_index)
+            self.search_var.set(selected)
+            self.suggestions_listbox.delete(0, tk.END)
+        self.qty_entry.focus_set()
+        return "break"
+    
+    def on_suggestion_select(self, event):
+        selection = self.suggestions_listbox.curselection()
+        if selection:
+            self.current_suggestion_index = selection[0]
+    
+    def on_suggestion_enter(self, event):
+        if self.current_suggestion_index >= 0:
+            selected = self.suggestions_listbox.get(self.current_suggestion_index)
+            self.search_var.set(selected)
+            self.suggestions_listbox.delete(0, tk.END)
+            self.qty_entry.focus_set()
+        return "break"
+    
+    def on_suggestion_up(self, event):
+        if self.current_suggestion_index > 0:
+            self.current_suggestion_index -= 1
+            self.suggestions_listbox.selection_clear(0, tk.END)
+            self.suggestions_listbox.selection_set(self.current_suggestion_index)
+        return "break"
+    
+    def on_suggestion_down(self, event):
+        if self.current_suggestion_index < self.suggestions_listbox.size() - 1:
+            self.current_suggestion_index += 1
+            self.suggestions_listbox.selection_clear(0, tk.END)
+            self.suggestions_listbox.selection_set(self.current_suggestion_index)
+        return "break"
+    
+    def on_suggestion_escape(self, event):
+        self.suggestions_listbox.delete(0, tk.END)
+        self.search_entry.focus_set()
+        return "break"
+    
+    def add_to_invoice(self, event=None):
+        med_name = self.search_var.get().strip()
+        if not med_name:
+            messagebox.showwarning("Warning", "Select a medicine first!")
+            return
+        
+        # Try both original case and lowercase
+        med_lower = med_name.lower()
+        if med_lower not in self.medicines:
+            # Try to find by partial match
+            found = False
+            for key in self.medicines.keys():
+                if med_lower in key or key in med_lower:
+                    med_lower = key
+                    found = True
+                    break
+            
+            if not found:
+                messagebox.showwarning("Warning", "Medicine not found in stock!")
+                return
+        try:
+            qty = int(self.qty_var.get())
+            if qty <= 0:
+                raise ValueError
+        except ValueError:
+            messagebox.showwarning("Warning", "Enter valid quantity > 0!")
+            return
+        
+        med_info = self.medicines[med_lower]
+        if qty > med_info['stock']:
+            messagebox.showwarning("Warning", f"Only {med_info['stock']} in stock!")
+            return
+        
+        # Update stock
+        self.medicines_df.loc[self.medicines_df['Medicine_Name'].str.lower() == med_lower, 'Stock'] -= qty
+        self.update_medicines_dict()
+        
+        total = qty * med_info['price']
+        self.invoice_items.append((med_name, qty, med_info['price'], total))
+        
+        # Add to treeview with current currency
+        currency_symbol = self.get_currency_symbol(self.currency_var.get())
+        self.invoice_tree.insert('', 'end', values=(med_name, qty, f"{currency_symbol}{med_info['price']:.2f}", f"{currency_symbol}{total:.2f}"))
+        
+        self.search_var.set('')
+        self.qty_var.set('1')
+        self.update_total()
+    
+    def update_total(self):
+        total = sum(item[3] for item in self.invoice_items)
+        currency = self.currency_var.get()
+        currency_symbol = self.get_currency_symbol(currency)
+        self.total_var.set(f"Total: {currency_symbol}{total:.2f}")
+    
+    def get_currency_symbol(self, currency):
+        symbols = {
+            "PKR": "₨",
+            "USD": "$",
+            "EUR": "€",
+            "GBP": "£"
+        }
+        return symbols.get(currency, "$")
+    
+    def on_currency_change(self, event=None):
+        # Update the invoice tree display
+        for item in self.invoice_tree.get_children():
+            self.invoice_tree.delete(item)
+        
+        currency_symbol = self.get_currency_symbol(self.currency_var.get())
+        
+        for item in self.invoice_items:
+            med_name, qty, price, total = item
+            self.invoice_tree.insert('', 'end', values=(
+                med_name, qty, f"{currency_symbol}{price:.2f}", f"{currency_symbol}{total:.2f}"
+            ))
+        
+        self.update_total()
+    
+    def add_stock(self, event=None):
+        # Simple dialog for manual add (extend for bulk Excel import if needed)
+        name = simpledialog.askstring("Add Stock", "Medicine Name:")
+        if name:
+            price = simpledialog.askfloat("Add Stock", "Price:")
+            stock = simpledialog.askinteger("Add Stock", "Stock Quantity:")
+            if name and price is not None and stock is not None:
+                new_row = pd.DataFrame({'Medicine_Name': [name], 'Price': [price], 'Stock': [stock]})
+                self.medicines_df = pd.concat([self.medicines_df, new_row], ignore_index=True)
+                self.update_medicines_dict()
+                self.save_medicines()
+    
+    def generate_receipt(self, event=None):
+        customer = self.customer_var.get().strip()
+        if not customer:
+            messagebox.showwarning("Warning", "Enter customer name!")
+            return
+        if not self.invoice_items:
+            messagebox.showwarning("Warning", "No items in invoice!")
+            return
+        
+        total = sum(item[3] for item in self.invoice_items)
+        now = datetime.now()
+        date_str = now.strftime("%Y%m%d_%H%M%S")
+        filename = f"receipt_{customer.replace(' ', '_')}_{date_str}.pdf"
+        
+        # Create PDF
+        c = canvas.Canvas(filename, pagesize=letter)
+        width, height = letter
+        y = height - 50  # Start from top
+        
+        # Header
+        c.setFont("Helvetica-Bold", 16)
+        c.drawString(50, y, "Pharmacy Receipt")
+        y -= 30
+        
+        # Customer and Date
+        c.setFont("Helvetica", 12)
+        c.drawString(50, y, f"Customer: {customer}")
+        y -= 20
+        c.drawString(50, y, f"Date: {now.strftime('%Y-%m-%d %H:%M:%S')}")
+        y -= 40
+        
+        # Items
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(50, y, "Items:")
+        y -= 20
+        c.setFont("Helvetica", 10)
+        currency_symbol = self.get_currency_symbol(self.currency_var.get())
+        for item in self.invoice_items:
+            line = f"{item[0]} x{item[1]} @ {currency_symbol}{item[2]:.2f} = {currency_symbol}{item[3]:.2f}"
+            c.drawString(50, y, line)
+            y -= 15
+            if y < 100:  # New page if needed
+                c.showPage()
+                y = height - 50
+                c.setFont("Helvetica", 10)
+        
+        # Total
+        y -= 10
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(50, y, f"Grand Total: {currency_symbol}{total:.2f}")
+        y -= 40
+        
+        # Footer
+        c.setFont("Helvetica", 12)
+        c.drawString(50, y, "Thank you! Visit again.")
+        
+        c.save()
+        
+        messagebox.showinfo("Success", f"Receipt PDF downloaded!\nFile: {os.path.abspath(filename)}")
+        
+        # Optional: Auto-open the PDF (uncomment if desired)
+        # os.startfile(filename)
+        
+        # Clear invoice
+        self.invoice_items = []
+        for item in self.invoice_tree.get_children():
+            self.invoice_tree.delete(item)
+        self.customer_var.set('')
+        self.update_total()
+        
+        # Auto-save stock changes
+        self.save_medicines()
+    
+    def thermal_print(self, event=None):
+        """Print thermal receipt directly to printer"""
+        customer = self.customer_var.get().strip()
+        if not customer:
+            messagebox.showwarning("Warning", "Enter customer name!")
+            return
+        if not self.invoice_items:
+            messagebox.showwarning("Warning", "No items in invoice!")
+            return
+        
+        try:
+            # Create thermal receipt content
+            receipt_content = self.create_thermal_receipt(customer)
+            
+            # Show print dialog
+            if messagebox.askyesno("Print Receipt", "Print thermal receipt to default printer?"):
+                self.print_thermal_receipt(receipt_content)
+                
+                # Clear invoice after successful print
+                self.clear_invoice()
+                
+        except Exception as e:
+            messagebox.showerror("Print Error", f"Failed to print: {str(e)}")
+    
+    def preview_receipt(self, event=None):
+        """Show receipt preview in a new window"""
+        customer = self.customer_var.get().strip()
+        if not customer:
+            messagebox.showwarning("Warning", "Enter customer name!")
+            return
+        if not self.invoice_items:
+            messagebox.showwarning("Warning", "No items in invoice!")
+            return
+        
+        # Create preview window
+        preview_window = tk.Toplevel(self.root)
+        preview_window.title("Receipt Preview")
+        preview_window.geometry("400x600")
+        preview_window.configure(bg='white')
+        
+        # Create receipt content
+        receipt_content = self.create_thermal_receipt(customer)
+        
+        # Display receipt in text widget
+        text_widget = tk.Text(preview_window, font=('Courier', 10), 
+                             bg='white', fg='black', wrap=tk.WORD)
+        text_widget.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        text_widget.insert(tk.END, receipt_content)
+        text_widget.config(state=tk.DISABLED)
+        
+        # Add print button
+        print_btn = ttk.Button(preview_window, text="🖨️ Print", 
+                              command=lambda: self.print_thermal_receipt(receipt_content))
+        print_btn.pack(pady=10)
+    
+    def create_thermal_receipt(self, customer):
+        """Create thermal receipt content"""
+        total = sum(item[3] for item in self.invoice_items)
+        now = datetime.now()
+        currency_symbol = self.get_currency_symbol(self.currency_var.get())
+        
+        # Receipt header
+        receipt = []
+        receipt.append("=" * 40)
+        receipt.append("    PHARMACY RECEIPT")
+        receipt.append("=" * 40)
+        receipt.append(f"Customer: {customer}")
+        receipt.append(f"Date: {now.strftime('%Y-%m-%d %H:%M:%S')}")
+        receipt.append("-" * 40)
+        receipt.append(f"{'Item':<20} {'Qty':<5} {'Price':<8} {'Total'}")
+        receipt.append("-" * 40)
+        
+        # Items
+        for item in self.invoice_items:
+            med_name, qty, price, item_total = item
+            receipt.append(f"{med_name[:19]:<20} {qty:<5} {currency_symbol}{price:<7.2f} {currency_symbol}{item_total:.2f}")
+        
+        receipt.append("-" * 40)
+        receipt.append(f"TOTAL: {currency_symbol}{total:.2f}")
+        receipt.append("=" * 40)
+        receipt.append("Thank you for your business!")
+        receipt.append("Visit again soon!")
+        receipt.append("=" * 40)
+        
+        return "\n".join(receipt)
+    
+    def print_thermal_receipt(self, receipt_content):
+        """Print thermal receipt to default printer"""
+        try:
+            # Create temporary file
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as temp_file:
+                temp_file.write(receipt_content)
+                temp_file_path = temp_file.name
+            
+            # Print using Windows print command
+            if os.name == 'nt':  # Windows
+                subprocess.run(['notepad', '/p', temp_file_path], check=True)
+            else:  # Linux/Mac
+                subprocess.run(['lp', temp_file_path], check=True)
+            
+            # Clean up
+            os.unlink(temp_file_path)
+            
+        except Exception as e:
+            raise Exception(f"Print failed: {str(e)}")
+    
+    def focus_customer(self, event):
+        self.customer_entry.focus_set()
+        return "break"
+    
+    def focus_generate(self, event):
+        self.generate_button.focus_set()
+        return "break"
+    
+    def focus_invoice_tree(self, event):
+        """Focus on invoice tree and select first item if available"""
+        self.invoice_tree.focus_set()
+        if self.invoice_tree.get_children():
+            first_item = self.invoice_tree.get_children()[0]
+            self.invoice_tree.selection_set(first_item)
+            self.invoice_tree.focus(first_item)
+        return "break"
+    
+    def focus_search(self, event):
+        """Focus back to search field"""
+        self.search_entry.focus_set()
+        return "break"
+    
+    def focus_add_button(self, event):
+        """Focus on Add to Invoice button"""
+        self.add_button.focus_set()
+        return "break"
+    
+    def increase_quantity(self, event):
+        """Increase quantity by 1"""
+        try:
+            current_qty = int(self.qty_var.get())
+            self.qty_var.set(str(current_qty + 1))
+        except ValueError:
+            self.qty_var.set("1")
+        return "break"
+    
+    def decrease_quantity(self, event):
+        """Decrease quantity by 1 (minimum 1)"""
+        try:
+            current_qty = int(self.qty_var.get())
+            if current_qty > 1:
+                self.qty_var.set(str(current_qty - 1))
+        except ValueError:
+            self.qty_var.set("1")
+        return "break"
+    
+    def delete_selected_item(self, event):
+        selection = self.invoice_tree.selection()
+        if selection:
+            item = self.invoice_tree.item(selection[0])
+            med_name = item['values'][0]
+            qty = int(item['values'][1])
+            
+            # Restore stock
+            med_lower = med_name.lower()
+            if med_lower in self.medicines:
+                self.medicines_df.loc[self.medicines_df['Medicine_Name'].str.lower() == med_lower, 'Stock'] += qty
+                self.update_medicines_dict()
+            
+            # Remove from invoice
+            self.invoice_tree.delete(selection[0])
+            self.invoice_items = [item for item in self.invoice_items if item[0] != med_name]
+            self.update_total()
+        return "break"
+    
+    def on_invoice_up(self, event):
+        """Navigate up in invoice tree"""
+        selection = self.invoice_tree.selection()
+        if selection:
+            current_item = selection[0]
+            prev_item = self.invoice_tree.prev(current_item)
+            if prev_item:
+                self.invoice_tree.selection_set(prev_item)
+                self.invoice_tree.focus(prev_item)
+        return "break"
+    
+    def on_invoice_down(self, event):
+        """Navigate down in invoice tree"""
+        selection = self.invoice_tree.selection()
+        if selection:
+            current_item = selection[0]
+            next_item = self.invoice_tree.next(current_item)
+            if next_item:
+                self.invoice_tree.selection_set(next_item)
+                self.invoice_tree.focus(next_item)
+        elif self.invoice_tree.get_children():
+            # If no selection, select first item
+            first_item = self.invoice_tree.get_children()[0]
+            self.invoice_tree.selection_set(first_item)
+            self.invoice_tree.focus(first_item)
+        return "break"
+    
+    def on_invoice_enter(self, event):
+        """Handle Enter key on invoice item - edit selected item"""
+        selection = self.invoice_tree.selection()
+        if selection:
+            self.edit_selected_item()
+        else:
+            self.search_entry.focus_set()
+        return "break"
+    
+    def edit_selected_item(self):
+        """Edit the selected invoice item"""
+        selection = self.invoice_tree.selection()
+        if not selection:
+            messagebox.showwarning("Warning", "Please select an item to edit!")
+            return
+        
+        item = self.invoice_tree.item(selection[0])
+        values = item['values']
+        med_name = values[0]
+        current_qty = int(values[1])
+        current_price_str = values[2]
+        
+        # Extract price from string (remove currency symbol)
+        currency_symbol = self.get_currency_symbol(self.currency_var.get())
+        current_price = float(current_price_str.replace(currency_symbol, ''))
+        
+        # Create edit dialog
+        edit_window = tk.Toplevel(self.root)
+        edit_window.title("Edit Invoice Item")
+        edit_window.geometry("400x300")
+        edit_window.configure(bg='#f8f9fa')
+        edit_window.resizable(False, False)
+        
+        # Center the window
+        edit_window.transient(self.root)
+        edit_window.grab_set()
+        
+        # Main frame
+        main_frame = tk.Frame(edit_window, bg='#f8f9fa', padx=20, pady=20)
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Title
+        title_label = tk.Label(main_frame, text="✏️ Edit Invoice Item", 
+                              font=('Segoe UI', 16, 'bold'), 
+                              fg='#2c3e50', bg='#f8f9fa')
+        title_label.pack(pady=(0, 20))
+        
+        # Medicine name (read-only)
+        med_frame = tk.Frame(main_frame, bg='#f8f9fa')
+        med_frame.pack(fill=tk.X, pady=5)
+        
+        tk.Label(med_frame, text="Medicine:", 
+                font=('Segoe UI', 11, 'bold'), 
+                fg='#34495e', bg='#f8f9fa').pack(side=tk.LEFT)
+        
+        med_name_label = tk.Label(med_frame, text=med_name, 
+                                 font=('Segoe UI', 11), 
+                                 fg='#2c3e50', bg='#f8f9fa')
+        med_name_label.pack(side=tk.LEFT, padx=(10, 0))
+        
+        # Quantity input
+        qty_frame = tk.Frame(main_frame, bg='#f8f9fa')
+        qty_frame.pack(fill=tk.X, pady=10)
+        
+        tk.Label(qty_frame, text="Quantity:", 
+                font=('Segoe UI', 11, 'bold'), 
+                fg='#34495e', bg='#f8f9fa').pack(side=tk.LEFT)
+        
+        qty_var = tk.StringVar(value=str(current_qty))
+        qty_entry = tk.Entry(qty_frame, textvariable=qty_var, 
+                            font=('Segoe UI', 11),
+                            relief='flat', bd=1, bg='#2c3e50', fg='white',
+                            highlightthickness=2, highlightcolor='#667eea',
+                            insertbackground='white', width=10)
+        qty_entry.pack(side=tk.LEFT, padx=(10, 0))
+        qty_entry.focus_set()
+        
+        # Price input
+        price_frame = tk.Frame(main_frame, bg='#f8f9fa')
+        price_frame.pack(fill=tk.X, pady=10)
+        
+        tk.Label(price_frame, text="Price:", 
+                font=('Segoe UI', 11, 'bold'), 
+                fg='#34495e', bg='#f8f9fa').pack(side=tk.LEFT)
+        
+        price_var = tk.StringVar(value=str(current_price))
+        price_entry = tk.Entry(price_frame, textvariable=price_var, 
+                               font=('Segoe UI', 11),
+                               relief='flat', bd=1, bg='#2c3e50', fg='white',
+                               highlightthickness=2, highlightcolor='#667eea',
+                               insertbackground='white', width=15)
+        price_entry.pack(side=tk.LEFT, padx=(10, 0))
+        
+        # Buttons frame
+        button_frame = tk.Frame(main_frame, bg='#f8f9fa')
+        button_frame.pack(fill=tk.X, pady=(20, 0))
+        
+        def save_changes():
+            try:
+                new_qty = int(qty_var.get())
+                new_price = float(price_var.get())
+                
+                if new_qty <= 0:
+                    messagebox.showwarning("Warning", "Quantity must be greater than 0!")
+                    return
+                
+                if new_price <= 0:
+                    messagebox.showwarning("Warning", "Price must be greater than 0!")
+                    return
+                
+                # Calculate new total
+                new_total = new_qty * new_price
+                
+                # Update the invoice_items list
+                for i, item in enumerate(self.invoice_items):
+                    if item[0] == med_name:
+                        # Restore old stock
+                        med_lower = med_name.lower()
+                        if med_lower in self.medicines:
+                            self.medicines_df.loc[self.medicines_df['Medicine_Name'].str.lower() == med_lower, 'Stock'] += current_qty
+                        
+                        # Update with new values
+                        self.invoice_items[i] = (med_name, new_qty, new_price, new_total)
+                        
+                        # Update stock with new quantity
+                        if med_lower in self.medicines:
+                            self.medicines_df.loc[self.medicines_df['Medicine_Name'].str.lower() == med_lower, 'Stock'] -= new_qty
+                        
+                        break
+                
+                # Update the treeview
+                self.invoice_tree.delete(selection[0])
+                currency_symbol = self.get_currency_symbol(self.currency_var.get())
+                self.invoice_tree.insert('', 'end', values=(
+                    med_name, new_qty, f"{currency_symbol}{new_price:.2f}", f"{currency_symbol}{new_total:.2f}"
+                ))
+                
+                # Update medicines dict and total
+                self.update_medicines_dict()
+                self.update_total()
+                
+                messagebox.showinfo("Success", "Item updated successfully!")
+                edit_window.destroy()
+                
+            except ValueError:
+                messagebox.showwarning("Warning", "Please enter valid numbers for quantity and price!")
+        
+        def cancel_edit():
+            edit_window.destroy()
+        
+        # Save button
+        save_button = tk.Button(button_frame, text="💾 Save Changes", 
+                              command=save_changes,
+                              font=('Segoe UI', 10, 'bold'),
+                              bg='#28a745', fg='white',
+                              relief='flat', bd=0,
+                              padx=20, pady=8,
+                              cursor='hand2',
+                              activebackground='#218838',
+                              activeforeground='white')
+        save_button.pack(side=tk.LEFT, padx=(0, 10))
+        
+        # Cancel button
+        cancel_button = tk.Button(button_frame, text="❌ Cancel", 
+                                command=cancel_edit,
+                                font=('Segoe UI', 10, 'bold'),
+                                bg='#dc3545', fg='white',
+                                relief='flat', bd=0,
+                                padx=20, pady=8,
+                                cursor='hand2',
+                                activebackground='#c82333',
+                                activeforeground='white')
+        cancel_button.pack(side=tk.LEFT)
+        
+        # Bind Enter key to save
+        edit_window.bind('<Return>', lambda e: save_changes())
+        edit_window.bind('<Escape>', lambda e: cancel_edit())
+    
+    def show_context_menu(self, event):
+        """Show right-click context menu for invoice items"""
+        # Select the item under the cursor
+        item = self.invoice_tree.identify_row(event.y)
+        if item:
+            self.invoice_tree.selection_set(item)
+            self.invoice_tree.focus(item)
+            
+            # Create context menu
+            context_menu = tk.Menu(self.root, tearoff=0, 
+                                 bg='white', fg='#2c3e50',
+                                 font=('Segoe UI', 10),
+                                 activebackground='#667eea',
+                                 activeforeground='white')
+            
+            context_menu.add_command(label="✏️ Edit Item", command=self.edit_selected_item)
+            context_menu.add_command(label="🗑️ Delete Item", command=self.delete_selected_item)
+            context_menu.add_separator()
+            context_menu.add_command(label="📋 Copy Item Info", command=self.copy_item_info)
+            
+            # Show context menu
+            try:
+                context_menu.tk_popup(event.x_root, event.y_root)
+            finally:
+                context_menu.grab_release()
+    
+    def copy_item_info(self):
+        """Copy selected item information to clipboard"""
+        selection = self.invoice_tree.selection()
+        if selection:
+            item = self.invoice_tree.item(selection[0])
+            values = item['values']
+            med_name, qty, price, total = values
+            
+            # Format the information
+            info_text = f"Medicine: {med_name}\nQuantity: {qty}\nPrice: {price}\nTotal: {total}"
+            
+            # Copy to clipboard
+            self.root.clipboard_clear()
+            self.root.clipboard_append(info_text)
+            messagebox.showinfo("Copied", "Item information copied to clipboard!")
+    
+    def clear_invoice(self, event=None):
+        # Restore all stock
+        for item in self.invoice_items:
+            med_name, qty, price, total = item
+            med_lower = med_name.lower()
+            if med_lower in self.medicines:
+                self.medicines_df.loc[self.medicines_df['Medicine_Name'].str.lower() == med_lower, 'Stock'] += qty
+        
+        # Clear invoice
+        self.invoice_items = []
+        for item in self.invoice_tree.get_children():
+            self.invoice_tree.delete(item)
+        self.customer_var.set('')
+        self.search_var.set('')
+        self.qty_var.set('1')
+        self.update_total()
+        self.update_medicines_dict()
+        self.search_entry.focus_set()
+    
+    def toggle_fullscreen(self, event=None):
+        """Toggle fullscreen mode"""
+        if self.root.attributes('-fullscreen'):
+            self.root.attributes('-fullscreen', False)
+        else:
+            self.root.attributes('-fullscreen', True)
+        return "break"
+    
+    def export_client_data(self, event=None):
+        """Export client machine data in multiple formats"""
+        try:
+            from machine_id_validator import MachineIDValidator
+            import json
+            import csv
+            import pandas as pd
+            from datetime import datetime
+            
+            # Get client data
+            validator = MachineIDValidator()
+            machines = validator.list_authorized_machines()
+            
+            if not machines:
+                messagebox.showwarning("Warning", "No client data found to export!")
+                return
+            
+            # Create export timestamp
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            
+            # Prepare client data
+            client_data = []
+            for machine in machines:
+                client_data.append({
+                    'machine_id': machine['id'],
+                    'machine_name': machine['name'],
+                    'export_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'status': 'Authorized'
+                })
+            
+            # Create export window
+            export_window = tk.Toplevel(self.root)
+            export_window.title("📊 Export Client Data")
+            export_window.geometry("500x400")
+            export_window.configure(bg='#f8f9fa')
+            export_window.resizable(False, False)
+            
+            # Center the window
+            export_window.transient(self.root)
+            export_window.grab_set()
+            
+            # Main frame
+            main_frame = tk.Frame(export_window, bg='#f8f9fa', padx=20, pady=20)
+            main_frame.pack(fill=tk.BOTH, expand=True)
+            
+            # Title
+            title_label = tk.Label(main_frame, text="📊 Export Client Data", 
+                                  font=('Segoe UI', 16, 'bold'), 
+                                  fg='#2c3e50', bg='#f8f9fa')
+            title_label.pack(pady=(0, 20))
+            
+            # Client list display
+            list_frame = tk.Frame(main_frame, bg='#f8f9fa')
+            list_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 20))
+            
+            tk.Label(list_frame, text="Current Clients:", 
+                    font=('Segoe UI', 12, 'bold'), 
+                    fg='#34495e', bg='#f8f9fa').pack(anchor=tk.W)
+            
+            # Create listbox for clients
+            listbox = tk.Listbox(list_frame, font=('Segoe UI', 10), 
+                               bg='white', fg='#2c3e50', height=8)
+            listbox.pack(fill=tk.BOTH, expand=True, pady=(10, 0))
+            
+            # Add clients to listbox
+            for i, client in enumerate(client_data, 1):
+                listbox.insert(tk.END, f"{i}. {client['machine_name']} ({client['machine_id']})")
+            
+            # Export options
+            options_frame = tk.Frame(main_frame, bg='#f8f9fa')
+            options_frame.pack(fill=tk.X, pady=(0, 20))
+            
+            tk.Label(options_frame, text="Export Format:", 
+                    font=('Segoe UI', 12, 'bold'), 
+                    fg='#34495e', bg='#f8f9fa').pack(anchor=tk.W)
+            
+            # Format selection
+            format_var = tk.StringVar(value="all")
+            format_frame = tk.Frame(options_frame, bg='#f8f9fa')
+            format_frame.pack(fill=tk.X, pady=(10, 0))
+            
+            tk.Radiobutton(format_frame, text="All Formats (JSON, CSV, Excel)", 
+                          variable=format_var, value="all", 
+                          font=('Segoe UI', 10), bg='#f8f9fa', fg='#2c3e50').pack(anchor=tk.W)
+            tk.Radiobutton(format_frame, text="JSON Only", 
+                          variable=format_var, value="json", 
+                          font=('Segoe UI', 10), bg='#f8f9fa', fg='#2c3e50').pack(anchor=tk.W)
+            tk.Radiobutton(format_frame, text="CSV Only", 
+                          variable=format_var, value="csv", 
+                          font=('Segoe UI', 10), bg='#f8f9fa', fg='#2c3e50').pack(anchor=tk.W)
+            tk.Radiobutton(format_frame, text="Excel Only", 
+                          variable=format_var, value="excel", 
+                          font=('Segoe UI', 10), bg='#f8f9fa', fg='#2c3e50').pack(anchor=tk.W)
+            
+            # Buttons frame
+            button_frame = tk.Frame(main_frame, bg='#f8f9fa')
+            button_frame.pack(fill=tk.X)
+            
+            def perform_export():
+                try:
+                    format_choice = format_var.get()
+                    exported_files = []
+                    
+                    if format_choice == "all" or format_choice == "json":
+                        # Export JSON
+                        json_filename = f"client_data_export_{timestamp}.json"
+                        export_data = {
+                            'export_info': {
+                                'export_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                                'total_clients': len(client_data),
+                                'exported_by': 'Pharmacy System'
+                            },
+                            'clients': client_data
+                        }
+                        with open(json_filename, 'w', encoding='utf-8') as f:
+                            json.dump(export_data, f, indent=4, ensure_ascii=False)
+                        exported_files.append(json_filename)
+                    
+                    if format_choice == "all" or format_choice == "csv":
+                        # Export CSV
+                        csv_filename = f"client_data_export_{timestamp}.csv"
+                        with open(csv_filename, 'w', newline='', encoding='utf-8') as f:
+                            if client_data:
+                                writer = csv.DictWriter(f, fieldnames=client_data[0].keys())
+                                writer.writeheader()
+                                writer.writerows(client_data)
+                        exported_files.append(csv_filename)
+                    
+                    if format_choice == "all" or format_choice == "excel":
+                        # Export Excel
+                        excel_filename = f"client_data_export_{timestamp}.xlsx"
+                        df = pd.DataFrame(client_data)
+                        with pd.ExcelWriter(excel_filename, engine='openpyxl') as writer:
+                            df.to_excel(writer, sheet_name='Client_Data', index=False)
+                            # Summary sheet
+                            summary_data = {
+                                'Export_Date': [datetime.now().strftime("%Y-%m-%d %H:%M:%S")],
+                                'Total_Clients': [len(client_data)],
+                                'Export_Format': [format_choice.title()],
+                                'System': ['Pharmacy Invoice Generator']
+                            }
+                            summary_df = pd.DataFrame(summary_data)
+                            summary_df.to_excel(writer, sheet_name='Export_Summary', index=False)
+                        exported_files.append(excel_filename)
+                    
+                    # Show success message
+                    if exported_files:
+                        file_list = "\n".join([f"📄 {os.path.abspath(f)}" for f in exported_files])
+                        messagebox.showinfo("Export Successful", 
+                                          f"Client data exported successfully!\n\nFiles created:\n{file_list}")
+                        export_window.destroy()
+                    else:
+                        messagebox.showerror("Export Failed", "No files were created!")
+                        
+                except Exception as e:
+                    messagebox.showerror("Export Error", f"Failed to export data: {str(e)}")
+            
+            def cancel_export():
+                export_window.destroy()
+            
+            # Export button
+            export_btn = tk.Button(button_frame, text="📊 Export Data", 
+                                 command=perform_export,
+                                 font=('Segoe UI', 10, 'bold'),
+                                 bg='#8b5cf6', fg='white',
+                                 relief='flat', bd=0,
+                                 padx=20, pady=8,
+                                 cursor='hand2',
+                                 activebackground='#7c3aed',
+                                 activeforeground='white')
+            export_btn.pack(side=tk.LEFT, padx=(0, 10))
+            
+            # Cancel button
+            cancel_btn = tk.Button(button_frame, text="❌ Cancel", 
+                                 command=cancel_export,
+                                 font=('Segoe UI', 10, 'bold'),
+                                 bg='#dc3545', fg='white',
+                                 relief='flat', bd=0,
+                                 padx=20, pady=8,
+                                 cursor='hand2',
+                                 activebackground='#c82333',
+                                 activeforeground='white')
+            cancel_btn.pack(side=tk.LEFT)
+            
+            # Bind Enter key to export
+            export_window.bind('<Return>', lambda e: perform_export())
+            export_window.bind('<Escape>', lambda e: cancel_export())
+            
+        except ImportError as e:
+            messagebox.showerror("Import Error", f"Required modules not available: {str(e)}")
+        except Exception as e:
+            messagebox.showerror("Export Error", f"Failed to export client data: {str(e)}")
+    
+    def exit_fullscreen(self, event=None):
+        """Exit fullscreen mode"""
+        self.root.attributes('-fullscreen', False)
+        return "break"
+
+if __name__ == "__main__":
+    # Validate machine access before starting the application
+    if not validate_machine_access():
+        exit(1)
+    
+    root = tk.Tk()
+    app = PharmacyInvoiceApp(root)
+    root.mainloop()
