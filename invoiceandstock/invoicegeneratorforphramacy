@@ -1035,6 +1035,29 @@ class PharmacyInvoiceApp:
         # Auto-save stock changes
         self.save_medicines()
     
+    def format_phone_number(self, phone):
+        """Format phone number for WhatsApp (add country code if missing)"""
+        # Clean phone number (remove spaces, dashes, +, etc.)
+        clean_phone = ''.join(filter(str.isdigit, phone))
+        
+        # If number starts with 0, remove it
+        if clean_phone.startswith('0'):
+            clean_phone = clean_phone[1:]
+        
+        # If number doesn't start with country code, add Pakistan code (92)
+        # Pakistan numbers are typically 10 digits after removing 0
+        if len(clean_phone) == 10:
+            # Add Pakistan country code
+            clean_phone = '92' + clean_phone
+        elif len(clean_phone) == 11 and clean_phone.startswith('92'):
+            # Already has country code
+            pass
+        elif len(clean_phone) < 10:
+            # Too short, return as is
+            pass
+        
+        return clean_phone
+    
     def share_whatsapp_direct(self, event=None):
         """Direct WhatsApp share button - opens WhatsApp with receipt message"""
         try:
@@ -1055,8 +1078,8 @@ class PharmacyInvoiceApp:
             import webbrowser
             import urllib.parse
             
-            # Clean phone number (remove spaces, dashes, etc.)
-            clean_phone = ''.join(filter(str.isdigit, customer_phone))
+            # Format phone number with country code
+            formatted_phone = self.format_phone_number(customer_phone)
             
             # Calculate totals
             subtotal = sum(item[4] for item in self.invoice_items)
@@ -1072,52 +1095,71 @@ class PharmacyInvoiceApp:
             discount_amount = subtotal * (discount_percent / 100)
             final_total = subtotal - discount_amount
             
-            # Create detailed message
+            # Create detailed message (using plain text, WhatsApp will format it)
             currency_symbol = self.get_currency_symbol(self.currency_var.get())
-            message = f"*Pharmacy Receipt*\n\n"
+            message = f"Pharmacy Receipt\n\n"
             message += f"Customer: {customer}\n"
             message += f"Phone: {customer_phone}\n"
             message += f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
-            message += f"*Items:*\n"
+            message += f"Items:\n"
             
             for item in self.invoice_items:
                 med_name, mg, qty, price, item_total = item
-                mg_text = f" ({mg})" if mg else ""
-                message += f"• {med_name}{mg_text} x{qty} = {currency_symbol}{item_total:.2f}\n"
+                mg_text = f" ({mg})" if mg and str(mg).lower() != 'nan' else ""
+                message += f"- {med_name}{mg_text} x{qty} = {currency_symbol}{item_total:.2f}\n"
             
-            message += f"\n*Subtotal:* {currency_symbol}{subtotal:.2f}\n"
+            message += f"\nSubtotal: {currency_symbol}{subtotal:.2f}\n"
             if discount_percent > 0:
-                message += f"*Discount ({discount_percent}%):* -{currency_symbol}{discount_amount:.2f}\n"
-            message += f"*Total:* {currency_symbol}{final_total:.2f}\n\n"
-            message += f"Thank you for your business! 🙏"
+                message += f"Discount ({discount_percent}%): -{currency_symbol}{discount_amount:.2f}\n"
+            message += f"Total: {currency_symbol}{final_total:.2f}\n\n"
+            message += f"Thank you for your business!"
             
-            # Encode message
-            encoded_message = urllib.parse.quote(message)
+            # Encode message properly for URL
+            encoded_message = urllib.parse.quote(message, safe='')
             
             # Try WhatsApp Desktop first (for Windows)
             whatsapp_opened = False
             if os.name == 'nt':  # Windows
                 try:
-                    # WhatsApp Desktop protocol
-                    whatsapp_desktop_url = f"whatsapp://send?phone={clean_phone}&text={encoded_message}"
-                    os.startfile(whatsapp_desktop_url)
+                    # WhatsApp Desktop protocol - use proper format
+                    whatsapp_desktop_url = f"whatsapp://send?phone={formatted_phone}&text={encoded_message}"
+                    # Use subprocess for better compatibility
+                    import subprocess
+                    subprocess.Popen(['start', whatsapp_desktop_url], shell=True)
                     whatsapp_opened = True
-                    messagebox.showinfo("WhatsApp", "WhatsApp Desktop opened with message!")
                 except Exception as e:
-                    # Fallback to web version
-                    pass
+                    # Try alternative method
+                    try:
+                        os.startfile(whatsapp_desktop_url)
+                        whatsapp_opened = True
+                    except:
+                        pass
             
             # If desktop didn't work, try web version
             if not whatsapp_opened:
                 try:
-                    # WhatsApp Web URL
-                    whatsapp_url = f"https://web.whatsapp.com/send?phone={clean_phone}&text={encoded_message}"
+                    # WhatsApp Web URL - format: https://wa.me/PHONE?text=MESSAGE
+                    whatsapp_url = f"https://wa.me/{formatted_phone}?text={encoded_message}"
                     webbrowser.open(whatsapp_url)
-                    messagebox.showinfo("WhatsApp", "WhatsApp Web opened! The message is ready to send.")
+                    whatsapp_opened = True
                 except Exception as e:
-                    messagebox.showerror("WhatsApp Error", 
-                                       f"Could not open WhatsApp.\n\n"
-                                       f"Please open WhatsApp manually and send this message:\n\n{message}")
+                    # Fallback to old web format
+                    try:
+                        whatsapp_url = f"https://web.whatsapp.com/send?phone={formatted_phone}&text={encoded_message}"
+                        webbrowser.open(whatsapp_url)
+                        whatsapp_opened = True
+                    except Exception as e2:
+                        messagebox.showerror("WhatsApp Error", 
+                                           f"Could not open WhatsApp.\n\n"
+                                           f"Phone: {formatted_phone}\n"
+                                           f"Please open WhatsApp manually and send this message:\n\n{message}")
+                        return
+            
+            if whatsapp_opened:
+                messagebox.showinfo("WhatsApp", 
+                                  f"WhatsApp opened!\n\n"
+                                  f"Phone: {formatted_phone}\n"
+                                  f"Message is ready to send.")
             
         except Exception as e:
             messagebox.showerror("WhatsApp Error", f"Error opening WhatsApp: {str(e)}")
@@ -1128,40 +1170,50 @@ class PharmacyInvoiceApp:
             import webbrowser
             import urllib.parse
             
-            # Clean phone number (remove spaces, dashes, etc.)
-            clean_phone = ''.join(filter(str.isdigit, phone_number))
+            # Format phone number with country code
+            formatted_phone = self.format_phone_number(phone_number)
             
             # Create message
             currency_symbol = self.get_currency_symbol(self.currency_var.get())
-            message = f"*Pharmacy Receipt*\n\n"
+            message = f"Pharmacy Receipt\n\n"
             message += f"Customer: {customer_name}\n"
             message += f"Subtotal: {currency_symbol}{subtotal:.2f}\n"
             if discount_percent > 0:
                 message += f"Discount ({discount_percent}%): -{currency_symbol}{discount_amount:.2f}\n"
             message += f"Total: {currency_symbol}{final_total:.2f}\n\n"
-            message += f"Receipt PDF attached: {os.path.abspath(pdf_filename)}"
+            message += f"Receipt PDF: {os.path.abspath(pdf_filename)}"
             
-            # Encode message
-            encoded_message = urllib.parse.quote(message)
+            # Encode message properly
+            encoded_message = urllib.parse.quote(message, safe='')
             
             # Try WhatsApp Desktop first (for Windows)
             whatsapp_opened = False
             if os.name == 'nt':  # Windows
                 try:
                     # WhatsApp Desktop protocol
-                    whatsapp_desktop_url = f"whatsapp://send?phone={clean_phone}&text={encoded_message}"
-                    os.startfile(whatsapp_desktop_url)
+                    whatsapp_desktop_url = f"whatsapp://send?phone={formatted_phone}&text={encoded_message}"
+                    import subprocess
+                    subprocess.Popen(['start', whatsapp_desktop_url], shell=True)
                     whatsapp_opened = True
                 except:
-                    pass  # Fallback to web version
+                    try:
+                        os.startfile(whatsapp_desktop_url)
+                        whatsapp_opened = True
+                    except:
+                        pass  # Fallback to web version
             
             # If desktop didn't work, try web version
             if not whatsapp_opened:
-                # WhatsApp Web URL
-                whatsapp_url = f"https://web.whatsapp.com/send?phone={clean_phone}&text={encoded_message}"
-                webbrowser.open(whatsapp_url)
+                try:
+                    # Use wa.me format
+                    whatsapp_url = f"https://wa.me/{formatted_phone}?text={encoded_message}"
+                    webbrowser.open(whatsapp_url)
+                except:
+                    # Fallback to old format
+                    whatsapp_url = f"https://web.whatsapp.com/send?phone={formatted_phone}&text={encoded_message}"
+                    webbrowser.open(whatsapp_url)
             
-            messagebox.showinfo("WhatsApp", "WhatsApp opened! Please attach the PDF file manually.")
+            messagebox.showinfo("WhatsApp", f"WhatsApp opened!\nPhone: {formatted_phone}\nPlease attach the PDF file manually.")
             
         except Exception as e:
             messagebox.showwarning("WhatsApp Error", 
