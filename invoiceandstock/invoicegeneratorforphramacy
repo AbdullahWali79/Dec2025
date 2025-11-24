@@ -46,21 +46,40 @@ class PharmacyInvoiceApp:
             df = pd.read_excel('medicines.xlsx')
             if 'Medicine_Name' not in df.columns or 'Price' not in df.columns or 'Stock' not in df.columns:
                 raise ValueError("Excel must have columns: Medicine_Name, Price, Stock")
+            
+            # Add new columns if they don't exist
+            if 'Rack_Number' not in df.columns:
+                df['Rack_Number'] = ''
+            if 'MG' not in df.columns:
+                df['MG'] = ''
+            if 'Actual_Price' not in df.columns:
+                df['Actual_Price'] = df['Price']  # Default to Price if not set
+            
             return df
         except FileNotFoundError:
-            # Create sample Excel if not found
+            # Create sample Excel with new columns if not found
             sample_df = pd.DataFrame({
                 'Medicine_Name': ['Paracetamol', 'Kaifa', 'Kaiga'],
                 'Price': [10.5, 25.0, 15.0],
-                'Stock': [100, 50, 30]
+                'Stock': [100, 50, 30],
+                'Rack_Number': ['R001', 'R002', 'R003'],
+                'MG': ['500mg', '200mg', '100mg'],
+                'Actual_Price': [10.5, 25.0, 15.0]
             })
             sample_df.to_excel('medicines.xlsx', index=False)
             messagebox.showinfo("Info", "Sample medicines.xlsx created. Add your data and restart.")
             return sample_df
     
     def update_medicines_dict(self):
-        self.medicines = {row['Medicine_Name'].lower(): {'price': row['Price'], 'stock': row['Stock']} 
-                          for _, row in self.medicines_df.iterrows()}
+        self.medicines = {}
+        for _, row in self.medicines_df.iterrows():
+            self.medicines[row['Medicine_Name'].lower()] = {
+                'price': row['Price'],
+                'stock': row['Stock'],
+                'rack_number': row.get('Rack_Number', ''),
+                'mg': row.get('MG', ''),
+                'actual_price': row.get('Actual_Price', row['Price'])
+            }
         # Debug: Print loaded medicines
         print("Loaded medicines:", list(self.medicines.keys())[:5])  # Show first 5
     
@@ -111,11 +130,18 @@ class PharmacyInvoiceApp:
                                 fg='#f8fafc', bg='#334155')
         search_header.grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(15, 10), padx=15)
         
+        # Medicine info display (MG and Rack Number)
+        self.medicine_info_label = tk.Label(search_frame, text="", 
+                                            font=('Segoe UI', 10), 
+                                            fg='#10b981', bg='#334155',
+                                            anchor='w')
+        self.medicine_info_label.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 5), padx=15)
+        
         # Search label with modern gradient styling
         search_label = tk.Label(search_frame, text="Search Medicine:", 
                                font=('Segoe UI', 11, 'bold'), 
                                fg='#e2e8f0', bg='#334155')
-        search_label.grid(row=1, column=0, sticky=tk.W, pady=5, padx=15)
+        search_label.grid(row=2, column=0, sticky=tk.W, pady=5, padx=15)
         
         self.search_var = tk.StringVar()
         self.search_entry = tk.Entry(search_frame, textvariable=self.search_var, 
@@ -123,7 +149,7 @@ class PharmacyInvoiceApp:
                                    relief='flat', bd=1, bg='#1e293b', fg='#f8fafc',
                                    highlightthickness=2, highlightcolor='#3b82f6',
                                    insertbackground='#f8fafc')
-        self.search_entry.grid(row=1, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 15))
+        self.search_entry.grid(row=2, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 15))
         self.search_entry.bind('<KeyRelease>', self.on_search_type)
         self.search_entry.bind('<Down>', self.on_search_down)
         self.search_entry.bind('<Up>', self.on_search_up)
@@ -135,7 +161,7 @@ class PharmacyInvoiceApp:
                                              font=('Segoe UI', 10), bg='#1e293b', fg='#f8fafc',
                                              selectbackground='#3b82f6', selectforeground='white',
                                              relief='flat', bd=1, highlightthickness=0)
-        self.suggestions_listbox.grid(row=2, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 15))
+        self.suggestions_listbox.grid(row=3, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 15))
         self.suggestions_listbox.bind('<<ListboxSelect>>', self.on_suggestion_select)
         self.suggestions_listbox.bind('<Return>', self.on_suggestion_enter)
         self.suggestions_listbox.bind('<Up>', self.on_suggestion_up)
@@ -144,7 +170,7 @@ class PharmacyInvoiceApp:
         
         # Quantity and Add Section with modern gradient styling
         qty_frame = tk.Frame(search_frame, bg='#334155')
-        qty_frame.grid(row=3, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=10, padx=15)
+        qty_frame.grid(row=4, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=10, padx=15)
         qty_frame.grid_columnconfigure(1, weight=1)
         
         qty_label = tk.Label(qty_frame, text="Quantity:", 
@@ -243,20 +269,22 @@ class PharmacyInvoiceApp:
         invoice_header.grid(row=0, column=0, sticky=tk.W, pady=(15, 10), padx=15)
         
         # Invoice tree with modern styling
-        columns = ('Medicine', 'Qty', 'Price', 'Total')
+        columns = ('Medicine', 'MG', 'Qty', 'Price', 'Total')
         self.invoice_tree = ttk.Treeview(invoice_frame, columns=columns, show='headings', height=10,
                                         style='Modern.Treeview')
         
         # Configure columns
         self.invoice_tree.heading('Medicine', text='Medicine Name')
+        self.invoice_tree.heading('MG', text='MG')
         self.invoice_tree.heading('Qty', text='Quantity')
         self.invoice_tree.heading('Price', text='Price')
         self.invoice_tree.heading('Total', text='Total')
         
-        self.invoice_tree.column('Medicine', width=200, anchor='w')
-        self.invoice_tree.column('Qty', width=80, anchor='center')
-        self.invoice_tree.column('Price', width=100, anchor='e')
-        self.invoice_tree.column('Total', width=100, anchor='e')
+        self.invoice_tree.column('Medicine', width=180, anchor='w')
+        self.invoice_tree.column('MG', width=80, anchor='center')
+        self.invoice_tree.column('Qty', width=70, anchor='center')
+        self.invoice_tree.column('Price', width=90, anchor='e')
+        self.invoice_tree.column('Total', width=90, anchor='e')
         
         self.invoice_tree.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=15, pady=(0, 15))
         self.invoice_tree.bind('<Delete>', self.delete_selected_item)
@@ -292,7 +320,7 @@ class PharmacyInvoiceApp:
         total_label.grid(row=1, column=0, columnspan=2, pady=(0, 15), padx=15)
         
         # Customer name with modern gradient styling
-        customer_label = tk.Label(total_customer_frame, text="Customer Name:", 
+        customer_label = tk.Label(total_customer_frame, text="Customer Name *:", 
                                  font=('Segoe UI', 11, 'bold'), 
                                  fg='#e2e8f0', bg='#334155')
         customer_label.grid(row=2, column=0, sticky=tk.W, pady=5, padx=15)
@@ -304,12 +332,45 @@ class PharmacyInvoiceApp:
                                       highlightthickness=2, highlightcolor='#3b82f6',
                                       insertbackground='#f8fafc')
         self.customer_entry.grid(row=2, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 15))
-        self.customer_entry.bind('<Return>', self.generate_receipt)
-        self.customer_entry.bind('<Tab>', self.focus_generate)
+        self.customer_entry.bind('<Return>', lambda e: self.customer_phone_entry.focus_set())
+        self.customer_entry.bind('<Tab>', lambda e: self.customer_phone_entry.focus_set())
+        
+        # Customer phone number (compulsory)
+        phone_label = tk.Label(total_customer_frame, text="Phone Number *:", 
+                              font=('Segoe UI', 11, 'bold'), 
+                              fg='#e2e8f0', bg='#334155')
+        phone_label.grid(row=3, column=0, sticky=tk.W, pady=5, padx=15)
+        
+        self.customer_phone_var = tk.StringVar()
+        self.customer_phone_entry = tk.Entry(total_customer_frame, textvariable=self.customer_phone_var, 
+                                            width=25, font=('Segoe UI', 11),
+                                            relief='flat', bd=1, bg='#1e293b', fg='#f8fafc',
+                                            highlightthickness=2, highlightcolor='#3b82f6',
+                                            insertbackground='#f8fafc')
+        self.customer_phone_entry.grid(row=3, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 15))
+        self.customer_phone_entry.bind('<Return>', self.generate_receipt)
+        self.customer_phone_entry.bind('<Tab>', self.focus_discount)
+        
+        # Discount field
+        discount_label = tk.Label(total_customer_frame, text="Discount (%):", 
+                                 font=('Segoe UI', 11, 'bold'), 
+                                 fg='#e2e8f0', bg='#334155')
+        discount_label.grid(row=4, column=0, sticky=tk.W, pady=5, padx=15)
+        
+        self.discount_var = tk.StringVar(value="0")
+        self.discount_entry = tk.Entry(total_customer_frame, textvariable=self.discount_var, 
+                                      width=25, font=('Segoe UI', 11),
+                                      relief='flat', bd=1, bg='#1e293b', fg='#f8fafc',
+                                      highlightthickness=2, highlightcolor='#3b82f6',
+                                      insertbackground='#f8fafc')
+        self.discount_entry.grid(row=4, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 15))
+        self.discount_entry.bind('<Return>', self.generate_receipt)
+        self.discount_entry.bind('<KeyRelease>', self.update_total)
+        self.discount_entry.bind('<Tab>', self.focus_generate)
         
         # Action buttons with modern gradient styling
         button_frame = tk.Frame(total_customer_frame, bg='#334155')
-        button_frame.grid(row=3, column=0, columnspan=2, pady=15, padx=15)
+        button_frame.grid(row=5, column=0, columnspan=2, pady=15, padx=15)
         
         # Generate PDF button with modern gradient
         self.generate_button = tk.Button(button_frame, text="📄 Generate PDF (F3)", 
@@ -347,6 +408,18 @@ class PharmacyInvoiceApp:
                                        activeforeground='white')
         self.preview_button.grid(row=0, column=2, padx=(0, 5))
         
+        # WhatsApp Share button
+        self.whatsapp_button = tk.Button(button_frame, text="📱 WhatsApp Share", 
+                                         command=self.share_whatsapp_direct,
+                                         font=('Segoe UI', 10, 'bold'),
+                                         bg='#25D366', fg='white',
+                                         relief='flat', bd=0,
+                                         padx=15, pady=8,
+                                         cursor='hand2',
+                                         activebackground='#128C7E',
+                                         activeforeground='white')
+        self.whatsapp_button.grid(row=0, column=3, padx=(0, 5))
+        
         # Clear button
         self.clear_button = tk.Button(button_frame, text="🗑️ Clear (F4)", 
                                      command=self.clear_invoice,
@@ -357,7 +430,7 @@ class PharmacyInvoiceApp:
                                      cursor='hand2',
                                      activebackground='#dc2626',
                                      activeforeground='white')
-        self.clear_button.grid(row=0, column=3, padx=(0, 5))
+        self.clear_button.grid(row=0, column=4, padx=(0, 5))
         
         # Export Client Data button
         self.export_button = tk.Button(button_frame, text="📊 Export Clients (F7)", 
@@ -369,7 +442,7 @@ class PharmacyInvoiceApp:
                                      cursor='hand2',
                                      activebackground='#7c3aed',
                                      activeforeground='white')
-        self.export_button.grid(row=0, column=4)
+        self.export_button.grid(row=0, column=5)
         
         # Global keyboard shortcuts
         self.root.bind('<F1>', lambda e: self.add_to_invoice())
@@ -473,6 +546,7 @@ class PharmacyInvoiceApp:
         query = self.search_var.get().lower()
         self.suggestions_listbox.delete(0, tk.END)
         self.current_suggestion_index = -1
+        self.medicine_info_label.config(text="")  # Clear info when typing
         if query:
             matches = [name.capitalize() for name in self.medicines.keys() if query in name]
             for match in matches[:10]:  # Limit to 10 suggestions
@@ -481,6 +555,8 @@ class PharmacyInvoiceApp:
             if matches:
                 self.suggestions_listbox.selection_set(0)
                 self.current_suggestion_index = 0
+                # Show info for first match
+                self.show_medicine_info(matches[0])
     
     def on_search_down(self, event):
         if self.suggestions_listbox.size() > 0:
@@ -530,14 +606,39 @@ class PharmacyInvoiceApp:
         selection = self.suggestions_listbox.curselection()
         if selection:
             self.current_suggestion_index = selection[0]
+            # Show medicine info when selected
+            selected_med = self.suggestions_listbox.get(selection[0])
+            self.show_medicine_info(selected_med)
     
     def on_suggestion_enter(self, event):
         if self.current_suggestion_index >= 0:
             selected = self.suggestions_listbox.get(self.current_suggestion_index)
             self.search_var.set(selected)
             self.suggestions_listbox.delete(0, tk.END)
+            self.show_medicine_info(selected)
             self.qty_entry.focus_set()
         return "break"
+    
+    def show_medicine_info(self, med_name):
+        """Display medicine MG and Rack Number when selected"""
+        med_lower = med_name.lower()
+        if med_lower in self.medicines:
+            med_info = self.medicines[med_lower]
+            mg = med_info.get('mg', '')
+            rack = med_info.get('rack_number', '')
+            info_text = ""
+            if mg:
+                info_text += f"MG: {mg}"
+            if rack:
+                if info_text:
+                    info_text += " | "
+                info_text += f"Rack: {rack}"
+            if info_text:
+                self.medicine_info_label.config(text=info_text)
+            else:
+                self.medicine_info_label.config(text="")
+        else:
+            self.medicine_info_label.config(text="")
     
     def on_suggestion_up(self, event):
         if self.current_suggestion_index > 0:
@@ -595,22 +696,48 @@ class PharmacyInvoiceApp:
         self.medicines_df.loc[self.medicines_df['Medicine_Name'].str.lower() == med_lower, 'Stock'] -= qty
         self.update_medicines_dict()
         
-        total = qty * med_info['price']
-        self.invoice_items.append((med_name, qty, med_info['price'], total))
+        # Use actual_price if available, otherwise use price
+        price_to_use = med_info.get('actual_price', med_info['price'])
+        total = qty * price_to_use
+        mg = med_info.get('mg', '')
+        self.invoice_items.append((med_name, mg, qty, price_to_use, total))
         
         # Add to treeview with current currency
         currency_symbol = self.get_currency_symbol(self.currency_var.get())
-        self.invoice_tree.insert('', 'end', values=(med_name, qty, f"{currency_symbol}{med_info['price']:.2f}", f"{currency_symbol}{total:.2f}"))
+        self.invoice_tree.insert('', 'end', values=(
+            med_name, mg, qty, 
+            f"{currency_symbol}{price_to_use:.2f}", 
+            f"{currency_symbol}{total:.2f}"
+        ))
         
         self.search_var.set('')
+        self.medicine_info_label.config(text="")
         self.qty_var.set('1')
         self.update_total()
     
-    def update_total(self):
-        total = sum(item[3] for item in self.invoice_items)
+    def update_total(self, event=None):
+        total = sum(item[4] for item in self.invoice_items)  # item[4] is total
+        
+        # Apply discount
+        try:
+            discount_percent = float(self.discount_var.get() or 0)
+            if discount_percent < 0:
+                discount_percent = 0
+            if discount_percent > 100:
+                discount_percent = 100
+        except ValueError:
+            discount_percent = 0
+        
+        discount_amount = total * (discount_percent / 100)
+        final_total = total - discount_amount
+        
         currency = self.currency_var.get()
         currency_symbol = self.get_currency_symbol(currency)
-        self.total_var.set(f"Total: {currency_symbol}{total:.2f}")
+        
+        if discount_percent > 0:
+            self.total_var.set(f"Subtotal: {currency_symbol}{total:.2f} | Discount: {discount_percent}% | Total: {currency_symbol}{final_total:.2f}")
+        else:
+            self.total_var.set(f"Total: {currency_symbol}{total:.2f}")
     
     def get_currency_symbol(self, currency):
         symbols = {
@@ -629,35 +756,207 @@ class PharmacyInvoiceApp:
         currency_symbol = self.get_currency_symbol(self.currency_var.get())
         
         for item in self.invoice_items:
-            med_name, qty, price, total = item
+            med_name, mg, qty, price, total = item
             self.invoice_tree.insert('', 'end', values=(
-                med_name, qty, f"{currency_symbol}{price:.2f}", f"{currency_symbol}{total:.2f}"
+                med_name, mg, qty, f"{currency_symbol}{price:.2f}", f"{currency_symbol}{total:.2f}"
             ))
         
         self.update_total()
     
     def add_stock(self, event=None):
-        # Simple dialog for manual add (extend for bulk Excel import if needed)
-        name = simpledialog.askstring("Add Stock", "Medicine Name:")
-        if name:
-            price = simpledialog.askfloat("Add Stock", "Price:")
-            stock = simpledialog.askinteger("Add Stock", "Stock Quantity:")
-            if name and price is not None and stock is not None:
-                new_row = pd.DataFrame({'Medicine_Name': [name], 'Price': [price], 'Stock': [stock]})
-                self.medicines_df = pd.concat([self.medicines_df, new_row], ignore_index=True)
+        # Create a dialog window for adding/updating stock with all fields
+        add_window = tk.Toplevel(self.root)
+        add_window.title("➕ Add/Update Medicine Stock")
+        add_window.geometry("500x450")
+        add_window.configure(bg='#f8f9fa')
+        add_window.resizable(False, False)
+        add_window.transient(self.root)
+        add_window.grab_set()
+        
+        # Main frame
+        main_frame = tk.Frame(add_window, bg='#f8f9fa', padx=20, pady=20)
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Title
+        title_label = tk.Label(main_frame, text="➕ Add/Update Medicine", 
+                              font=('Segoe UI', 16, 'bold'), 
+                              fg='#2c3e50', bg='#f8f9fa')
+        title_label.pack(pady=(0, 20))
+        
+        # Medicine Name
+        tk.Label(main_frame, text="Medicine Name *:", 
+                font=('Segoe UI', 11, 'bold'), 
+                fg='#34495e', bg='#f8f9fa').pack(anchor=tk.W, pady=5)
+        name_var = tk.StringVar()
+        name_entry = tk.Entry(main_frame, textvariable=name_var, 
+                             font=('Segoe UI', 11), width=40,
+                             relief='flat', bd=1, bg='white', fg='#2c3e50',
+                             highlightthickness=2, highlightcolor='#667eea')
+        name_entry.pack(fill=tk.X, pady=(0, 10))
+        name_entry.focus_set()
+        
+        # MG (Milligrams)
+        tk.Label(main_frame, text="MG (e.g., 100mg, 200mg, 500mg):", 
+                font=('Segoe UI', 11, 'bold'), 
+                fg='#34495e', bg='#f8f9fa').pack(anchor=tk.W, pady=5)
+        mg_var = tk.StringVar()
+        mg_entry = tk.Entry(main_frame, textvariable=mg_var, 
+                           font=('Segoe UI', 11), width=40,
+                           relief='flat', bd=1, bg='white', fg='#2c3e50',
+                           highlightthickness=2, highlightcolor='#667eea')
+        mg_entry.pack(fill=tk.X, pady=(0, 10))
+        
+        # Rack Number
+        tk.Label(main_frame, text="Rack Number:", 
+                font=('Segoe UI', 11, 'bold'), 
+                fg='#34495e', bg='#f8f9fa').pack(anchor=tk.W, pady=5)
+        rack_var = tk.StringVar()
+        rack_entry = tk.Entry(main_frame, textvariable=rack_var, 
+                             font=('Segoe UI', 11), width=40,
+                             relief='flat', bd=1, bg='white', fg='#2c3e50',
+                             highlightthickness=2, highlightcolor='#667eea')
+        rack_entry.pack(fill=tk.X, pady=(0, 10))
+        
+        # Price per Tablet
+        tk.Label(main_frame, text="Price per Tablet *:", 
+                font=('Segoe UI', 11, 'bold'), 
+                fg='#34495e', bg='#f8f9fa').pack(anchor=tk.W, pady=5)
+        price_var = tk.StringVar()
+        price_entry = tk.Entry(main_frame, textvariable=price_var, 
+                              font=('Segoe UI', 11), width=40,
+                              relief='flat', bd=1, bg='white', fg='#2c3e50',
+                              highlightthickness=2, highlightcolor='#667eea')
+        price_entry.pack(fill=tk.X, pady=(0, 10))
+        
+        # Actual Price (for client pricing)
+        tk.Label(main_frame, text="Actual Price (for billing) *:", 
+                font=('Segoe UI', 11, 'bold'), 
+                fg='#34495e', bg='#f8f9fa').pack(anchor=tk.W, pady=5)
+        actual_price_var = tk.StringVar()
+        actual_price_entry = tk.Entry(main_frame, textvariable=actual_price_var, 
+                                      font=('Segoe UI', 11), width=40,
+                                      relief='flat', bd=1, bg='white', fg='#2c3e50',
+                                      highlightthickness=2, highlightcolor='#667eea')
+        actual_price_entry.pack(fill=tk.X, pady=(0, 10))
+        
+        # Stock Quantity
+        tk.Label(main_frame, text="Stock Quantity *:", 
+                font=('Segoe UI', 11, 'bold'), 
+                fg='#34495e', bg='#f8f9fa').pack(anchor=tk.W, pady=5)
+        stock_var = tk.StringVar()
+        stock_entry = tk.Entry(main_frame, textvariable=stock_var, 
+                              font=('Segoe UI', 11), width=40,
+                              relief='flat', bd=1, bg='white', fg='#2c3e50',
+                              highlightthickness=2, highlightcolor='#667eea')
+        stock_entry.pack(fill=tk.X, pady=(0, 20))
+        
+        def save_medicine():
+            name = name_var.get().strip()
+            if not name:
+                messagebox.showwarning("Warning", "Medicine name is required!")
+                return
+            
+            try:
+                price = float(price_var.get() or 0)
+                actual_price = float(actual_price_var.get() or price)
+                stock = int(stock_var.get() or 0)
+                
+                if price <= 0:
+                    messagebox.showwarning("Warning", "Price must be greater than 0!")
+                    return
+                if stock < 0:
+                    messagebox.showwarning("Warning", "Stock cannot be negative!")
+                    return
+                
+                mg = mg_var.get().strip()
+                rack = rack_var.get().strip()
+                
+                # Check if medicine already exists
+                med_lower = name.lower()
+                existing = self.medicines_df[self.medicines_df['Medicine_Name'].str.lower() == med_lower]
+                
+                if not existing.empty:
+                    # Update existing
+                    idx = existing.index[0]
+                    self.medicines_df.at[idx, 'Price'] = price
+                    self.medicines_df.at[idx, 'Actual_Price'] = actual_price
+                    self.medicines_df.at[idx, 'Stock'] = stock
+                    self.medicines_df.at[idx, 'MG'] = mg
+                    self.medicines_df.at[idx, 'Rack_Number'] = rack
+                else:
+                    # Add new
+                    new_row = pd.DataFrame({
+                        'Medicine_Name': [name],
+                        'Price': [price],
+                        'Actual_Price': [actual_price],
+                        'Stock': [stock],
+                        'MG': [mg],
+                        'Rack_Number': [rack]
+                    })
+                    self.medicines_df = pd.concat([self.medicines_df, new_row], ignore_index=True)
+                
                 self.update_medicines_dict()
                 self.save_medicines()
+                messagebox.showinfo("Success", f"Medicine '{name}' saved successfully!")
+                add_window.destroy()
+                
+            except ValueError:
+                messagebox.showwarning("Warning", "Please enter valid numbers for price and stock!")
+        
+        # Buttons
+        button_frame = tk.Frame(main_frame, bg='#f8f9fa')
+        button_frame.pack(fill=tk.X)
+        
+        save_btn = tk.Button(button_frame, text="💾 Save", 
+                            command=save_medicine,
+                            font=('Segoe UI', 10, 'bold'),
+                            bg='#28a745', fg='white',
+                            relief='flat', bd=0,
+                            padx=20, pady=8,
+                            cursor='hand2')
+        save_btn.pack(side=tk.LEFT, padx=(0, 10))
+        
+        cancel_btn = tk.Button(button_frame, text="❌ Cancel", 
+                              command=add_window.destroy,
+                              font=('Segoe UI', 10, 'bold'),
+                              bg='#dc3545', fg='white',
+                              relief='flat', bd=0,
+                              padx=20, pady=8,
+                              cursor='hand2')
+        cancel_btn.pack(side=tk.LEFT)
+        
+        add_window.bind('<Return>', lambda e: save_medicine())
+        add_window.bind('<Escape>', lambda e: add_window.destroy())
     
     def generate_receipt(self, event=None):
         customer = self.customer_var.get().strip()
         if not customer:
             messagebox.showwarning("Warning", "Enter customer name!")
             return
+        
+        customer_phone = self.customer_phone_var.get().strip()
+        if not customer_phone:
+            messagebox.showwarning("Warning", "Enter customer phone number!")
+            return
+        
         if not self.invoice_items:
             messagebox.showwarning("Warning", "No items in invoice!")
             return
         
-        total = sum(item[3] for item in self.invoice_items)
+        # Calculate totals with discount
+        subtotal = sum(item[4] for item in self.invoice_items)  # item[4] is total
+        try:
+            discount_percent = float(self.discount_var.get() or 0)
+            if discount_percent < 0:
+                discount_percent = 0
+            if discount_percent > 100:
+                discount_percent = 100
+        except ValueError:
+            discount_percent = 0
+        
+        discount_amount = subtotal * (discount_percent / 100)
+        final_total = subtotal - discount_amount
+        
         now = datetime.now()
         date_str = now.strftime("%Y%m%d_%H%M%S")
         filename = f"receipt_{customer.replace(' ', '_')}_{date_str}.pdf"
@@ -676,6 +975,8 @@ class PharmacyInvoiceApp:
         c.setFont("Helvetica", 12)
         c.drawString(50, y, f"Customer: {customer}")
         y -= 20
+        c.drawString(50, y, f"Phone: {customer_phone}")
+        y -= 20
         c.drawString(50, y, f"Date: {now.strftime('%Y-%m-%d %H:%M:%S')}")
         y -= 40
         
@@ -686,7 +987,9 @@ class PharmacyInvoiceApp:
         c.setFont("Helvetica", 10)
         currency_symbol = self.get_currency_symbol(self.currency_var.get())
         for item in self.invoice_items:
-            line = f"{item[0]} x{item[1]} @ {currency_symbol}{item[2]:.2f} = {currency_symbol}{item[3]:.2f}"
+            med_name, mg, qty, price, item_total = item
+            mg_text = f" ({mg})" if mg else ""
+            line = f"{med_name}{mg_text} x{qty} @ {currency_symbol}{price:.2f} = {currency_symbol}{item_total:.2f}"
             c.drawString(50, y, line)
             y -= 15
             if y < 100:  # New page if needed
@@ -694,10 +997,16 @@ class PharmacyInvoiceApp:
                 y = height - 50
                 c.setFont("Helvetica", 10)
         
-        # Total
+        # Totals
         y -= 10
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(50, y, f"Subtotal: {currency_symbol}{subtotal:.2f}")
+        y -= 20
+        if discount_percent > 0:
+            c.drawString(50, y, f"Discount ({discount_percent}%): -{currency_symbol}{discount_amount:.2f}")
+            y -= 20
         c.setFont("Helvetica-Bold", 14)
-        c.drawString(50, y, f"Grand Total: {currency_symbol}{total:.2f}")
+        c.drawString(50, y, f"Grand Total: {currency_symbol}{final_total:.2f}")
         y -= 40
         
         # Footer
@@ -706,20 +1015,160 @@ class PharmacyInvoiceApp:
         
         c.save()
         
-        messagebox.showinfo("Success", f"Receipt PDF downloaded!\nFile: {os.path.abspath(filename)}")
+        # Show success and ask about WhatsApp sharing
+        response = messagebox.askyesno("Receipt Generated", 
+                                       f"Receipt PDF downloaded!\nFile: {os.path.abspath(filename)}\n\n"
+                                       f"Would you like to share this receipt via WhatsApp?")
         
-        # Optional: Auto-open the PDF (uncomment if desired)
-        # os.startfile(filename)
+        if response:
+            self.share_via_whatsapp(filename, customer_phone, customer, subtotal, discount_percent, discount_amount, final_total)
         
         # Clear invoice
         self.invoice_items = []
         for item in self.invoice_tree.get_children():
             self.invoice_tree.delete(item)
         self.customer_var.set('')
+        self.customer_phone_var.set('')
+        self.discount_var.set('0')
         self.update_total()
         
         # Auto-save stock changes
         self.save_medicines()
+    
+    def share_whatsapp_direct(self, event=None):
+        """Direct WhatsApp share button - opens WhatsApp with receipt message"""
+        try:
+            customer = self.customer_var.get().strip()
+            if not customer:
+                messagebox.showwarning("Warning", "Enter customer name!")
+                return
+            
+            customer_phone = self.customer_phone_var.get().strip()
+            if not customer_phone:
+                messagebox.showwarning("Warning", "Enter customer phone number!")
+                return
+            
+            if not self.invoice_items:
+                messagebox.showwarning("Warning", "No items in invoice!")
+                return
+            
+            import webbrowser
+            import urllib.parse
+            
+            # Clean phone number (remove spaces, dashes, etc.)
+            clean_phone = ''.join(filter(str.isdigit, customer_phone))
+            
+            # Calculate totals
+            subtotal = sum(item[4] for item in self.invoice_items)
+            try:
+                discount_percent = float(self.discount_var.get() or 0)
+                if discount_percent < 0:
+                    discount_percent = 0
+                if discount_percent > 100:
+                    discount_percent = 100
+            except ValueError:
+                discount_percent = 0
+            
+            discount_amount = subtotal * (discount_percent / 100)
+            final_total = subtotal - discount_amount
+            
+            # Create detailed message
+            currency_symbol = self.get_currency_symbol(self.currency_var.get())
+            message = f"*Pharmacy Receipt*\n\n"
+            message += f"Customer: {customer}\n"
+            message += f"Phone: {customer_phone}\n"
+            message += f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+            message += f"*Items:*\n"
+            
+            for item in self.invoice_items:
+                med_name, mg, qty, price, item_total = item
+                mg_text = f" ({mg})" if mg else ""
+                message += f"• {med_name}{mg_text} x{qty} = {currency_symbol}{item_total:.2f}\n"
+            
+            message += f"\n*Subtotal:* {currency_symbol}{subtotal:.2f}\n"
+            if discount_percent > 0:
+                message += f"*Discount ({discount_percent}%):* -{currency_symbol}{discount_amount:.2f}\n"
+            message += f"*Total:* {currency_symbol}{final_total:.2f}\n\n"
+            message += f"Thank you for your business! 🙏"
+            
+            # Encode message
+            encoded_message = urllib.parse.quote(message)
+            
+            # Try WhatsApp Desktop first (for Windows)
+            whatsapp_opened = False
+            if os.name == 'nt':  # Windows
+                try:
+                    # WhatsApp Desktop protocol
+                    whatsapp_desktop_url = f"whatsapp://send?phone={clean_phone}&text={encoded_message}"
+                    os.startfile(whatsapp_desktop_url)
+                    whatsapp_opened = True
+                    messagebox.showinfo("WhatsApp", "WhatsApp Desktop opened with message!")
+                except Exception as e:
+                    # Fallback to web version
+                    pass
+            
+            # If desktop didn't work, try web version
+            if not whatsapp_opened:
+                try:
+                    # WhatsApp Web URL
+                    whatsapp_url = f"https://web.whatsapp.com/send?phone={clean_phone}&text={encoded_message}"
+                    webbrowser.open(whatsapp_url)
+                    messagebox.showinfo("WhatsApp", "WhatsApp Web opened! The message is ready to send.")
+                except Exception as e:
+                    messagebox.showerror("WhatsApp Error", 
+                                       f"Could not open WhatsApp.\n\n"
+                                       f"Please open WhatsApp manually and send this message:\n\n{message}")
+            
+        except Exception as e:
+            messagebox.showerror("WhatsApp Error", f"Error opening WhatsApp: {str(e)}")
+    
+    def share_via_whatsapp(self, pdf_filename, phone_number, customer_name, subtotal, discount_percent, discount_amount, final_total):
+        """Open WhatsApp Web/Desktop to share receipt (called after PDF generation)"""
+        try:
+            import webbrowser
+            import urllib.parse
+            
+            # Clean phone number (remove spaces, dashes, etc.)
+            clean_phone = ''.join(filter(str.isdigit, phone_number))
+            
+            # Create message
+            currency_symbol = self.get_currency_symbol(self.currency_var.get())
+            message = f"*Pharmacy Receipt*\n\n"
+            message += f"Customer: {customer_name}\n"
+            message += f"Subtotal: {currency_symbol}{subtotal:.2f}\n"
+            if discount_percent > 0:
+                message += f"Discount ({discount_percent}%): -{currency_symbol}{discount_amount:.2f}\n"
+            message += f"Total: {currency_symbol}{final_total:.2f}\n\n"
+            message += f"Receipt PDF attached: {os.path.abspath(pdf_filename)}"
+            
+            # Encode message
+            encoded_message = urllib.parse.quote(message)
+            
+            # Try WhatsApp Desktop first (for Windows)
+            whatsapp_opened = False
+            if os.name == 'nt':  # Windows
+                try:
+                    # WhatsApp Desktop protocol
+                    whatsapp_desktop_url = f"whatsapp://send?phone={clean_phone}&text={encoded_message}"
+                    os.startfile(whatsapp_desktop_url)
+                    whatsapp_opened = True
+                except:
+                    pass  # Fallback to web version
+            
+            # If desktop didn't work, try web version
+            if not whatsapp_opened:
+                # WhatsApp Web URL
+                whatsapp_url = f"https://web.whatsapp.com/send?phone={clean_phone}&text={encoded_message}"
+                webbrowser.open(whatsapp_url)
+            
+            messagebox.showinfo("WhatsApp", "WhatsApp opened! Please attach the PDF file manually.")
+            
+        except Exception as e:
+            messagebox.showwarning("WhatsApp Error", 
+                                   f"Could not open WhatsApp automatically.\n"
+                                   f"Please share the receipt manually.\n\n"
+                                   f"File: {os.path.abspath(pdf_filename)}\n"
+                                   f"Error: {str(e)}")
     
     def thermal_print(self, event=None):
         """Print thermal receipt directly to printer"""
@@ -727,6 +1176,12 @@ class PharmacyInvoiceApp:
         if not customer:
             messagebox.showwarning("Warning", "Enter customer name!")
             return
+        
+        customer_phone = self.customer_phone_var.get().strip()
+        if not customer_phone:
+            messagebox.showwarning("Warning", "Enter customer phone number!")
+            return
+        
         if not self.invoice_items:
             messagebox.showwarning("Warning", "No items in invoice!")
             return
@@ -747,38 +1202,103 @@ class PharmacyInvoiceApp:
     
     def preview_receipt(self, event=None):
         """Show receipt preview in a new window"""
-        customer = self.customer_var.get().strip()
-        if not customer:
-            messagebox.showwarning("Warning", "Enter customer name!")
-            return
-        if not self.invoice_items:
-            messagebox.showwarning("Warning", "No items in invoice!")
-            return
-        
-        # Create preview window
-        preview_window = tk.Toplevel(self.root)
-        preview_window.title("Receipt Preview")
-        preview_window.geometry("400x600")
-        preview_window.configure(bg='white')
-        
-        # Create receipt content
-        receipt_content = self.create_thermal_receipt(customer)
-        
-        # Display receipt in text widget
-        text_widget = tk.Text(preview_window, font=('Courier', 10), 
-                             bg='white', fg='black', wrap=tk.WORD)
-        text_widget.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-        text_widget.insert(tk.END, receipt_content)
-        text_widget.config(state=tk.DISABLED)
-        
-        # Add print button
-        print_btn = ttk.Button(preview_window, text="🖨️ Print", 
-                              command=lambda: self.print_thermal_receipt(receipt_content))
-        print_btn.pack(pady=10)
+        try:
+            customer = self.customer_var.get().strip()
+            if not customer:
+                messagebox.showwarning("Warning", "Enter customer name!")
+                return
+            
+            customer_phone = self.customer_phone_var.get().strip()
+            if not customer_phone:
+                messagebox.showwarning("Warning", "Enter customer phone number!")
+                return
+            
+            if not self.invoice_items:
+                messagebox.showwarning("Warning", "No items in invoice!")
+                return
+            
+            # Create preview window
+            preview_window = tk.Toplevel(self.root)
+            preview_window.title("Receipt Preview")
+            preview_window.geometry("500x700")
+            preview_window.configure(bg='white')
+            preview_window.transient(self.root)
+            
+            # Center the window
+            preview_window.update_idletasks()
+            x = (preview_window.winfo_screenwidth() // 2) - (500 // 2)
+            y = (preview_window.winfo_screenheight() // 2) - (700 // 2)
+            preview_window.geometry(f"500x700+{x}+{y}")
+            
+            # Create receipt content
+            receipt_content = self.create_thermal_receipt(customer, customer_phone)
+            
+            # Frame for text widget and scrollbar
+            text_frame = tk.Frame(preview_window, bg='white')
+            text_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+            
+            # Display receipt in text widget with scrollbar
+            scrollbar = tk.Scrollbar(text_frame)
+            scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+            
+            text_widget = tk.Text(text_frame, font=('Courier', 10), 
+                                 bg='white', fg='black', wrap=tk.WORD,
+                                 yscrollcommand=scrollbar.set)
+            text_widget.pack(fill=tk.BOTH, expand=True)
+            scrollbar.config(command=text_widget.yview)
+            
+            text_widget.insert(tk.END, receipt_content)
+            text_widget.config(state=tk.DISABLED)
+            
+            # Button frame
+            button_frame = tk.Frame(preview_window, bg='white')
+            button_frame.pack(pady=10)
+            
+            # Add print button
+            print_btn = tk.Button(button_frame, text="🖨️ Print", 
+                                 command=lambda: self.print_thermal_receipt(receipt_content),
+                                 font=('Segoe UI', 10, 'bold'),
+                                 bg='#3b82f6', fg='white',
+                                 relief='flat', bd=0,
+                                 padx=15, pady=8,
+                                 cursor='hand2')
+            print_btn.pack(side=tk.LEFT, padx=5)
+            
+            # Add close button
+            close_btn = tk.Button(button_frame, text="❌ Close", 
+                                 command=preview_window.destroy,
+                                 font=('Segoe UI', 10, 'bold'),
+                                 bg='#ef4444', fg='white',
+                                 relief='flat', bd=0,
+                                 padx=15, pady=8,
+                                 cursor='hand2')
+            close_btn.pack(side=tk.LEFT, padx=5)
+            
+            # Focus on preview window
+            preview_window.focus_set()
+            
+        except Exception as e:
+            messagebox.showerror("Preview Error", f"Error showing preview: {str(e)}")
     
-    def create_thermal_receipt(self, customer):
+    def create_thermal_receipt(self, customer, customer_phone=None):
         """Create thermal receipt content"""
-        total = sum(item[3] for item in self.invoice_items)
+        subtotal = sum(item[4] for item in self.invoice_items)  # item[4] is total
+        if customer_phone is None:
+            customer_phone = self.customer_phone_var.get().strip()
+        
+        # Calculate discount
+        try:
+            discount_percent = float(self.discount_var.get() or 0)
+            if discount_percent < 0:
+                discount_percent = 0
+            if discount_percent > 100:
+                discount_percent = 100
+        except ValueError:
+            discount_percent = 0
+        
+        discount_amount = subtotal * (discount_percent / 100)
+        final_total = subtotal - discount_amount
+        
         now = datetime.now()
         currency_symbol = self.get_currency_symbol(self.currency_var.get())
         
@@ -788,18 +1308,24 @@ class PharmacyInvoiceApp:
         receipt.append("    PHARMACY RECEIPT")
         receipt.append("=" * 40)
         receipt.append(f"Customer: {customer}")
+        receipt.append(f"Phone: {customer_phone}")
         receipt.append(f"Date: {now.strftime('%Y-%m-%d %H:%M:%S')}")
         receipt.append("-" * 40)
-        receipt.append(f"{'Item':<20} {'Qty':<5} {'Price':<8} {'Total'}")
+        receipt.append(f"{'Item':<18} {'MG':<6} {'Qty':<4} {'Price':<8} {'Total'}")
         receipt.append("-" * 40)
         
         # Items
         for item in self.invoice_items:
-            med_name, qty, price, item_total = item
-            receipt.append(f"{med_name[:19]:<20} {qty:<5} {currency_symbol}{price:<7.2f} {currency_symbol}{item_total:.2f}")
+            med_name, mg, qty, price, item_total = item
+            mg_display = mg[:5] if mg else ""
+            med_display = med_name[:17] if len(med_name) <= 17 else med_name[:14] + "..."
+            receipt.append(f"{med_display:<18} {mg_display:<6} {qty:<4} {currency_symbol}{price:<7.2f} {currency_symbol}{item_total:.2f}")
         
         receipt.append("-" * 40)
-        receipt.append(f"TOTAL: {currency_symbol}{total:.2f}")
+        receipt.append(f"Subtotal: {currency_symbol}{subtotal:.2f}")
+        if discount_percent > 0:
+            receipt.append(f"Discount ({discount_percent}%): -{currency_symbol}{discount_amount:.2f}")
+        receipt.append(f"TOTAL: {currency_symbol}{final_total:.2f}")
         receipt.append("=" * 40)
         receipt.append("Thank you for your business!")
         receipt.append("Visit again soon!")
@@ -829,6 +1355,10 @@ class PharmacyInvoiceApp:
     
     def focus_customer(self, event):
         self.customer_entry.focus_set()
+        return "break"
+    
+    def focus_discount(self, event):
+        self.discount_entry.focus_set()
         return "break"
     
     def focus_generate(self, event):
@@ -878,7 +1408,7 @@ class PharmacyInvoiceApp:
         if selection:
             item = self.invoice_tree.item(selection[0])
             med_name = item['values'][0]
-            qty = int(item['values'][1])
+            qty = int(item['values'][2])  # Qty is now at index 2 (after MG)
             
             # Restore stock
             med_lower = med_name.lower()
@@ -886,7 +1416,7 @@ class PharmacyInvoiceApp:
                 self.medicines_df.loc[self.medicines_df['Medicine_Name'].str.lower() == med_lower, 'Stock'] += qty
                 self.update_medicines_dict()
             
-            # Remove from invoice
+            # Remove from invoice (find by med_name)
             self.invoice_tree.delete(selection[0])
             self.invoice_items = [item for item in self.invoice_items if item[0] != med_name]
             self.update_total()
@@ -938,12 +1468,12 @@ class PharmacyInvoiceApp:
         item = self.invoice_tree.item(selection[0])
         values = item['values']
         med_name = values[0]
-        current_qty = int(values[1])
-        current_price_str = values[2]
+        current_qty = int(values[2])  # Qty is at index 2 (after MG)
+        current_price_str = values[3]  # Price is at index 3
         
         # Extract price from string (remove currency symbol)
         currency_symbol = self.get_currency_symbol(self.currency_var.get())
-        current_price = float(current_price_str.replace(currency_symbol, ''))
+        current_price = float(current_price_str.replace(currency_symbol, '').strip())
         
         # Create edit dialog
         edit_window = tk.Toplevel(self.root)
@@ -1040,8 +1570,11 @@ class PharmacyInvoiceApp:
                         if med_lower in self.medicines:
                             self.medicines_df.loc[self.medicines_df['Medicine_Name'].str.lower() == med_lower, 'Stock'] += current_qty
                         
-                        # Update with new values
-                        self.invoice_items[i] = (med_name, new_qty, new_price, new_total)
+                        # Preserve MG from original item
+                        mg = item[1] if len(item) > 1 else ''
+                        
+                        # Update with new values (med_name, mg, qty, price, total)
+                        self.invoice_items[i] = (med_name, mg, new_qty, new_price, new_total)
                         
                         # Update stock with new quantity
                         if med_lower in self.medicines:
@@ -1052,8 +1585,10 @@ class PharmacyInvoiceApp:
                 # Update the treeview
                 self.invoice_tree.delete(selection[0])
                 currency_symbol = self.get_currency_symbol(self.currency_var.get())
+                # Get MG from the updated item
+                mg = self.invoice_items[i][1] if i < len(self.invoice_items) else ''
                 self.invoice_tree.insert('', 'end', values=(
-                    med_name, new_qty, f"{currency_symbol}{new_price:.2f}", f"{currency_symbol}{new_total:.2f}"
+                    med_name, mg, new_qty, f"{currency_symbol}{new_price:.2f}", f"{currency_symbol}{new_total:.2f}"
                 ))
                 
                 # Update medicines dict and total
@@ -1142,7 +1677,7 @@ class PharmacyInvoiceApp:
     def clear_invoice(self, event=None):
         # Restore all stock
         for item in self.invoice_items:
-            med_name, qty, price, total = item
+            med_name, mg, qty, price, total = item
             med_lower = med_name.lower()
             if med_lower in self.medicines:
                 self.medicines_df.loc[self.medicines_df['Medicine_Name'].str.lower() == med_lower, 'Stock'] += qty
@@ -1152,7 +1687,10 @@ class PharmacyInvoiceApp:
         for item in self.invoice_tree.get_children():
             self.invoice_tree.delete(item)
         self.customer_var.set('')
+        self.customer_phone_var.set('')
+        self.discount_var.set('0')
         self.search_var.set('')
+        self.medicine_info_label.config(text="")
         self.qty_var.set('1')
         self.update_total()
         self.update_medicines_dict()
