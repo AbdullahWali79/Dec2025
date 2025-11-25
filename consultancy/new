@@ -1875,25 +1875,38 @@
       }
       
       /* Back to Services Link (for service pages) */
-      .service-back-link {
+      .service-detail-navigation {
+        max-width: 1000px;
+        margin: 0 auto 20px auto;
+        padding: 0 20px;
         display: none;
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: #ffd700;
+      }
+      
+      body.service-page .service-detail-navigation {
+        display: block;
+      }
+      
+      .service-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #ffd700, #ffeb3b);
         color: #000000;
         padding: 12px 24px;
         border-radius: 25px;
         text-decoration: none;
-        font-size: 16px;
-        font-weight: bold;
+        font-size: 15px;
+        font-weight: 700;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        z-index: 10001;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        position: relative;
       }
       
       body.service-page .service-back-link {
-        display: inline-block;
+        display: inline-flex;
       }
       
       body.service-page .service-detail-close {
@@ -2180,9 +2193,17 @@
           font-size: 20px;
         }
         
+        .service-detail-navigation {
+          margin: 0 auto 15px auto;
+          padding: 0 15px;
+        }
+        
         .service-back-link {
           padding: 10px 18px;
           font-size: 14px;
+          position: relative;
+          top: auto;
+          right: auto;
         }
         
         .service-detail-title {
@@ -4521,11 +4542,13 @@
 
       <!-- Service Detail Section -->
       <section class='service-detail-section' id='service-structural-engineering'>
+        <div class='service-detail-navigation'>
+          <a class='service-back-link' href='/#services'>&#8592; Go Back</a>
+        </div>
         <div class='service-detail-container'>
           <div class='service-detail-header'>
             <div class='service-detail-header-buttons'>
               <button class='service-detail-close' onclick='closeServiceDetail()'>&#215;</button>
-              <a class='service-back-link' href='/#services'>&#8592; Go Back</a>
             </div>
             <h1 class='service-detail-title'>Structural Engineering</h1>
             <h2 class='service-detail-subtitle'>Designing Strength, Stability, and Confidence in Every Structure</h2>
@@ -4574,11 +4597,13 @@
 
       <!-- Civil Engineering Service Detail Section -->
       <section class='service-detail-section' id='service-civil-engineering'>
+        <div class='service-detail-navigation'>
+          <a class='service-back-link' href='/#services'>&#8592; Go Back</a>
+        </div>
         <div class='service-detail-container'>
           <div class='service-detail-header'>
             <div class='service-detail-header-buttons'>
               <button class='service-detail-close' onclick='closeServiceDetail()'>&#215;</button>
-              <a class='service-back-link' href='/#services'>&#8592; Go Back</a>
             </div>
             <h1 class='service-detail-title'>Civil &amp; Infrastructure Design</h1>
             <h2 class='service-detail-subtitle'>Engineering the Foundations of Future Communities</h2>
@@ -4625,11 +4650,13 @@
 
       <!-- Consulting Services (Project Management) Service Detail Section -->
       <section class='service-detail-section' id='service-consulting-services'>
+        <div class='service-detail-navigation'>
+          <a class='service-back-link' href='/#services'>&#8592; Go Back</a>
+        </div>
         <div class='service-detail-container'>
           <div class='service-detail-header'>
             <div class='service-detail-header-buttons'>
               <button class='service-detail-close' onclick='closeServiceDetail()'>&#215;</button>
-              <a class='service-back-link' href='/#services'>&#8592; Go Back</a>
             </div>
             <h1 class='service-detail-title'>Project Management</h1>
             <h2 class='service-detail-subtitle'>Delivering Projects with Clarity, Control, and Confidence</h2>
