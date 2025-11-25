@@ -967,6 +967,9 @@ class PharmacyInvoiceApp:
         y = height - 50  # Start from top
         
         # Header
+        c.setFont("Helvetica-Bold", 18)
+        c.drawString(50, y, "REHMAT PHARMACY")
+        y -= 25
         c.setFont("Helvetica-Bold", 16)
         c.drawString(50, y, "Pharmacy Receipt")
         y -= 30
@@ -1095,71 +1098,136 @@ class PharmacyInvoiceApp:
             discount_amount = subtotal * (discount_percent / 100)
             final_total = subtotal - discount_amount
             
-            # Create detailed message (using plain text, WhatsApp will format it)
+            # Create detailed message with proper formatting
             currency_symbol = self.get_currency_symbol(self.currency_var.get())
-            message = f"Pharmacy Receipt\n\n"
-            message += f"Customer: {customer}\n"
-            message += f"Phone: {customer_phone}\n"
-            message += f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
-            message += f"Items:\n"
+            
+            # Build message with proper line breaks
+            message_lines = []
+            message_lines.append("🏥 *REHMAT PHARMACY*")
+            message_lines.append("━━━━━━━━━━━━━━━━━━━━")
+            message_lines.append("*PHARMACY RECEIPT*")
+            message_lines.append("━━━━━━━━━━━━━━━━━━━━")
+            message_lines.append("")
+            message_lines.append(f"👤 Customer: {customer}")
+            message_lines.append(f"📱 Phone: {customer_phone}")
+            message_lines.append(f"📅 Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            message_lines.append("")
+            message_lines.append("📋 *Items:*")
+            message_lines.append("")
             
             for item in self.invoice_items:
                 med_name, mg, qty, price, item_total = item
-                mg_text = f" ({mg})" if mg and str(mg).lower() != 'nan' else ""
-                message += f"- {med_name}{mg_text} x{qty} = {currency_symbol}{item_total:.2f}\n"
+                mg_text = f" ({mg})" if mg and str(mg).lower() != 'nan' and str(mg).strip() else ""
+                message_lines.append(f"• {med_name}{mg_text}")
+                message_lines.append(f"  Qty: {qty} × {currency_symbol}{price:.2f} = {currency_symbol}{item_total:.2f}")
             
-            message += f"\nSubtotal: {currency_symbol}{subtotal:.2f}\n"
+            message_lines.append("")
+            message_lines.append("━━━━━━━━━━━━━━━━━━━━")
+            message_lines.append(f"💰 Subtotal: {currency_symbol}{subtotal:.2f}")
             if discount_percent > 0:
-                message += f"Discount ({discount_percent}%): -{currency_symbol}{discount_amount:.2f}\n"
-            message += f"Total: {currency_symbol}{final_total:.2f}\n\n"
-            message += f"Thank you for your business!"
+                message_lines.append(f"🎫 Discount ({discount_percent}%): -{currency_symbol}{discount_amount:.2f}")
+            message_lines.append(f"💵 *Total: {currency_symbol}{final_total:.2f}*")
+            message_lines.append("━━━━━━━━━━━━━━━━━━━━")
+            message_lines.append("")
+            message_lines.append("🙏 Thank you for your business!")
+            message_lines.append("")
+            message_lines.append("🏥 *Rehmat Pharmacy*")
             
-            # Encode message properly for URL
+            # Join message lines (only once, no duplication)
+            message = "\n".join(message_lines)
+            
+            # Encode message properly for URL (preserve newlines)
             encoded_message = urllib.parse.quote(message, safe='')
             
-            # Try WhatsApp Desktop first (for Windows)
+            # Directly open WhatsApp Desktop with customer's number and message
+            # This will open the chat with customer's number and message pre-filled
             whatsapp_opened = False
-            if os.name == 'nt':  # Windows
+            
+            if os.name == 'nt':  # Windows - Desktop WhatsApp
                 try:
-                    # WhatsApp Desktop protocol - use proper format
-                    whatsapp_desktop_url = f"whatsapp://send?phone={formatted_phone}&text={encoded_message}"
-                    # Use subprocess for better compatibility
+                    # Copy message to clipboard first (backup method)
+                    self.root.clipboard_clear()
+                    self.root.clipboard_append(message)
+                    self.root.update()
+                    
+                    # Try different encoding methods for WhatsApp Desktop
+                    # WhatsApp Desktop sometimes needs different encoding
                     import subprocess
-                    subprocess.Popen(['start', whatsapp_desktop_url], shell=True)
-                    whatsapp_opened = True
-                except Exception as e:
-                    # Try alternative method
+                    import time
+                    
+                    # Method 1: Try with proper URL encoding
+                    whatsapp_desktop_url = f"whatsapp://send?phone={formatted_phone}&text={encoded_message}"
+                    
+                    # Method 2: Try with plus signs for spaces (alternative encoding)
+                    message_alt = message.replace(' ', '+')
+                    encoded_message_alt = urllib.parse.quote(message_alt, safe='+')
+                    whatsapp_desktop_url_alt = f"whatsapp://send?phone={formatted_phone}&text={encoded_message_alt}"
+                    
+                    # Try opening WhatsApp Desktop
+                    opened = False
                     try:
-                        os.startfile(whatsapp_desktop_url)
-                        whatsapp_opened = True
+                        # First try standard encoding
+                        subprocess.Popen(['cmd', '/c', 'start', whatsapp_desktop_url], shell=False)
+                        time.sleep(0.5)  # Wait a bit
+                        opened = True
+                    except:
+                        try:
+                            # Try alternative encoding
+                            subprocess.Popen(['cmd', '/c', 'start', whatsapp_desktop_url_alt], shell=False)
+                            time.sleep(0.5)
+                            opened = True
+                        except:
+                            # Just open WhatsApp without message
+                            try:
+                                subprocess.Popen(['cmd', '/c', 'start', f'whatsapp://send?phone={formatted_phone}'], shell=False)
+                                opened = True
+                            except:
+                                pass
+                    
+                    whatsapp_opened = opened
+                    
+                    if whatsapp_opened:
+                        messagebox.showinfo("WhatsApp", 
+                                          f"WhatsApp Desktop opened!\n\n"
+                                          f"Customer Number: {formatted_phone}\n\n"
+                                          f"Message is copied to clipboard.\n"
+                                          f"If message is not pre-filled, press Ctrl+V to paste.\n\n"
+                                          f"Message ready to send!")
+                    else:
+                        messagebox.showwarning("WhatsApp", 
+                                             f"Opening WhatsApp Desktop...\n\n"
+                                             f"Customer Number: {formatted_phone}\n\n"
+                                             f"Message is copied to clipboard.\n"
+                                             f"Please paste (Ctrl+V) in the chat.")
+                    
+                except Exception as e:
+                    # Even if opening fails, copy to clipboard
+                    try:
+                        self.root.clipboard_clear()
+                        self.root.clipboard_append(message)
+                        self.root.update()
                     except:
                         pass
+                    
+                    messagebox.showwarning("WhatsApp", 
+                                       f"Opening WhatsApp Desktop...\n\n"
+                                       f"Customer Number: {formatted_phone}\n\n"
+                                       f"Message has been copied to clipboard!\n"
+                                       f"Please paste (Ctrl+V) in the chat.\n\n"
+                                       f"Error: {str(e)}")
+                    return
+            else:
+                messagebox.showwarning("WhatsApp", 
+                                     f"Desktop WhatsApp is only available on Windows.\n\n"
+                                     f"Customer Number: {formatted_phone}\n"
+                                     f"Please open WhatsApp manually and send this message:\n\n{message}")
+                return
             
-            # If desktop didn't work, try web version
             if not whatsapp_opened:
-                try:
-                    # WhatsApp Web URL - format: https://wa.me/PHONE?text=MESSAGE
-                    whatsapp_url = f"https://wa.me/{formatted_phone}?text={encoded_message}"
-                    webbrowser.open(whatsapp_url)
-                    whatsapp_opened = True
-                except Exception as e:
-                    # Fallback to old web format
-                    try:
-                        whatsapp_url = f"https://web.whatsapp.com/send?phone={formatted_phone}&text={encoded_message}"
-                        webbrowser.open(whatsapp_url)
-                        whatsapp_opened = True
-                    except Exception as e2:
-                        messagebox.showerror("WhatsApp Error", 
-                                           f"Could not open WhatsApp.\n\n"
-                                           f"Phone: {formatted_phone}\n"
-                                           f"Please open WhatsApp manually and send this message:\n\n{message}")
-                        return
-            
-            if whatsapp_opened:
-                messagebox.showinfo("WhatsApp", 
-                                  f"WhatsApp opened!\n\n"
-                                  f"Phone: {formatted_phone}\n"
-                                  f"Message is ready to send.")
+                messagebox.showerror("WhatsApp Error", 
+                                   f"Could not open WhatsApp Desktop.\n\n"
+                                   f"Customer Number: {formatted_phone}\n"
+                                   f"Please open WhatsApp manually and send this message:\n\n{message}")
             
         except Exception as e:
             messagebox.showerror("WhatsApp Error", f"Error opening WhatsApp: {str(e)}")
@@ -1357,6 +1425,7 @@ class PharmacyInvoiceApp:
         # Receipt header
         receipt = []
         receipt.append("=" * 40)
+        receipt.append("    REHMAT PHARMACY")
         receipt.append("    PHARMACY RECEIPT")
         receipt.append("=" * 40)
         receipt.append(f"Customer: {customer}")
