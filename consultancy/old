@@ -649,7 +649,7 @@
         /* About Section Mobile Styles - Remove ALL white space - Exact 2px gap */
         .consulting-about {
           padding: 0 0 40px 0;
-          margin-top: -95vh;
+          margin-top: -650px;
           margin-bottom: 0;
           padding-top: 0;
           width: 100%;
@@ -662,10 +662,8 @@
           max-width: 100%;
           margin: 0;
           margin-top: 0;
-          margin-bottom: 0;
           padding: 0;
           padding-top: 0;
-          padding-bottom: 0;
           display: flex !important;
           flex-direction: column;
           gap: 0;
@@ -674,11 +672,9 @@
         
         .consulting-about h2 {
           font-size: 32px;
-          margin: 0;
+          margin: 0 0 10px 0;
           margin-top: 0;
-          margin-bottom: -5px;
           padding-top: 0;
-          padding-bottom: 0;
           text-align: center;
           grid-column: auto !important;
           order: 1;
@@ -690,8 +686,7 @@
         .consulting-about-image {
           order: 2;
           margin: 0 auto;
-          margin-top: -5px;
-          width: 90%;
+          width: 70%;
           padding: 0;
           text-align: center;
         }
@@ -894,7 +889,7 @@
       @media (max-width: 768px) {
         /* Mobile Hero Section - Remove ALL gap after LEARN MORE button - Centered */
         .consulting-hero {
-          min-height: 45vh;
+          min-height: 35vh;
           max-height: none;
           height: auto;
           padding: 25px 0 0 0;
@@ -908,9 +903,9 @@
         
         /* Hero slider - Fixed height for background - Centered */
         .hero-slider {
-          height: 45vh;
-          min-height: 45vh;
-          max-height: 45vh;
+          height: 35vh;
+          min-height: 35vh;
+          max-height: 35vh;
           position: absolute;
           top: 0;
           left: 0;
@@ -925,12 +920,12 @@
           padding-top: 0;
           position: relative;
           z-index: 2;
-          min-height: 45vh;
+          min-height: 35vh;
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
           align-items: center;
-          padding-bottom: 0;
+          padding-bottom: 60px;
           margin-top: -40px;
           padding-top: 20px;
         }
@@ -966,7 +961,7 @@
         /* Remove ALL gap before about section - Exact 2px gap after LEARN MORE button */
         .consulting-about {
           padding-top: 0;
-          margin-top: -95vh;
+          margin-top: -650px;
           position: relative;
           z-index: 1;
         }
@@ -977,13 +972,9 @@
         }
         
         .consulting-about h2 {
-          margin-top: 0;
+          margin-top: 2px;
           padding-top: 0;
-          margin-bottom: -5px;
-        }
-        
-        .consulting-about-image {
-          margin-top: -5px;
+          margin-bottom: 0;
         }
         
         /* Remove all spacing from hero section bottom */
@@ -1024,8 +1015,8 @@
         .hero-slider {
           width: 100%;
           height: 100%;
-          max-height: 45vh;
-          min-height: 45vh;
+          max-height: 35vh;
+          min-height: 35vh;
           left: 0;
           right: 0;
           margin: 0 auto;
@@ -1035,9 +1026,9 @@
         .hero-slide {
           width: 100%;
           height: 100%;
-          max-height: 45vh;
-          min-height: 45vh;
-          background-size: 100% 100%;
+          max-height: 35vh;
+          min-height: 35vh;
+          background-size: cover;
           background-position: center center;
           background-attachment: scroll;
           background-repeat: no-repeat;
@@ -1049,19 +1040,19 @@
         /* Mobile: Specific image positioning - All centered */
         .hero-slide:nth-child(1) {
           background-position: center center;
-          background-size: 100% 100%;
+          background-size: cover;
           object-fit: cover;
         }
         
         .hero-slide:nth-child(2) {
           background-position: center center;
-          background-size: 100% 100%;
+          background-size: cover;
           object-fit: cover;
         }
         
         .hero-slide:nth-child(3) {
           background-position: center center;
-          background-size: 100% 100%;
+          background-size: cover;
           object-fit: cover;
         }
         
@@ -1088,7 +1079,7 @@
       @media (max-width: 480px) {
         /* Mobile Hero Section - Smaller Height - Remove ALL gap after LEARN MORE - Centered */
         .consulting-hero {
-          min-height: 40vh;
+          min-height: 30vh;
           max-height: none;
           height: auto;
           padding: 20px 0 0 0;
@@ -1102,9 +1093,9 @@
         
         /* Hero slider - Fixed height for background - Centered */
         .hero-slider {
-          height: 40vh;
-          min-height: 40vh;
-          max-height: 40vh;
+          height: 30vh;
+          min-height: 30vh;
+          max-height: 30vh;
           position: absolute;
           top: 0;
           left: 0;
@@ -1119,12 +1110,12 @@
           padding-top: 0;
           position: relative;
           z-index: 2;
-          min-height: 40vh;
+          min-height: 30vh;
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
           align-items: center;
-          padding-bottom: 0;
+          padding-bottom: 60px;
           margin-top: -40px;
           padding-top: 20px;
         }
@@ -1160,7 +1151,7 @@
         /* Remove ALL gap before about section - Exact 2px gap after LEARN MORE button */
         .consulting-about {
           padding-top: 0;
-          margin-top: -90vh;
+          margin-top: -650px;
           position: relative;
           z-index: 1;
         }
@@ -1171,13 +1162,9 @@
         }
         
         .consulting-about h2 {
-          margin-top: 0;
+          margin-top: 2px;
           padding-top: 0;
-          margin-bottom: -5px;
-        }
-        
-        .consulting-about-image {
-          margin-top: -5px;
+          margin-bottom: 0;
         }
         
         /* Remove all spacing from hero section bottom */
@@ -1218,8 +1205,8 @@
         .hero-slider {
           width: 100%;
           height: 100%;
-          max-height: 40vh;
-          min-height: 40vh;
+          max-height: 30vh;
+          min-height: 30vh;
           left: 0;
           right: 0;
           margin: 0 auto;
@@ -1229,25 +1216,25 @@
         .hero-slide {
           width: 100%;
           height: 100%;
-          max-height: 40vh;
-          min-height: 40vh;
-          background-size: 100% 100%;
+          max-height: 30vh;
+          min-height: 30vh;
+          background-size: cover;
           background-position: center center;
         }
         
         .hero-slide:nth-child(1) {
           background-position: center center;
-          background-size: 100% 100%;
+          background-size: cover;
         }
         
         .hero-slide:nth-child(2) {
           background-position: center center;
-          background-size: 100% 100%;
+          background-size: cover;
         }
         
         .hero-slide:nth-child(3) {
           background-position: center center;
-          background-size: 100% 100%;
+          background-size: cover;
         }
       }
       
@@ -1888,38 +1875,25 @@
       }
       
       /* Back to Services Link (for service pages) */
-      .service-detail-navigation {
-        max-width: 1000px;
-        margin: 0 auto 20px auto;
-        padding: 0 20px;
-        display: none;
-      }
-      
-      body.service-page .service-detail-navigation {
-        display: block;
-      }
-      
       .service-back-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        background: linear-gradient(135deg, #ffd700, #ffeb3b);
+        display: none;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #ffd700;
         color: #000000;
         padding: 12px 24px;
         border-radius: 25px;
         text-decoration: none;
-        font-size: 15px;
-        font-weight: 700;
+        font-size: 16px;
+        font-weight: bold;
         transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-        border: 2px solid rgba(255, 255, 255, 0.1);
-        position: relative;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        z-index: 10001;
       }
       
       body.service-page .service-back-link {
-        display: inline-flex;
+        display: inline-block;
       }
       
       body.service-page .service-detail-close {
@@ -2206,17 +2180,9 @@
           font-size: 20px;
         }
         
-        .service-detail-navigation {
-          margin: 0 auto 15px auto;
-          padding: 0 15px;
-        }
-        
         .service-back-link {
           padding: 10px 18px;
           font-size: 14px;
-          position: relative;
-          top: auto;
-          right: auto;
         }
         
         .service-detail-title {
@@ -3918,7 +3884,7 @@
         }
         
         .consulting-about-image {
-          width: 90%;
+          width: 70%;
           margin: 0 auto;
           text-align: center;
         }
@@ -4137,7 +4103,7 @@
         }
         
         .consulting-about-image {
-          width: 90%;
+          width: 70%;
           margin: 0 auto;
           text-align: center;
         }
@@ -4555,13 +4521,11 @@
 
       <!-- Service Detail Section -->
       <section class='service-detail-section' id='service-structural-engineering'>
-        <div class='service-detail-navigation'>
-          <a class='service-back-link' href='/#services'>&#8592; Go Back</a>
-        </div>
         <div class='service-detail-container'>
           <div class='service-detail-header'>
             <div class='service-detail-header-buttons'>
               <button class='service-detail-close' onclick='closeServiceDetail()'>&#215;</button>
+              <a class='service-back-link' href='/#services'>&#8592; Back to Services</a>
             </div>
             <h1 class='service-detail-title'>Structural Engineering</h1>
             <h2 class='service-detail-subtitle'>Designing Strength, Stability, and Confidence in Every Structure</h2>
@@ -4610,13 +4574,11 @@
 
       <!-- Civil Engineering Service Detail Section -->
       <section class='service-detail-section' id='service-civil-engineering'>
-        <div class='service-detail-navigation'>
-          <a class='service-back-link' href='/#services'>&#8592; Go Back</a>
-        </div>
         <div class='service-detail-container'>
           <div class='service-detail-header'>
             <div class='service-detail-header-buttons'>
               <button class='service-detail-close' onclick='closeServiceDetail()'>&#215;</button>
+              <a class='service-back-link' href='/#services'>&#8592; Back to Services</a>
             </div>
             <h1 class='service-detail-title'>Civil &amp; Infrastructure Design</h1>
             <h2 class='service-detail-subtitle'>Engineering the Foundations of Future Communities</h2>
@@ -4663,13 +4625,11 @@
 
       <!-- Consulting Services (Project Management) Service Detail Section -->
       <section class='service-detail-section' id='service-consulting-services'>
-        <div class='service-detail-navigation'>
-          <a class='service-back-link' href='/#services'>&#8592; Go Back</a>
-        </div>
         <div class='service-detail-container'>
           <div class='service-detail-header'>
             <div class='service-detail-header-buttons'>
               <button class='service-detail-close' onclick='closeServiceDetail()'>&#215;</button>
+              <a class='service-back-link' href='/#services'>&#8592; Back to Services</a>
             </div>
             <h1 class='service-detail-title'>Project Management</h1>
             <h2 class='service-detail-subtitle'>Delivering Projects with Clarity, Control, and Confidence</h2>
@@ -5306,7 +5266,7 @@
               <b:includable id='post' var='post'>
                 <b:if cond='data:blog.pageType == &quot;item&quot;'>
                   <div class='single-post-navigation'>
-                    <a class='back-to-blog-nav' href='/'>&#8592; Back to Home</a>
+                    <a class='back-to-blog-nav' href='/'>&#8592; Back to Campaign News</a>
                   </div>
                   <article class='single-blog-post'>
                     <div class='single-post-header'>
@@ -5336,7 +5296,7 @@
                       <data:post.body/>
                     </div>
                     <div class='single-post-footer'>
-                      <a class='back-to-blog' href='/'>&#8592; Back to Home</a>
+                      <a class='back-to-blog' href='/'>&#8592; Back to Campaign News</a>
                     </div>
                   </article>
                 </b:if>
