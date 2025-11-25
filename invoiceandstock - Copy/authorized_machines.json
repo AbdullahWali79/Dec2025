@@ -1,0 +1,10 @@
+{
+    "authorized_machines": [
+        "B1D1FC64C865533F",
+        "63962CB948526976"
+    ],
+    "machine_names": {
+        "B1D1FC64C865533F": "Main Development Machine",
+        "63962CB948526976": "Client Laptop"
+    }
+}

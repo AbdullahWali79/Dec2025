@@ -28,6 +28,26 @@ class PharmacyInvoiceApp:
             # Fallback for systems that don't support zoomed
             self.root.geometry("1200x800")
         
+        # Store base font sizes for responsive scaling
+        self.base_font_sizes = {
+            'title': 24,
+            'header': 14,
+            'body': 11,
+            'small': 10,
+            'button': 10,
+            'total': 16
+        }
+        
+        # Base window size for scaling (1200x800)
+        self.base_width = 1200
+        self.base_height = 800
+        
+        # Store references to widgets that need resizing
+        self.resizable_widgets = []
+        
+        # Bind window resize event (only after UI is set up)
+        self.setup_responsive = False
+        
         # Configure style
         self.setup_styles()
         
@@ -104,11 +124,12 @@ class PharmacyInvoiceApp:
         title_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(20, 20))
         title_frame.grid_propagate(False)
         
-        title_label = tk.Label(title_frame, text="🏥 Pharmacy Invoice Generator", 
-                              font=('Segoe UI', 24, 'bold'), 
+        self.title_label = tk.Label(title_frame, text="🏥 Pharmacy Invoice Generator", 
+                              font=('Segoe UI', self.base_font_sizes['title'], 'bold'), 
                               fg='#f8fafc', bg='#1e293b',
                               pady=20)
-        title_label.pack(expand=True)
+        self.title_label.pack(expand=True)
+        self.resizable_widgets.append(('title_label', self.title_label, 'title'))
         
         # Left Panel - Medicine Search & Management with modern card styling
         left_panel = tk.Frame(main_container, bg='#1e293b', relief='flat', bd=0)
@@ -464,6 +485,15 @@ class PharmacyInvoiceApp:
         
         # Bind total update
         self.update_total()
+        
+        # Now enable responsive resizing
+        self.setup_responsive = True
+        self.root.bind('<Configure>', self.on_window_resize)
+        self.last_width = self.root.winfo_width()
+        self.last_height = self.root.winfo_height()
+        
+        # Initial resize to set proper sizes
+        self.root.after(100, self.update_responsive_ui)
     
     def setup_styles(self):
         """Setup modern styling for the application"""
@@ -2022,6 +2052,101 @@ class PharmacyInvoiceApp:
         """Exit fullscreen mode"""
         self.root.attributes('-fullscreen', False)
         return "break"
+    
+    def calculate_scale_factor(self):
+        """Calculate scale factor based on current window size"""
+        try:
+            current_width = self.root.winfo_width()
+            current_height = self.root.winfo_height()
+            
+            # Calculate scale based on both width and height, use the smaller one
+            width_scale = current_width / self.base_width
+            height_scale = current_height / self.base_height
+            scale = min(width_scale, height_scale)
+            
+            # Limit scale between 0.7 and 1.5 for reasonable sizes
+            scale = max(0.7, min(1.5, scale))
+            
+            return scale
+        except:
+            return 1.0
+    
+    def on_window_resize(self, event=None):
+        """Handle window resize event"""
+        if not self.setup_responsive:
+            return
+        
+        # Only update if window size actually changed significantly
+        try:
+            current_width = self.root.winfo_width()
+            current_height = self.root.winfo_height()
+            
+            # Only update if change is significant (more than 10 pixels)
+            if abs(current_width - self.last_width) > 10 or abs(current_height - self.last_height) > 10:
+                self.last_width = current_width
+                self.last_height = current_height
+                # Debounce: update after a short delay
+                self.root.after(100, self.update_responsive_ui)
+        except:
+            pass
+    
+    def update_responsive_ui(self):
+        """Update UI elements based on current window size"""
+        try:
+            scale = self.calculate_scale_factor()
+            
+            # Update title font
+            if hasattr(self, 'title_label'):
+                new_size = int(self.base_font_sizes['title'] * scale)
+                self.title_label.config(font=('Segoe UI', new_size, 'bold'))
+            
+            # Update all buttons
+            buttons = [
+                self.generate_button, self.thermal_button, self.preview_button,
+                self.whatsapp_button, self.clear_button, self.export_button,
+                self.add_button, self.stock_button
+            ]
+            
+            button_font_size = int(self.base_font_sizes['button'] * scale)
+            button_padx = int(15 * scale)
+            button_pady = int(8 * scale)
+            
+            for button in buttons:
+                if button:
+                    button.config(
+                        font=('Segoe UI', button_font_size, 'bold'),
+                        padx=button_padx,
+                        pady=button_pady
+                    )
+            
+            # Update headers
+            header_size = int(self.base_font_sizes['header'] * scale)
+            body_size = int(self.base_font_sizes['body'] * scale)
+            small_size = int(self.base_font_sizes['small'] * scale)
+            total_size = int(self.base_font_sizes['total'] * scale)
+            
+            # Update entry fields
+            entries = [
+                self.search_entry, self.qty_entry, self.customer_entry,
+                self.customer_phone_entry, self.discount_entry
+            ]
+            
+            for entry in entries:
+                if entry:
+                    entry.config(font=('Segoe UI', body_size))
+            
+            # Update listbox
+            if hasattr(self, 'suggestions_listbox'):
+                self.suggestions_listbox.config(font=('Segoe UI', small_size))
+            
+            # Update treeview font (via style)
+            style = ttk.Style()
+            style.configure('Modern.Treeview', font=('Segoe UI', body_size))
+            style.configure('Modern.Treeview.Heading', font=('Segoe UI', body_size, 'bold'))
+            
+        except Exception as e:
+            # Silently fail to avoid disrupting UI
+            pass
 
 if __name__ == "__main__":
     # Validate machine access before starting the application
