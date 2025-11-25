@@ -649,7 +649,7 @@
         /* About Section Mobile Styles - Remove ALL white space - Exact 2px gap */
         .consulting-about {
           padding: 0 0 40px 0;
-          margin-top: -650px;
+          margin-top: -500px;
           margin-bottom: 0;
           padding-top: 0;
           width: 100%;
@@ -686,43 +686,14 @@
         .consulting-about-image {
           order: 2;
           margin: 0 auto;
-          width: 85%;
+          width: 70%;
           padding: 0;
           text-align: center;
-          position: relative;
-        }
-        
-        .about-image-slider {
-          position: relative;
-          width: 100%;
-          margin: 0 auto;
-        }
-        
-        .about-slide {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          max-height: 450px;
-          object-fit: cover;
-          border: none;
-          border-radius: 0;
-          box-shadow: none;
-          display: block;
-          margin: 0 auto;
-          padding: 0;
-          opacity: 0;
-          transition: opacity 1.5s ease-in-out;
-        }
-        
-        .about-slide.active {
-          position: relative;
-          opacity: 1;
         }
         
         .consulting-about-image img {
           width: 100%;
-          max-height: 450px;
+          max-height: 350px;
           object-fit: cover;
           border: none;
           border-radius: 0;
@@ -990,7 +961,7 @@
         /* Remove ALL gap before about section - Exact 2px gap after LEARN MORE button */
         .consulting-about {
           padding-top: 0;
-          margin-top: -650px;
+          margin-top: -500px;
           position: relative;
           z-index: 1;
         }
@@ -1180,7 +1151,7 @@
         /* Remove ALL gap before about section - Exact 2px gap after LEARN MORE button */
         .consulting-about {
           padding-top: 0;
-          margin-top: -650px;
+          margin-top: -500px;
           position: relative;
           z-index: 1;
         }
@@ -1413,7 +1384,7 @@
         }
         
         .consulting-about {
-          padding-top: 40px;
+          padding-top: 10px;
           margin-top: 0;
         }
       }
@@ -1458,7 +1429,7 @@
       /* About Section */
       .consulting-about {
         background: linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #ffffff 100%);
-        padding: 80px 0;
+        padding: 40px 0 80px 0;
       }
       
       .consulting-about-content {
@@ -1477,7 +1448,6 @@
         margin: 0 0 15px 0;
         text-align: center;
         grid-column: 1 / -1;
-        text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.3);
       }
       
       .consulting-about-text h3 {
@@ -1495,50 +1465,21 @@
       
       .consulting-about-image {
         text-align: center;
-        position: relative;
-      }
-      
-      .about-image-slider {
-        position: relative;
-        width: 100%;
-        max-width: 100%;
-        margin: 0 auto;
-      }
-      
-      .about-slide {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        max-height: 500px;
-        object-fit: contain;
-        object-position: center;
-        border-radius: 10px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        background: #ffd700;
-        padding: 15px;
-        opacity: 0;
-        transition: opacity 1.5s ease-in-out;
-      }
-      
-      .about-slide.active {
-        position: relative;
-        opacity: 1;
       }
       
       .consulting-about-image img {
         max-width: 100%;
         height: auto;
-        max-height: 500px;
+        max-height: 400px;
         object-fit: contain;
         object-position: center;
         border-radius: 10px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         background: #ffd700;
         padding: 15px;
-        animation: slowShake 4s ease-in-out infinite;
+        animation: fadeIn 1.5s ease-in;
+        opacity: 0;
+        animation-fill-mode: forwards;
       }
       
       @keyframes slowShake {
@@ -1574,6 +1515,15 @@
         }
       }
       
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      
       /* Services Section */
       .consulting-services {
         background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
@@ -1585,7 +1535,6 @@
         color: #000000;
         text-align: center;
         margin: 0 0 50px 0;
-        text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.3);
       }
       
       .services-grid {
@@ -2364,7 +2313,6 @@
         font: bold 48px &#39;Arial&#39;, sans-serif;
         color: #000000;
         margin: 0 0 15px 0;
-        text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.3);
       }
       
       .consulting-contact p {
@@ -2781,7 +2729,6 @@
         color: #000000;
         text-align: center;
         margin: 0 0 50px 0;
-        text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.3);
       }
       
       .blog-posts-container {
@@ -3177,7 +3124,6 @@
         margin: 40px 0 20px 0;
         font-weight: 700;
         line-height: 1.3;
-        text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.2);
         border-left: 4px solid #000000;
         padding-left: 20px;
         background: linear-gradient(90deg, rgba(0, 0, 0, 0.05), transparent);
@@ -3944,35 +3890,13 @@
         }
         
         .consulting-about-image {
-          width: 85%;
+          width: 70%;
           margin: 0 auto;
           text-align: center;
-          position: relative;
-        }
-        
-        .about-image-slider {
-          position: relative;
-          width: 100%;
-        }
-        
-        .about-slide {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          max-height: 380px;
-          object-fit: cover;
-          opacity: 0;
-          transition: opacity 1.5s ease-in-out;
-        }
-        
-        .about-slide.active {
-          position: relative;
-          opacity: 1;
         }
         
         .consulting-about-image img {
-          max-height: 380px;
+          max-height: 280px;
         }
         
         .consulting-about-text {
@@ -4185,35 +4109,13 @@
         }
         
         .consulting-about-image {
-          width: 85%;
+          width: 70%;
           margin: 0 auto;
           text-align: center;
-          position: relative;
-        }
-        
-        .about-image-slider {
-          position: relative;
-          width: 100%;
-        }
-        
-        .about-slide {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          max-height: 340px;
-          object-fit: cover;
-          opacity: 0;
-          transition: opacity 1.5s ease-in-out;
-        }
-        
-        .about-slide.active {
-          position: relative;
-          opacity: 1;
         }
         
         .consulting-about-image img {
-          max-height: 340px;
+          max-height: 240px;
         }
         
         .consulting-about-text {
@@ -4578,11 +4480,7 @@
             <p>Our commitment to excellence and client satisfaction has made us a trusted partner for engineering projects worldwide.</p>
           </div>
           <div class='consulting-about-image'>
-            <div class='about-image-slider'>
-              <img class='about-slide active' alt='AR Consulting Engineers - Construction Site' src='https://raw.githubusercontent.com/AbdullahWali79/consultancy_images/main/Construction%20Site.png'/>
-              <img class='about-slide' alt='AR Consulting Engineers - Professional Services' src='https://raw.githubusercontent.com/AbdullahWali79/consultancy_images/main/second.webp'/>
-              <img class='about-slide' alt='AR Consulting Engineers - Engineering Excellence' src='https://raw.githubusercontent.com/AbdullahWali79/consultancy_images/main/third.webp'/>
-            </div>
+            <img alt='AR Consulting Engineers - Professional Engineering Services' src='https://raw.githubusercontent.com/AbdullahWali79/consultancy_images/main/Construction%20Site.png'/>
           </div>
         </div>
       </section>
@@ -6305,38 +6203,6 @@
           if (heroSlider) {
             heroSlider.addEventListener(&#39;mouseenter&#39;, stopAutoSlide);
             heroSlider.addEventListener(&#39;mouseleave&#39;, startAutoSlide);
-          }
-        });
-      </script>
-      
-      <!-- About Section Image Slider Script -->
-      <script type='text/javascript'>
-        document.addEventListener('DOMContentLoaded', function() {
-          const aboutSlides = document.querySelectorAll('.about-slide');
-          let currentAboutSlide = 0;
-          
-          if (aboutSlides.length > 0) {
-            function showAboutSlide(index) {
-              // Remove active class from all slides
-              aboutSlides.forEach(slide => {
-                slide.classList.remove('active');
-              });
-              
-              // Add active class to current slide
-              aboutSlides[index].classList.add('active');
-            }
-            
-            function nextAboutSlide() {
-              currentAboutSlide = (currentAboutSlide + 1) % aboutSlides.length;
-              showAboutSlide(currentAboutSlide);
-            }
-            
-            // Start the auto-slide with fade animation
-            // Change image every 4 seconds (4000ms)
-            setInterval(nextAboutSlide, 4000);
-            
-            // Initialize first slide
-            showAboutSlide(0);
           }
         });
       </script>
