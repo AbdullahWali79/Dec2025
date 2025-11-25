@@ -686,14 +686,43 @@
         .consulting-about-image {
           order: 2;
           margin: 0 auto;
-          width: 70%;
+          width: 85%;
           padding: 0;
           text-align: center;
+          position: relative;
+        }
+        
+        .about-image-slider {
+          position: relative;
+          width: 100%;
+          margin: 0 auto;
+        }
+        
+        .about-slide {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          max-height: 450px;
+          object-fit: cover;
+          border: none;
+          border-radius: 0;
+          box-shadow: none;
+          display: block;
+          margin: 0 auto;
+          padding: 0;
+          opacity: 0;
+          transition: opacity 1.5s ease-in-out;
+        }
+        
+        .about-slide.active {
+          position: relative;
+          opacity: 1;
         }
         
         .consulting-about-image img {
           width: 100%;
-          max-height: 350px;
+          max-height: 450px;
           object-fit: cover;
           border: none;
           border-radius: 0;
@@ -1466,12 +1495,43 @@
       
       .consulting-about-image {
         text-align: center;
+        position: relative;
+      }
+      
+      .about-image-slider {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+      }
+      
+      .about-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: 500px;
+        object-fit: contain;
+        object-position: center;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        background: #ffd700;
+        padding: 15px;
+        opacity: 0;
+        transition: opacity 1.5s ease-in-out;
+      }
+      
+      .about-slide.active {
+        position: relative;
+        opacity: 1;
       }
       
       .consulting-about-image img {
         max-width: 100%;
         height: auto;
-        max-height: 400px;
+        max-height: 500px;
         object-fit: contain;
         object-position: center;
         border-radius: 10px;
@@ -3884,13 +3944,35 @@
         }
         
         .consulting-about-image {
-          width: 70%;
+          width: 85%;
           margin: 0 auto;
           text-align: center;
+          position: relative;
+        }
+        
+        .about-image-slider {
+          position: relative;
+          width: 100%;
+        }
+        
+        .about-slide {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          max-height: 380px;
+          object-fit: cover;
+          opacity: 0;
+          transition: opacity 1.5s ease-in-out;
+        }
+        
+        .about-slide.active {
+          position: relative;
+          opacity: 1;
         }
         
         .consulting-about-image img {
-          max-height: 280px;
+          max-height: 380px;
         }
         
         .consulting-about-text {
@@ -4103,13 +4185,35 @@
         }
         
         .consulting-about-image {
-          width: 70%;
+          width: 85%;
           margin: 0 auto;
           text-align: center;
+          position: relative;
+        }
+        
+        .about-image-slider {
+          position: relative;
+          width: 100%;
+        }
+        
+        .about-slide {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          max-height: 340px;
+          object-fit: cover;
+          opacity: 0;
+          transition: opacity 1.5s ease-in-out;
+        }
+        
+        .about-slide.active {
+          position: relative;
+          opacity: 1;
         }
         
         .consulting-about-image img {
-          max-height: 240px;
+          max-height: 340px;
         }
         
         .consulting-about-text {
@@ -4474,7 +4578,11 @@
             <p>Our commitment to excellence and client satisfaction has made us a trusted partner for engineering projects worldwide.</p>
           </div>
           <div class='consulting-about-image'>
-            <img alt='AR Consulting Engineers - Professional Engineering Services' src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=2070&amp;q=80'/>
+            <div class='about-image-slider'>
+              <img alt='AR Consulting Engineers - Construction Site' class='about-slide active' src='https://raw.githubusercontent.com/AbdullahWali79/consultancy_images/main/Construction%20Site.png'/>
+              <img alt='AR Consulting Engineers - Professional Services' class='about-slide' src='https://raw.githubusercontent.com/AbdullahWali79/consultancy_images/main/second.webp'/>
+              <img alt='AR Consulting Engineers - Engineering Excellence' class='about-slide' src='https://raw.githubusercontent.com/AbdullahWali79/consultancy_images/main/third.webp'/>
+            </div>
           </div>
         </div>
       </section>
@@ -6197,6 +6305,38 @@
           if (heroSlider) {
             heroSlider.addEventListener(&#39;mouseenter&#39;, stopAutoSlide);
             heroSlider.addEventListener(&#39;mouseleave&#39;, startAutoSlide);
+          }
+        });
+      </script>
+      
+      <!-- About Section Image Slider Script -->
+      <script type='text/javascript'>
+        document.addEventListener(&#39;DOMContentLoaded&#39;, function() {
+          const aboutSlides = document.querySelectorAll(&#39;.about-slide&#39;);
+          let currentAboutSlide = 0;
+          
+          if (aboutSlides.length &gt; 0) {
+            function showAboutSlide(index) {
+              // Remove active class from all slides
+              aboutSlides.forEach(slide =&gt; {
+                slide.classList.remove(&#39;active&#39;);
+              });
+              
+              // Add active class to current slide
+              aboutSlides[index].classList.add(&#39;active&#39;);
+            }
+            
+            function nextAboutSlide() {
+              currentAboutSlide = (currentAboutSlide + 1) % aboutSlides.length;
+              showAboutSlide(currentAboutSlide);
+            }
+            
+            // Start the auto-slide with fade animation
+            // Change image every 4 seconds (4000ms)
+            setInterval(nextAboutSlide, 4000);
+            
+            // Initialize first slide
+            showAboutSlide(0);
           }
         });
       </script>
