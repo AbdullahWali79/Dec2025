@@ -650,7 +650,7 @@
         /* About Section Mobile Styles - Remove ALL white space - Exact 2px gap */
         .consulting-about {
           padding: 0 0 40px 0;
-          margin-top: -500px;
+          margin-top: -550px;
           margin-bottom: 0;
           padding-top: 0;
           width: 100%;
@@ -685,23 +685,7 @@
         }
         
         .consulting-about-image {
-          order: 2;
-          margin: 0 auto;
-          width: 70%;
-          padding: 0;
-          text-align: center;
-        }
-        
-        .consulting-about-image img {
-          width: 100%;
-          max-height: 350px;
-          object-fit: cover;
-          border: none;
-          border-radius: 0;
-          box-shadow: none;
-          display: block;
-          margin: 0 auto;
-          padding: 0;
+          display: none !important;
         }
         
         .consulting-about-text {
@@ -1152,7 +1136,7 @@
         /* Remove ALL gap before about section - Exact 2px gap after LEARN MORE button */
         .consulting-about {
           padding-top: 0;
-          margin-top: -500px;
+          margin-top: -550px;
           position: relative;
           z-index: 1;
         }
@@ -1371,7 +1355,7 @@
       /* Desktop: Keep original spacing between hero and about */
       @media (min-width: 769px) {
         .consulting-hero {
-          padding-bottom: 20px;
+          padding-bottom: 0;
           margin-bottom: 0;
         }
         
@@ -1385,7 +1369,7 @@
         }
         
         .consulting-about {
-          padding-top: 10px;
+          padding-top: 0;
           margin-top: 0;
         }
       }
@@ -1430,7 +1414,7 @@
       /* About Section */
       .consulting-about {
         background: linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #ffffff 100%);
-        padding: 40px 0 80px 0;
+        padding: 10px 0 10px 0;
       }
       
       .consulting-about-content {
@@ -1446,7 +1430,7 @@
       .consulting-about h2 {
         font: bold 48px &#39;Arial&#39;, sans-serif;
         color: #000000;
-        margin: 0 0 15px 0;
+        margin: 0 0 5px 0;
         text-align: center;
         grid-column: 1 / -1;
       }
@@ -1528,14 +1512,14 @@
       /* Services Section */
       .consulting-services {
         background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
-        padding: 80px 0;
+        padding: 10px 0;
       }
       
       .consulting-services h2 {
         font: bold 48px &#39;Arial&#39;, sans-serif;
         color: #000000;
         text-align: center;
-        margin: 0 0 50px 0;
+        margin: 0 0 5px 0;
       }
       
       .services-grid {
@@ -2313,14 +2297,14 @@
       /* Contact Section */
       .consulting-contact {
         background: linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #ffffff 100%);
-        padding: 80px 0;
+        padding: 10px 0;
         text-align: center;
       }
       
       .consulting-contact h2 {
         font: bold 48px &#39;Arial&#39;, sans-serif;
         color: #000000;
-        margin: 0 0 15px 0;
+        margin: 0 0 5px 0;
       }
       
       .consulting-contact p {
@@ -3898,13 +3882,7 @@
         }
         
         .consulting-about-image {
-          width: 70%;
-          margin: 0 auto;
-          text-align: center;
-        }
-        
-        .consulting-about-image img {
-          max-height: 280px;
+          display: none !important;
         }
         
         .consulting-about-text {
@@ -4117,13 +4095,7 @@
         }
         
         .consulting-about-image {
-          width: 70%;
-          margin: 0 auto;
-          text-align: center;
-        }
-        
-        .consulting-about-image img {
-          max-height: 240px;
+          display: none !important;
         }
         
         .consulting-about-text {
@@ -4488,7 +4460,7 @@
             <p>Our commitment to excellence and client satisfaction has made us a trusted partner for engineering projects worldwide.</p>
           </div>
           <div class='consulting-about-image'>
-            <img alt='AR Consulting Engineers - Professional Engineering Services' src='https://raw.githubusercontent.com/AbdullahWali79/consultancy_images/main/Construction%20Site.png'/>
+            <img alt='AR Consulting Engineers - Professional Engineering Services' src='https://raw.githubusercontent.com/AbdullahWali79/consultancy_images/main/third.webp'/>
           </div>
         </div>
       </section>
