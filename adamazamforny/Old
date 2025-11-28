@@ -4099,7 +4099,7 @@
       <!-- Floating Donation Container with QR Code -->
       <div class='floating-donation-container'>
         <div class='floating-donation-qr'>
-          <img src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/Donate.png' alt='Donation QR Code'/>
+          <img src='https://raw.githubusercontent.com/adamazam2749-cmyk/qrCodes/main/offical.jpeg' alt='Donation QR Code'/>
         </div>
         <a class='floating-donation-btn' href='https://secure.actblue.com/donate/adam-azam-1?refcode=directory' target='_blank'>
           DONATE NOW
