@@ -1,0 +1,803 @@
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.container, .container-fluid {
+    padding-left: 30px !important;
+    padding-right: 30px !important;
+}
+
+.gradient-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 60px 30px;
+    color: white;
+}
+
+.course-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    animation: fadeInDown 1s;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-image {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.hero-image img {
+    transition: transform 0.5s ease;
+}
+
+.hero-image:hover img {
+    transform: scale(1.05);
+}
+
+.info-card {
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    border: none;
+    overflow: hidden;
+}
+
+.info-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.module-card {
+    border-radius: 15px;
+    transition: all 0.4s ease;
+    border: none;
+    overflow: hidden;
+    height: 100%;
+}
+
+.module-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+
+.module-card img {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.module-card:hover img {
+    transform: scale(1.1);
+}
+
+.module-card .card-body {
+    padding: 20px 25px;
+}
+
+.card-body {
+    padding: 25px 30px !important;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    position: relative;
+    display: inline-block;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+}
+
+.instructor-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 40px 30px;
+    color: white;
+}
+
+.instructor-card h2,
+.instructor-card h4,
+.instructor-card p {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.instructor-img {
+    border: 5px solid white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.week-accordion .accordion-button {
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 15px 25px;
+}
+
+.week-accordion .accordion-body {
+    padding: 20px 30px;
+}
+
+.week-accordion .accordion-button:not(.collapsed) {
+    box-shadow: none;
+}
+
+.floating-badge {
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.alert {
+    padding: 20px 30px !important;
+}
+
+.lead, p, h1, h2, h3, h4, h5, h6 {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.objective-item {
+    padding: 15px 20px;
+    margin: 10px 0;
+    border-left: 4px solid #667eea;
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.objective-item h5,
+.objective-item p {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.objective-item:hover {
+    transform: translateX(10px);
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.2) 0%, transparent 100%);
+}
+</style>
+
+<!-- Header Section -->
+<div class="gradient-header text-center">
+    <div class="container">
+        <div class="floating-badge mb-3">
+            <i class="bi bi-laptop" style="font-size: 4rem;"></i>
+        </div>
+        <h1 class="course-title">Computer Science Fundamentals</h1>
+        <p class="lead fs-4 mt-3">Master the Art of Programming & Technology</p>
+        <div class="mt-4">
+            <span class="badge bg-light text-dark fs-6 me-2 px-4 py-2"><i class="bi bi-calendar3 me-2"></i>15 Weeks</span>
+            <span class="badge bg-light text-dark fs-6 me-2 px-4 py-2"><i class="bi bi-people me-2"></i>Online</span>
+            <span class="badge bg-light text-dark fs-6 px-4 py-2"><i class="bi bi-award me-2"></i>Certificate</span>
+        </div>
+    </div>
+</div>
+
+<!-- Hero Image -->
+<div class="container my-5">
+    <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200&h=500&fit=crop" 
+             alt="Computer Programming" 
+             class="img-fluid w-100" 
+             style="height: 450px; object-fit: cover;" />
+    </div>
+</div>
+
+<!-- Course Information -->
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="section-title gradient-text">Course Information</h2>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="info-card card shadow-lg h-100">
+                <div class="card-body text-center p-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <i class="bi bi-book-fill" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3 mb-2">Course Title</h5>
+                    <p class="mb-0">CS101 - Introduction to Computer Science</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="info-card card shadow-lg h-100">
+                <div class="card-body text-center p-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                    <i class="bi bi-calendar-event-fill" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3 mb-2">Start Date</h5>
+                    <p class="mb-0">January 15, 2024</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="info-card card shadow-lg h-100">
+                <div class="card-body text-center p-4" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                    <i class="bi bi-clock-fill" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3 mb-2">Schedule</h5>
+                    <p class="mb-0">Mon & Wed, 6:00 PM - 8:00 PM</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="info-card card shadow-lg h-100">
+                <div class="card-body text-center p-4" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+                    <i class="bi bi-geo-alt-fill" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3 mb-2">Location</h5>
+                    <p class="mb-0">Online via Zoom</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Course Overview -->
+<div class="container my-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=400&fit=crop" 
+                 alt="Computer Science" 
+                 class="img-fluid rounded shadow-lg" />
+        </div>
+        <div class="col-lg-6">
+            <h2 class="section-title gradient-text">Course Overview</h2>
+            <p class="lead">Welcome to Computer Science Fundamentals! This comprehensive course is designed to introduce you to the exciting world of programming and technology.</p>
+            <p>Throughout this course, you will learn essential programming concepts, problem-solving techniques, and gain hands-on experience with modern development tools. Whether you're a complete beginner or looking to strengthen your foundation, this course will provide you with the skills needed to succeed in the tech industry.</p>
+            <div class="mt-4">
+                <span class="badge bg-primary fs-6 me-2 mb-2 px-3 py-2">Python</span>
+                <span class="badge bg-success fs-6 me-2 mb-2 px-3 py-2">JavaScript</span>
+                <span class="badge bg-info fs-6 me-2 mb-2 px-3 py-2">Data Structures</span>
+                <span class="badge bg-warning fs-6 me-2 mb-2 px-3 py-2">Algorithms</span>
+                <span class="badge bg-danger fs-6 mb-2 px-3 py-2">Web Development</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Learning Objectives -->
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="section-title gradient-text">Learning Objectives</h2>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="objective-item">
+                <h5><span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">LO1</span> <strong class="ms-2">Understand Programming Fundamentals</strong></h5>
+                <p class="mb-0 ms-5">Master variables, data types, control structures, and functions</p>
+            </div>
+            <div class="objective-item">
+                <h5><span class="badge" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">LO2</span> <strong class="ms-2">Apply Problem-Solving Techniques</strong></h5>
+                <p class="mb-0 ms-5">Develop algorithmic thinking and debugging skills</p>
+            </div>
+            <div class="objective-item">
+                <h5><span class="badge" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">LO3</span> <strong class="ms-2">Implement Data Structures</strong></h5>
+                <p class="mb-0 ms-5">Work with arrays, lists, stacks, queues, and trees</p>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="objective-item">
+                <h5><span class="badge" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">LO4</span> <strong class="ms-2">Build Web Applications</strong></h5>
+                <p class="mb-0 ms-5">Create interactive websites using HTML, CSS, and JavaScript</p>
+            </div>
+            <div class="objective-item">
+                <h5><span class="badge" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">LO5</span> <strong class="ms-2">Collaborate Using Version Control</strong></h5>
+                <p class="mb-0 ms-5">Master Git and GitHub for team projects</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Instructor Section -->
+<div class="container my-5">
+    <div class="instructor-card shadow-lg">
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center mb-4 mb-md-0">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop" 
+                     alt="Instructor" 
+                     class="rounded-circle img-fluid instructor-img" 
+                     style="width: 200px; height: 200px; object-fit: cover;" />
+            </div>
+            <div class="col-md-9">
+                <h2 class="mb-3"><i class="bi bi-person-badge me-2"></i>Meet Your Instructor</h2>
+                <h4 class="mb-3">Dr. Sarah Johnson</h4>
+                <p class="mb-3"><i class="bi bi-envelope-fill me-2"></i><strong>Email:</strong> <a href="mailto:sarah.johnson@university.edu" class="text-white">sarah.johnson@university.edu</a></p>
+                <p class="mb-3"><i class="bi bi-building me-2"></i><strong>Office:</strong> Computer Science Building, Room 305</p>
+                <p class="mb-0"><i class="bi bi-clock me-2"></i><strong>Office Hours:</strong> Tuesday & Thursday, 2:00 PM - 4:00 PM</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Course Orientation Video -->
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="section-title gradient-text">Course Orientation</h2>
+        <p class="lead">Watch this video to get started with the course</p>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="ratio ratio-16x9 rounded shadow-lg overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=450&fit=crop" 
+                     alt="Course Orientation" 
+                     class="img-fluid" />
+            </div>
+            <div class="text-center mt-4">
+                <a href="#" class="btn btn-lg shadow-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 40px; border-radius: 50px;">
+                    <i class="bi bi-play-circle-fill me-2"></i>Start Course Orientation
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Weekly Schedule -->
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="section-title gradient-text">Weekly Schedule</h2>
+        <p class="text-muted fs-5">(Subject to Change)</p>
+    </div>
+    
+    <div class="alert alert-info shadow-sm border-0 rounded-4 mb-4">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        <strong>Note:</strong> Each week includes lectures, readings, hands-on coding exercises, and assignments. Please complete all materials before moving to the next module.
+    </div>
+    
+    <div class="accordion week-accordion shadow-lg" id="weeklySchedule">
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week1">
+                    <i class="bi bi-1-circle-fill me-3"></i><strong>Week 1</strong><span class="ms-3">Jan 15 - Jan 21</span>
+                </button>
+            </h2>
+            <div id="week1" class="accordion-collapse collapse show" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body bg-light">
+                    <strong>Introduction to Computer Science</strong><br>
+                    Topics: Course overview, setting up development environment, basic programming concepts
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week2">
+                    <i class="bi bi-2-circle-fill me-3"></i><strong>Week 2</strong><span class="ms-3">Jan 22 - Jan 28</span>
+                </button>
+            </h2>
+            <div id="week2" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body">
+                    <strong>Python Basics</strong><br>
+                    Topics: Variables, data types, operators, input/output operations
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week3">
+                    <i class="bi bi-3-circle-fill me-3"></i><strong>Week 3</strong><span class="ms-3">Jan 29 - Feb 4</span>
+                </button>
+            </h2>
+            <div id="week3" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body bg-light">
+                    <strong>Control Structures</strong><br>
+                    Topics: If-else statements, loops (for, while), nested loops
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week4">
+                    <i class="bi bi-4-circle-fill me-3"></i><strong>Week 4</strong><span class="ms-3">Feb 5 - Feb 11</span>
+                </button>
+            </h2>
+            <div id="week4" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body">
+                    <strong>Functions & Modules</strong><br>
+                    Topics: Function definition, parameters, return values, importing modules
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week5">
+                    <i class="bi bi-5-circle-fill me-3"></i><strong>Week 5</strong><span class="ms-3">Feb 12 - Feb 18</span>
+                </button>
+            </h2>
+            <div id="week5" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body bg-light">
+                    <strong>Data Structures - Lists & Tuples</strong><br>
+                    Topics: List operations, list comprehension, tuples, sets, dictionaries
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week6">
+                    <i class="bi bi-6-circle-fill me-3"></i><strong>Week 6</strong><span class="ms-3">Feb 19 - Feb 25</span>
+                </button>
+            </h2>
+            <div id="week6" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body">
+                    <strong>Object-Oriented Programming</strong><br>
+                    Topics: Classes, objects, inheritance, polymorphism, encapsulation
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week7">
+                    <i class="bi bi-7-circle-fill me-3"></i><strong>Week 7</strong><span class="ms-3">Feb 26 - Mar 3</span>
+                </button>
+            </h2>
+            <div id="week7" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body bg-light">
+                    <strong>File Handling & Exceptions</strong><br>
+                    Topics: Reading/writing files, exception handling, debugging techniques
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week8">
+                    <i class="bi bi-8-circle-fill me-3"></i><strong>Week 8</strong><span class="ms-3">Mar 4 - Mar 10</span>
+                </button>
+            </h2>
+            <div id="week8" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body">
+                    <strong>Midterm Project</strong><br>
+                    Topics: Build a complete Python application using concepts learned so far
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week9">
+                    <i class="bi bi-9-circle-fill me-3"></i><strong>Week 9</strong><span class="ms-3">Mar 11 - Mar 17</span>
+                </button>
+            </h2>
+            <div id="week9" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body bg-light">
+                    <strong>Web Development - HTML & CSS</strong><br>
+                    Topics: HTML structure, CSS styling, responsive design basics
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week10">
+                    <strong class="me-3">Week 10</strong><span class="ms-3">Mar 18 - Mar 24</span>
+                </button>
+            </h2>
+            <div id="week10" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body">
+                    <strong>JavaScript Fundamentals</strong><br>
+                    Topics: JavaScript syntax, DOM manipulation, event handling
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week11">
+                    <strong class="me-3">Week 11</strong><span class="ms-3">Mar 25 - Mar 31</span>
+                </button>
+            </h2>
+            <div id="week11" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body bg-light">
+                    <strong>Algorithms & Complexity</strong><br>
+                    Topics: Sorting algorithms, searching algorithms, Big O notation
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week12">
+                    <strong class="me-3">Week 12</strong><span class="ms-3">Apr 1 - Apr 7</span>
+                </button>
+            </h2>
+            <div id="week12" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body">
+                    <strong>Database Basics</strong><br>
+                    Topics: SQL fundamentals, database design, CRUD operations
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week13">
+                    <strong class="me-3">Week 13</strong><span class="ms-3">Apr 8 - Apr 14</span>
+                </button>
+            </h2>
+            <div id="week13" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body bg-light">
+                    <strong>Version Control with Git</strong><br>
+                    Topics: Git basics, GitHub, branching, merging, collaboration
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week14">
+                    <strong class="me-3">Week 14</strong><span class="ms-3">Apr 15 - Apr 21</span>
+                </button>
+            </h2>
+            <div id="week14" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body">
+                    <strong>Final Project Development</strong><br>
+                    Topics: Work on comprehensive final project, code review sessions
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#week15">
+                    <strong class="me-3">Week 15</strong><span class="ms-3">Apr 22 - Apr 28</span>
+                </button>
+            </h2>
+            <div id="week15" class="accordion-collapse collapse" data-bs-parent="#weeklySchedule">
+                <div class="accordion-body bg-light">
+                    <strong>Final Presentations & Course Wrap-up</strong><br>
+                    Topics: Project presentations, course review, next steps in your learning journey
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Course Modules -->
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="section-title gradient-text">Course Modules</h2>
+        <p class="lead">Explore our comprehensive curriculum</p>
+    </div>
+    
+    <div class="row g-4">
+        <!-- Module 1 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=200&fit=crop" alt="Introduction" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Module 1</span></h5>
+                    <h6 class="mt-2">Introduction to Programming</h6>
+                    <p class="card-text text-muted">Get started with programming fundamentals and set up your development environment.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 2 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=200&fit=crop" alt="Python" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">Module 2</span></h5>
+                    <h6 class="mt-2">Python Programming</h6>
+                    <p class="card-text text-muted">Master Python syntax, variables, and basic operations.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 3 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=200&fit=crop" alt="Control Flow" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">Module 3</span></h5>
+                    <h6 class="mt-2">Control Flow & Loops</h6>
+                    <p class="card-text text-muted">Learn decision making and iteration in programming.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 4 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=400&h=200&fit=crop" alt="Functions" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">Module 4</span></h5>
+                    <h6 class="mt-2">Functions & Modularity</h6>
+                    <p class="card-text text-muted">Write reusable code with functions and modules.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 5 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=200&fit=crop" alt="Data Structures" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">Module 5</span></h5>
+                    <h6 class="mt-2">Data Structures</h6>
+                    <p class="card-text text-muted">Explore lists, tuples, sets, and dictionaries.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 6 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=400&h=200&fit=crop" alt="OOP" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Module 6</span></h5>
+                    <h6 class="mt-2">Object-Oriented Programming</h6>
+                    <p class="card-text text-muted">Master classes, objects, and OOP principles.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 7 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400&h=200&fit=crop" alt="Files" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">Module 7</span></h5>
+                    <h6 class="mt-2">File Handling</h6>
+                    <p class="card-text text-muted">Work with files and handle exceptions gracefully.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 8 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=400&h=200&fit=crop" alt="Project" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">Module 8</span></h5>
+                    <h6 class="mt-2">Midterm Project</h6>
+                    <p class="card-text text-muted">Apply your skills in a comprehensive project.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 9 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?w=400&h=200&fit=crop" alt="Web Dev" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">Module 9</span></h5>
+                    <h6 class="mt-2">Web Development Basics</h6>
+                    <p class="card-text text-muted">Build beautiful websites with HTML and CSS.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 10 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?w=400&h=200&fit=crop" alt="JavaScript" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">Module 10</span></h5>
+                    <h6 class="mt-2">JavaScript Programming</h6>
+                    <p class="card-text text-muted">Add interactivity to your web pages.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 11 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400&h=200&fit=crop" alt="Algorithms" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Module 11</span></h5>
+                    <h6 class="mt-2">Algorithms</h6>
+                    <p class="card-text text-muted">Understand sorting, searching, and complexity.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 12 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=400&h=200&fit=crop" alt="Database" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">Module 12</span></h5>
+                    <h6 class="mt-2">Database Fundamentals</h6>
+                    <p class="card-text text-muted">Learn SQL and database management.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 13 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=400&h=200&fit=crop" alt="Git" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">Module 13</span></h5>
+                    <h6 class="mt-2">Version Control</h6>
+                    <p class="card-text text-muted">Master Git and GitHub for collaboration.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 14 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=200&fit=crop" alt="Final Project" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">Module 14</span></h5>
+                    <h6 class="mt-2">Final Project</h6>
+                    <p class="card-text text-muted">Build your capstone project from scratch.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module 15 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="module-card card shadow-lg">
+                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&h=200&fit=crop" alt="Graduation" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">Module 15</span></h5>
+                    <h6 class="mt-2">Course Completion</h6>
+                    <p class="card-text text-muted">Present your work and celebrate your success!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="gradient-header text-center mt-5 py-5">
+    <div class="container">
+        <h3 class="mb-4">Ready to Start Your Journey?</h3>
+        <p class="lead mb-4">Join thousands of students learning to code</p>
+        <a href="#" class="btn btn-light btn-lg shadow-lg px-5 py-3 rounded-pill">
+            <i class="bi bi-rocket-takeoff-fill me-2"></i>Enroll Now
+        </a>
+        <div class="mt-5 pt-4 border-top border-light">
+            <p class="mb-2"><i class="bi bi-envelope-fill me-2"></i>support@university.edu</p>
+            <p class="mb-0"><i class="bi bi-telephone-fill me-2"></i>+1 (555) 123-4567</p>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+""
