@@ -431,22 +431,53 @@
       
       /* Mobile Navigation Styles */
       @media (max-width: 768px) {
+        /* Prevent horizontal overflow on mobile */
+        html, body {
+          overflow-x: hidden;
+          width: 100%;
+          max-width: 100vw;
+          box-sizing: border-box;
+        }
+        
+        * {
+          box-sizing: border-box;
+        }
+        
+        /* Text wrapping for long words */
+        body, p, h1, h2, h3, h4, h5, h6, span, div {
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          hyphens: auto;
+        }
+        
+        /* Images responsive */
+        img {
+          max-width: 100%;
+          height: auto;
+          display: block;
+        }
+        
         .nav-container {
           justify-content: space-between;
         }
         
         .social-icons-nav {
-          gap: 8px;
+          gap: 6px;
         }
         
         .social-icon-nav {
-          width: 32px;
-          height: 32px;
+          width: 28px;
+          height: 28px;
+          border-radius: 50% !important;
+          min-width: 28px;
+          min-height: 28px;
+          max-width: 28px;
+          max-height: 28px;
         }
         
         .social-icon-nav svg {
-          width: 16px;
-          height: 16px;
+          width: 14px;
+          height: 14px;
         }
         
         .nav-logo {
@@ -1454,6 +1485,7 @@
       
       .consulting-about-image img {
         max-width: 100%;
+        width: 100%;
         height: auto;
         max-height: 400px;
         object-fit: contain;
@@ -1462,6 +1494,8 @@
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         background: #ffd700;
         padding: 15px;
+        display: block;
+        box-sizing: border-box;
         animation: fadeIn 1.5s ease-in;
         opacity: 0;
         animation-fill-mode: forwards;
@@ -3768,23 +3802,34 @@
         }
         
         .consulting-hero-content {
-          padding: 0 20px;
+          padding: 0 15px;
           max-width: 100%;
+          width: 100%;
+          box-sizing: border-box;
         }
         
         .consulting-hero h1 {
           font-size: 32px;
           margin: 0 0 12px 0;
           line-height: 1.2;
+          padding: 0 10px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
         }
         
         .typing-container {
           gap: 10px;
+          max-width: 100%;
+          padding: 0 10px;
         }
         
         .tagline-text {
           font-size: 18px;
           min-height: 24px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
         }
         
         .tagline-cursor {
@@ -3795,12 +3840,20 @@
           font-size: 16px;
           margin: 0 0 15px 0;
           line-height: 1.3;
+          padding: 0 10px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
         }
         
         .consulting-hero .slogan {
           font-size: 20px;
           margin: 0 0 15px 0;
           line-height: 1.2;
+          padding: 0 10px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
         }
         
         .cta-buttons {
@@ -3827,25 +3880,42 @@
         .consulting-services h2 {
           font-size: 36px;
           margin-bottom: 30px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 15px;
+          max-width: 100%;
         }
         
         .services-grid {
           grid-template-columns: 1fr;
           gap: 25px;
           padding: 0 15px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
         }
         
         .service-card {
           height: 320px;
           min-height: 320px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+          overflow: hidden;
         }
         
         .service-card h3 {
           font-size: 22px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 10px;
         }
         
         .service-card p {
           font-size: 15px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 10px;
         }
         
         /* About Section Mobile */
@@ -3856,54 +3926,92 @@
         .consulting-about h2 {
           font-size: 36px;
           margin-bottom: 30px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 15px;
+          max-width: 100%;
         }
         
         .consulting-about-content {
           grid-template-columns: 1fr;
           gap: 30px;
           padding: 0 15px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .consulting-about-text {
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
         }
         
         .consulting-about-text h3 {
           font-size: 22px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 10px;
         }
         
         .consulting-about-text p {
           font-size: 15px;
           line-height: 1.7;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 10px;
         }
         
         /* Contact Section Mobile */
         .consulting-contact {
           padding: 60px 0;
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
         }
         
         .consulting-contact h2 {
           font-size: 36px;
           margin-bottom: 20px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 15px;
         }
         
         .consulting-contact > p {
           font-size: 15px;
           padding: 0 15px;
           margin-bottom: 30px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
         
         .contact-info {
           grid-template-columns: 1fr;
           gap: 20px;
+          padding: 0 15px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
         }
         
         .contact-item {
           padding: 25px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
         }
         
         .contact-item h3 {
           font-size: 22px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
         
         .contact-item p {
           font-size: 15px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
         
         /* Blog Section Mobile Responsive */
@@ -3914,6 +4022,10 @@
         .blog-section h2 {
           font-size: 36px;
           margin-bottom: 30px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 15px;
+          max-width: 100%;
         }
         
         .blog-grid {
@@ -4077,7 +4189,7 @@
         }
       }
       
-      @media (max-width: 480px) {
+        @media (max-width: 480px) {
         /* Hero Section Small Mobile */
         .consulting-hero h1 {
           font-size: 28px;
@@ -4108,6 +4220,26 @@
           padding: 10px 16px;
           font-size: 12px;
           max-width: 160px;
+        }
+        
+        /* Social Icons - Small Mobile */
+        .social-icons-nav {
+          gap: 5px;
+        }
+        
+        .social-icon-nav {
+          width: 27px;
+          height: 27px;
+          border-radius: 50% !important;
+          min-width: 27px;
+          min-height: 27px;
+          max-width: 27px;
+          max-height: 27px;
+        }
+        
+        .social-icon-nav svg {
+          width: 13px;
+          height: 13px;
         }
         
         /* About Section Small Mobile */
@@ -4544,6 +4676,26 @@
         .nav-logo img {
           height: 40px;
         }
+        
+        /* Social Icons - 414px */
+        .social-icons-nav {
+          gap: 5px;
+        }
+        
+        .social-icon-nav {
+          width: 27px;
+          height: 27px;
+          border-radius: 50% !important;
+          min-width: 27px;
+          min-height: 27px;
+          max-width: 27px;
+          max-height: 27px;
+        }
+        
+        .social-icon-nav svg {
+          width: 13px;
+          height: 13px;
+        }
       }
       
       /* iPhone SE and Very Small Screens */
@@ -4639,17 +4791,563 @@
         }
         
         .social-icon-nav {
-          width: 30px;
-          height: 30px;
+          width: 26px;
+          height: 26px;
+          border-radius: 50% !important;
+          min-width: 26px;
+          min-height: 26px;
+          max-width: 26px;
+          max-height: 26px;
         }
         
         .social-icon-nav svg {
-          width: 15px;
-          height: 15px;
+          width: 13px;
+          height: 13px;
         }
       }
       
-
+      /* ============================================
+         MOBILE LANDSCAPE MODE - SEPARATE CSS
+         Optimized for landscape orientation on mobile devices
+         ============================================ */
+      
+      /* Tablet and Mobile Landscape - 768px and below, landscape */
+      @media (max-width: 768px) and (orientation: landscape) {
+        /* Prevent horizontal overflow */
+        html, body {
+          overflow-x: hidden;
+          width: 100%;
+          max-width: 100vw;
+          max-height: 100vh;
+          box-sizing: border-box;
+        }
+        
+        /* Hero Section - Reduced height for landscape - Proper spacing */
+        .consulting-hero {
+          min-height: 50vh;
+          max-height: 50vh;
+          height: 50vh;
+          padding: 15px 0 0 0;
+          margin-bottom: 0;
+          padding-bottom: 0;
+          display: block;
+          position: relative;
+          width: 100%;
+          overflow: hidden;
+          z-index: 2;
+        }
+        
+        /* Hero slider - Landscape optimized - Visible */
+        .hero-slider {
+          height: 50vh;
+          min-height: 50vh;
+          max-height: 50vh;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          overflow: hidden;
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          z-index: 0;
+        }
+        
+        /* Hero slide images - Landscape - Visible */
+        .hero-slide {
+          height: 50vh;
+          min-height: 50vh;
+          max-height: 50vh;
+          background-size: cover;
+          background-position: center center;
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+        }
+        
+        .hero-slide.active {
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          z-index: 1;
+        }
+        
+        /* Ensure background images are visible in landscape */
+        .hero-slide:nth-child(1) {
+          background-image: url(&#39;https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=2070&amp;q=80&#39;);
+          background-position: center center;
+          background-size: cover;
+        }
+        
+        .hero-slide:nth-child(2) {
+          background-image: url(&#39;https://github.com/AbdullahWali79/ARCosulting/raw/main/engineers1.webp&#39;);
+          background-position: center center;
+          background-size: cover;
+        }
+        
+        .hero-slide:nth-child(3) {
+          background-image: url(&#39;https://github.com/AbdullahWali79/ARCosulting/raw/main/construction2.png&#39;);
+          background-position: center center;
+          background-size: cover;
+        }
+        
+        /* Hero content - Landscape layout - Above images */
+        .consulting-hero-content {
+          position: absolute;
+          bottom: 40px;
+          left: 0;
+          right: 0;
+          margin: 0;
+          padding: 0 20px;
+          max-width: 100%;
+          z-index: 10;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          align-items: center;
+          box-sizing: border-box;
+          height: auto;
+          max-height: calc(50vh - 60px);
+        }
+        
+        /* Hero text - Smaller for landscape */
+        .consulting-hero h1 {
+          font-size: 24px;
+          margin: 0 0 5px 0;
+          line-height: 1.2;
+          padding: 0 10px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
+        }
+        
+        .typing-container {
+          gap: 8px;
+          max-width: 100%;
+          padding: 0 10px;
+        }
+        
+        .tagline-text {
+          font-size: 14px;
+          min-height: 18px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
+        }
+        
+        .tagline-cursor {
+          height: 18px;
+        }
+        
+        .consulting-hero .subtitle {
+          font-size: 12px;
+          margin: 0 0 5px 0;
+          line-height: 1.2;
+          padding: 0 10px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
+        }
+        
+        .consulting-hero .slogan {
+          font-size: 16px;
+          margin: 0 0 5px 0;
+          line-height: 1.1;
+          padding: 0 10px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
+        }
+        
+        /* Slider dots - Landscape position */
+        .slider-dots {
+          position: absolute;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 10px;
+          z-index: 10;
+          pointer-events: auto;
+        }
+        
+        /* Hide CTA buttons in landscape */
+        .cta-buttons {
+          display: none !important;
+        }
+        
+        /* About Section - Landscape optimized - No overlap with hero */
+        .consulting-about {
+          padding: 30px 0;
+          margin-top: 0;
+          position: relative;
+          z-index: 1;
+          clear: both;
+        }
+        
+        .consulting-about h2 {
+          font-size: 28px;
+          margin: 0 0 15px 0;
+          padding: 0 20px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
+          position: relative;
+          z-index: 1;
+        }
+        
+        .consulting-about-content {
+          padding: 0 20px;
+          gap: 20px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+          position: relative;
+          z-index: 1;
+        }
+        
+        .consulting-about-text {
+          padding: 20px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .consulting-about-text h3 {
+          font-size: 18px;
+          margin: 0 0 12px 0;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
+        
+        .consulting-about-text p {
+          font-size: 13px;
+          line-height: 1.6;
+          margin: 0 0 12px 0;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
+        
+        /* Services Section - Landscape */
+        .consulting-services {
+          padding: 40px 0;
+        }
+        
+        .consulting-services h2 {
+          font-size: 28px;
+          margin-bottom: 20px;
+          padding: 0 20px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
+        }
+        
+        .services-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 15px;
+          padding: 0 20px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .service-card {
+          height: 250px;
+          min-height: 250px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+          overflow: hidden;
+        }
+        
+        .service-card h3 {
+          font-size: 18px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 10px;
+        }
+        
+        .service-card p {
+          font-size: 13px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 10px;
+        }
+        
+        /* Contact Section - Landscape */
+        .consulting-contact {
+          padding: 40px 0;
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+        
+        .consulting-contact h2 {
+          font-size: 28px;
+          margin-bottom: 15px;
+          padding: 0 20px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
+        }
+        
+        .consulting-contact > p {
+          font-size: 13px;
+          padding: 0 20px;
+          margin-bottom: 20px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
+        
+        .contact-info {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 15px;
+          padding: 0 20px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .contact-item {
+          padding: 20px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .contact-item h3 {
+          font-size: 18px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
+        
+        .contact-item p {
+          font-size: 13px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
+        
+        /* Navigation - Landscape */
+        .nav-container {
+          padding: 10px 20px;
+        }
+        
+        .social-icons-nav {
+          gap: 6px;
+        }
+        
+        .social-icon-nav {
+          width: 26px;
+          height: 26px;
+          border-radius: 50% !important;
+        }
+        
+        .social-icon-nav svg {
+          width: 13px;
+          height: 13px;
+        }
+      }
+      
+      /* Small Mobile Landscape - 480px and below, landscape */
+      @media (max-width: 480px) and (orientation: landscape) {
+        /* Hero Section - Even smaller for small landscape */
+        .consulting-hero {
+          min-height: 45vh;
+          max-height: 45vh;
+          height: 45vh;
+          padding: 10px 0 0 0;
+        }
+        
+        .hero-slider {
+          height: 45vh;
+          min-height: 45vh;
+          max-height: 45vh;
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          z-index: 0;
+        }
+        
+        .hero-slide {
+          height: 45vh;
+          min-height: 45vh;
+          max-height: 45vh;
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          background-size: cover;
+          background-position: center center;
+        }
+        
+        .hero-slide.active {
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          z-index: 1;
+        }
+        
+        /* Ensure background images are visible in small landscape */
+        .hero-slide:nth-child(1),
+        .hero-slide:nth-child(2),
+        .hero-slide:nth-child(3) {
+          background-size: cover !important;
+          background-position: center center !important;
+        }
+        
+        .consulting-hero-content {
+          bottom: 35px;
+          padding: 0 15px;
+          max-height: calc(45vh - 50px);
+        }
+        
+        /* Hero section - Small landscape */
+        .consulting-hero {
+          z-index: 2;
+        }
+        
+        .consulting-hero h1 {
+          font-size: 20px;
+          margin: 0 0 4px 0;
+        }
+        
+        .tagline-text {
+          font-size: 12px;
+          min-height: 16px;
+        }
+        
+        .tagline-cursor {
+          height: 16px;
+        }
+        
+        .consulting-hero .subtitle {
+          font-size: 11px;
+          margin: 0 0 4px 0;
+        }
+        
+        .consulting-hero .slogan {
+          font-size: 14px;
+          margin: 0 0 4px 0;
+        }
+        
+        .slider-dots {
+          bottom: 15px;
+          gap: 8px;
+        }
+        
+        /* About Section - Small landscape - No overlap */
+        .consulting-about {
+          padding: 25px 0;
+          margin-top: 0;
+          clear: both;
+        }
+        
+        .consulting-about h2 {
+          font-size: 24px;
+          margin: 0 0 12px 0;
+          padding: 0 15px;
+          position: relative;
+          z-index: 1;
+        }
+        
+        .consulting-about-content {
+          padding: 0 15px;
+          gap: 15px;
+          position: relative;
+          z-index: 1;
+        }
+        
+        .consulting-about-text {
+          padding: 15px;
+          position: relative;
+          z-index: 1;
+        }
+        
+        .consulting-about-text h3 {
+          font-size: 16px;
+          margin: 0 0 10px 0;
+        }
+        
+        .consulting-about-text p {
+          font-size: 12px;
+          line-height: 1.5;
+          margin: 0 0 10px 0;
+        }
+        
+        /* Services - Small landscape */
+        .consulting-services {
+          padding: 30px 0;
+        }
+        
+        .consulting-services h2 {
+          font-size: 24px;
+          margin-bottom: 15px;
+          padding: 0 15px;
+        }
+        
+        .services-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+          padding: 0 15px;
+        }
+        
+        .service-card {
+          height: 220px;
+          min-height: 220px;
+        }
+        
+        .service-card h3 {
+          font-size: 16px;
+        }
+        
+        .service-card p {
+          font-size: 12px;
+        }
+        
+        /* Contact - Small landscape */
+        .consulting-contact {
+          padding: 30px 0;
+        }
+        
+        .consulting-contact h2 {
+          font-size: 24px;
+          margin-bottom: 12px;
+          padding: 0 15px;
+        }
+        
+        .consulting-contact > p {
+          font-size: 12px;
+          padding: 0 15px;
+          margin-bottom: 15px;
+        }
+        
+        .contact-info {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+          padding: 0 15px;
+        }
+        
+        .contact-item {
+          padding: 15px;
+        }
+        
+        .contact-item h3 {
+          font-size: 16px;
+        }
+        
+        .contact-item p {
+          font-size: 12px;
+        }
+      }
+      
 
       /* Floating Donation Button */
       .floating-donation-btn {

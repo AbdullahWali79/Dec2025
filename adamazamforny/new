@@ -1520,6 +1520,10 @@
         visibility: visible !important;
       }
       
+      .picture-card .picture-image {
+        position: relative;
+      }
+      
       .picture-card:hover {
         transform: translateY(-8px);
         box-shadow: 0 15px 35px rgba(0,0,0,0.4);
@@ -1532,9 +1536,60 @@
         object-fit: cover;
         object-position: center;
         background: linear-gradient(135deg, #1e293b, #0f172a);
-        transition: transform 0.3s ease;
+        transition: transform 0.3s ease, opacity 0.3s ease;
         display: block !important;
         visibility: visible !important;
+        opacity: 1;
+      }
+      
+      /* Image loading state */
+      .picture-image[loading='lazy'] {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+      
+      .picture-image.loaded {
+        opacity: 1;
+      }
+      
+      /* Image error placeholder */
+      .image-error-placeholder {
+        width: 100%;
+        height: 250px;
+        background: linear-gradient(135deg, #1e293b, #0f172a);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        font-size: 16px;
+        text-align: center;
+        border-radius: 10px;
+        border: 2px dashed #1e40af;
+      }
+      
+      /* Loading spinner for images */
+      .picture-image::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 40px;
+        height: 40px;
+        margin: -20px 0 0 -20px;
+        border: 3px solid rgba(30, 64, 175, 0.3);
+        border-top-color: #1e40af;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .picture-image:not(.loaded)::before {
+        opacity: 1;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
       }
       
       /* Adam Azam specific image centering */
@@ -3053,182 +3108,252 @@
           <h2>Meet Adam Azam Friends</h2>
           <div class='pictures-grid'>
             <div class='picture-card'>
-              <img alt='Campaign Event November 2025' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.49%20AM.jpeg'/>
+              <img alt='South Asian Team for Delgado 1' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/south-Asian-team-for-Delgado/main/1.jpeg' loading='lazy'/>
+              <div class='picture-content'>
+                <h3 class='picture-title'>South Asian Team for Delgado</h3>
+                <p class='picture-description'>Community engagement and collaboration.</p>
+              </div>
+            </div>
+            <div class='picture-card'>
+              <img alt='South Asian Team for Delgado 2' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/south-Asian-team-for-Delgado/main/2.jpeg' loading='lazy'/>
+              <div class='picture-content'>
+                <h3 class='picture-title'>South Asian Team for Delgado</h3>
+                <p class='picture-description'>Community engagement and collaboration.</p>
+              </div>
+            </div>
+            <div class='picture-card'>
+              <img alt='South Asian Team for Delgado 3' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/south-Asian-team-for-Delgado/main/3.jpeg' loading='lazy'/>
+              <div class='picture-content'>
+                <h3 class='picture-title'>South Asian Team for Delgado</h3>
+                <p class='picture-description'>Community engagement and collaboration.</p>
+              </div>
+            </div>
+            <div class='picture-card'>
+              <img alt='South Asian Team for Delgado 4' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/south-Asian-team-for-Delgado/main/4.jpeg' loading='lazy'/>
+              <div class='picture-content'>
+                <h3 class='picture-title'>South Asian Team for Delgado</h3>
+                <p class='picture-description'>Community engagement and collaboration.</p>
+              </div>
+            </div>
+            <div class='picture-card'>
+              <img alt='South Asian Team for Delgado 5' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/south-Asian-team-for-Delgado/main/5.jpeg' loading='lazy'/>
+              <div class='picture-content'>
+                <h3 class='picture-title'>South Asian Team for Delgado</h3>
+                <p class='picture-description'>Community engagement and collaboration.</p>
+              </div>
+            </div>
+            <div class='picture-card'>
+              <img alt='South Asian Team for Delgado 9' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/south-Asian-team-for-Delgado/main/9.jpeg' loading='lazy'/>
+              <div class='picture-content'>
+                <h3 class='picture-title'>South Asian Team for Delgado</h3>
+                <p class='picture-description'>Community engagement and collaboration.</p>
+              </div>
+            </div>
+            <div class='picture-card'>
+              <img alt='South Asian Team for Delgado 10' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/south-Asian-team-for-Delgado/main/10.jpeg' loading='lazy'/>
+              <div class='picture-content'>
+                <h3 class='picture-title'>South Asian Team for Delgado</h3>
+                <p class='picture-description'>Community engagement and collaboration.</p>
+              </div>
+            </div>
+            <div class='picture-card'>
+              <img alt='South Asian Team for Delgado 11' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/south-Asian-team-for-Delgado/main/11.jpeg' loading='lazy'/>
+              <div class='picture-content'>
+                <h3 class='picture-title'>South Asian Team for Delgado</h3>
+                <p class='picture-description'>Community engagement and collaboration.</p>
+              </div>
+            </div>
+            <div class='picture-card'>
+              <img alt='South Asian Team for Delgado 12' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/south-Asian-team-for-Delgado/main/12.jpeg' loading='lazy'/>
+              <div class='picture-content'>
+                <h3 class='picture-title'>South Asian Team for Delgado</h3>
+                <p class='picture-description'>Community engagement and collaboration.</p>
+              </div>
+            </div>
+            <div class='picture-card'>
+              <img alt='South Asian Team for Delgado 13' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/south-Asian-team-for-Delgado/main/13.jpeg' loading='lazy'/>
+              <div class='picture-content'>
+                <h3 class='picture-title'>South Asian Team for Delgado</h3>
+                <p class='picture-description'>Community engagement and collaboration.</p>
+              </div>
+            </div>
+            <div class='picture-card'>
+              <img alt='Campaign Event November 2025' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.49%20AM.jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign 2025</h3>
                 <p class='picture-description'>Senate Elections</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event November 2025 - 1' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.50%20AM%20(1).jpeg'/>
+              <img alt='Campaign Event November 2025 - 1' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.50%20AM%20(1).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign 2025</h3>
                 <p class='picture-description'>Senate Elections</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event November 2025 - 2' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.50%20AM%20(2).jpeg'/>
+              <img alt='Campaign Event November 2025 - 2' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.50%20AM%20(2).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign 2025</h3>
                 <p class='picture-description'>Senate Elections</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event November 2025 - 3' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.50%20AM%20(3).jpeg'/>
+              <img alt='Campaign Event November 2025 - 3' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.50%20AM%20(3).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign 2025</h3>
                 <p class='picture-description'>Senate Elections</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event November 2025 - 4' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.50%20AM%20(4).jpeg'/>
+              <img alt='Campaign Event November 2025 - 4' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.50%20AM%20(4).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign 2025</h3>
                 <p class='picture-description'>Senate Elections</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event November 2025 - 5' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.50%20AM%20(5).jpeg'/>
+              <img alt='Campaign Event November 2025 - 5' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.50%20AM%20(5).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign 2025</h3>
                 <p class='picture-description'>Senate Elections</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event November 2025 - 6' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.50%20AM%20(6).jpeg'/>
+              <img alt='Campaign Event November 2025 - 6' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adamazamforny.com/main/WhatsApp%20Image%202025-11-01%20at%204.59.50%20AM%20(6).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign 2025</h3>
                 <p class='picture-description'>Senate Elections</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Tony Avella' class='picture-image' src='https://github.com/adamazam2749-cmyk/adam-azam-imagess/raw/main/Tony%20Avella.jpg'/>
+              <img alt='Tony Avella' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adam-azam-imagess/main/Tony%20Avella.jpg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Tony Avella</h3>
                 <p class='picture-description'>Meeting with community leaders and supporters.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Tom Kaminsky' class='picture-image' src='https://github.com/adamazam2749-cmyk/adam-azam-imagess/raw/main/Tom%20Kaminsky.PNG'/>
+              <img alt='Tom Kaminsky' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adam-azam-imagess/main/Tom%20Kaminsky.PNG' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Tom Kaminsky</h3>
                 <p class='picture-description'>Engaging with voters and discussing key issues.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Sheila Jackson' class='picture-image' src='https://github.com/adamazam2749-cmyk/adam-azam-imagess/raw/main/Sheila%20Jackson.PNG'/>
+              <img alt='Sheila Jackson' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adam-azam-imagess/main/Sheila%20Jackson.PNG' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Sheila Jackson</h3>
                 <p class='picture-description'>Campaign event with community advocates.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Riaz Babar' class='picture-image' src='https://github.com/adamazam2749-cmyk/adam-azam-imagess/raw/main/Riaz%20Babar%20in%20blue%20coat%20and%20Washington%20Senator.PNG'/>
+              <img alt='Riaz Babar' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adam-azam-imagess/main/Riaz%20Babar%20in%20blue%20coat%20and%20Washington%20Senator.PNG' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Riaz Babar in Blue Coat and Washington Senator</h3>
                 <p class='picture-description'>Official meeting at the state capitol.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Rafi Shah (Director Union Policies) in United Nations' class='picture-image' src='https://github.com/adamazam2749-cmyk/adam-azam-imagess/raw/main/Rafi%20Shah%20(Director%20Union%20Policies)%20in%20United%20Nations.PNG'/>
+              <img alt='Rafi Shah (Director Union Policies) in United Nations' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/adam-azam-imagess/main/Rafi%20Shah%20(Director%20Union%20Policies)%20in%20United%20Nations.PNG' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Rafi Shah (Director Union Policies) in United Nations</h3>
                 <p class='picture-description'>International policy discussion and collaboration.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 1' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.47%20PM%20(1).jpeg'/>
+              <img alt='Campaign Event 1' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.47%20PM%20(1).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 1</h3>
                 <p class='picture-description'>Important campaign meeting and discussion.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 2' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.47%20PM%20(3).jpeg'/>
+              <img alt='Campaign Event 2' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.47%20PM%20(3).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 2</h3>
                 <p class='picture-description'>Community engagement and voter outreach.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 3' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.47%20PM%20(4).jpeg'/>
+              <img alt='Campaign Event 3' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.47%20PM%20(4).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 3</h3>
                 <p class='picture-description'>Strategic planning and policy development.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 4' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.47%20PM%20(7).jpeg'/>
+              <img alt='Campaign Event 4' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.47%20PM%20(7).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 4</h3>
                 <p class='picture-description'>Community outreach and engagement activities.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 5' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.47%20PM.jpeg'/>
+              <img alt='Campaign Event 5' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.47%20PM.jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 5</h3>
                 <p class='picture-description'>Voter engagement and community discussion.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 6' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(1).jpeg'/>
+              <img alt='Campaign Event 6' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(1).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 6</h3>
                 <p class='picture-description'>Policy discussion and strategic planning.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 7' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(2).jpeg'/>
+              <img alt='Campaign Event 7' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(2).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 7</h3>
                 <p class='picture-description'>Community leadership and collaboration.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 8' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(3).jpeg'/>
+              <img alt='Campaign Event 8' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(3).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 8</h3>
                 <p class='picture-description'>Public engagement and voter outreach.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 9' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(5).jpeg'/>
+              <img alt='Campaign Event 9' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(5).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 9</h3>
                 <p class='picture-description'>Community building and relationship development.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 10' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(6).jpeg'/>
+              <img alt='Campaign Event 10' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(6).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 10</h3>
                 <p class='picture-description'>Strategic partnerships and alliances.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 11' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(8).jpeg'/>
+              <img alt='Campaign Event 11' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(8).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 11</h3>
                 <p class='picture-description'>Community advocacy and support.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 12' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(9).jpeg'/>
+              <img alt='Campaign Event 12' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM%20(9).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 12</h3>
                 <p class='picture-description'>Leadership development and mentorship.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 13' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM.jpeg'/>
+              <img alt='Campaign Event 13' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.48%20PM.jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 13</h3>
                 <p class='picture-description'>Public service and community engagement.</p>
               </div>
             </div>
             <div class='picture-card'>
-              <img alt='Campaign Event 14' class='picture-image' src='https://github.com/adamazam2749-cmyk/NovImages2026/raw/main/WhatsApp%20Image%202026-10-18%20at%209.25.49%20PM%20(10).jpeg'/>
+              <img alt='Campaign Event 14' class='picture-image' src='https://raw.githubusercontent.com/adamazam2749-cmyk/NovImages2026/main/WhatsApp%20Image%202026-10-18%20at%209.25.49%20PM%20(10).jpeg' loading='lazy'/>
               <div class='picture-content'>
                 <h3 class='picture-title'>Campaign Event 14</h3>
                 <p class='picture-description'>Building bridges and fostering unity.</p>
@@ -4245,6 +4370,73 @@
                 document.body.removeChild(modal);
               });
             });
+          });
+          
+          // Image Error Handling - Add fallback for broken images
+          const allPictureImages = document.querySelectorAll('.picture-image');
+          allPictureImages.forEach(function(img) {
+            // Mark as loaded when image successfully loads
+            if (img.complete && img.naturalHeight !== 0) {
+              img.classList.add('loaded');
+              img.style.opacity = '1';
+            } else {
+              img.addEventListener('load', function() {
+                this.classList.add('loaded');
+                this.style.opacity = '1';
+              });
+            }
+            
+            // Add error handler
+            img.addEventListener('error', function() {
+              console.log('Image failed to load:', this.src);
+              this.style.display = 'none';
+              const card = this.closest('.picture-card');
+              if (card && !card.querySelector('.image-error-placeholder')) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'image-error-placeholder';
+                placeholder.innerHTML = '<div style="padding: 40px; text-align: center; color: #94a3b8; font-size: 14px;">📷<br><span style="font-size: 12px;">Image unavailable</span></div>';
+                const imageContainer = this.parentNode;
+                imageContainer.insertBefore(placeholder, this);
+              }
+            });
+          });
+        });
+      </script>
+      
+      <!-- Image Loading Error Handler Script -->
+      <script type='text/javascript'>
+        document.addEventListener('DOMContentLoaded', function() {
+          // Retry mechanism for failed images
+          function retryImageLoad(img, maxRetries = 3) {
+            let retries = 0;
+            const originalSrc = img.src;
+            
+            img.addEventListener('error', function() {
+              retries++;
+              if (retries < maxRetries) {
+                // Retry after a delay
+                setTimeout(function() {
+                  // Force reload by adding timestamp
+                  img.src = originalSrc + (originalSrc.includes('?') ? '&' : '?') + 'retry=' + retries + '&t=' + Date.now();
+                }, 1000 * retries); // Exponential backoff
+              } else {
+                // Final fallback - show placeholder
+                img.style.display = 'none';
+                const card = img.closest('.picture-card');
+                if (card) {
+                  const placeholder = document.createElement('div');
+                  placeholder.className = 'image-error-placeholder';
+                  placeholder.innerHTML = '<div style="padding: 40px; text-align: center; color: #94a3b8;">📷<br>Image unavailable</div>';
+                  card.querySelector('.picture-content').insertBefore(placeholder, card.querySelector('.picture-content').firstChild);
+                }
+              }
+            });
+          }
+          
+          // Apply retry mechanism to all images
+          const images = document.querySelectorAll('.picture-image');
+          images.forEach(function(img) {
+            retryImageLoad(img);
           });
         });
       </script>

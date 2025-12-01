@@ -8,6 +8,7 @@ import platform
 import subprocess
 import uuid
 import os
+import sys
 
 class SecureMachineValidator:
     def __init__(self):
@@ -16,7 +17,8 @@ class SecureMachineValidator:
             "B1D1FC64C865533F",  # Your main development machine
             "63962CB948526976",  # Client machine 1
             "AC090693E5",        # MacBook Client (ac:c9:06:09:93:e5)
-            "75B43D8506B99408",  # Current machine
+            "75B43D8506B99408",  # Previous machine
+            "1E9C2B92CB321EAB",  # Current machine (Added: 2025-11-25)
             # Add more machine IDs here as needed
             # "MACHINE_ID_3",
             # "MACHINE_ID_4",
@@ -92,14 +94,33 @@ def validate_machine_access():
     
     if not validator.is_machine_authorized():
         current_machine_id = validator.get_machine_id()
-        print("=" * 60)
-        print("UNAUTHORIZED MACHINE ACCESS")
-        print("=" * 60)
-        print(f"Machine ID: {current_machine_id}")
-        print("This application is not authorized to run on this machine.")
-        print("Please contact the administrator to add this machine.")
-        print("=" * 60)
-        input("Press Enter to exit...")
+        
+        # Try to show messagebox if running as windowed app
+        try:
+            import tkinter.messagebox as mb
+            mb.showerror(
+                "Unauthorized Machine Access",
+                f"This application is not authorized to run on this machine.\n\n"
+                f"Machine ID: {current_machine_id}\n\n"
+                f"Please contact the administrator to add this machine."
+            )
+        except:
+            # If messagebox not available, try console output
+            try:
+                print("=" * 60)
+                print("UNAUTHORIZED MACHINE ACCESS")
+                print("=" * 60)
+                print(f"Machine ID: {current_machine_id}")
+                print("This application is not authorized to run on this machine.")
+                print("Please contact the administrator to add this machine.")
+                print("=" * 60)
+                # Only use input if stdin is available (console mode)
+                if sys.stdin and sys.stdin.isatty():
+                    input("Press Enter to exit...")
+            except:
+                # If all else fails, just exit silently
+                pass
+        
         return False
     
     return True

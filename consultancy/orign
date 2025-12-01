@@ -431,22 +431,53 @@
       
       /* Mobile Navigation Styles */
       @media (max-width: 768px) {
+        /* Prevent horizontal overflow on mobile */
+        html, body {
+          overflow-x: hidden;
+          width: 100%;
+          max-width: 100vw;
+          box-sizing: border-box;
+        }
+        
+        * {
+          box-sizing: border-box;
+        }
+        
+        /* Text wrapping for long words */
+        body, p, h1, h2, h3, h4, h5, h6, span, div {
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          hyphens: auto;
+        }
+        
+        /* Images responsive */
+        img {
+          max-width: 100%;
+          height: auto;
+          display: block;
+        }
+        
         .nav-container {
           justify-content: space-between;
         }
         
         .social-icons-nav {
-          gap: 8px;
+          gap: 6px;
         }
         
         .social-icon-nav {
-          width: 32px;
-          height: 32px;
+          width: 28px;
+          height: 28px;
+          border-radius: 50% !important;
+          min-width: 28px;
+          min-height: 28px;
+          max-width: 28px;
+          max-height: 28px;
         }
         
         .social-icon-nav svg {
-          width: 16px;
-          height: 16px;
+          width: 14px;
+          height: 14px;
         }
         
         .nav-logo {
@@ -650,7 +681,7 @@
         /* About Section Mobile Styles - Remove ALL white space - Exact 2px gap */
         .consulting-about {
           padding: 0 0 40px 0;
-          margin-top: -500px;
+          margin-top: -550px;
           margin-bottom: 0;
           padding-top: 0;
           width: 100%;
@@ -685,23 +716,7 @@
         }
         
         .consulting-about-image {
-          order: 2;
-          margin: 0 auto;
-          width: 70%;
-          padding: 0;
-          text-align: center;
-        }
-        
-        .consulting-about-image img {
-          width: 100%;
-          max-height: 350px;
-          object-fit: cover;
-          border: none;
-          border-radius: 0;
-          box-shadow: none;
-          display: block;
-          margin: 0 auto;
-          padding: 0;
+          display: none !important;
         }
         
         .consulting-about-text {
@@ -1152,7 +1167,7 @@
         /* Remove ALL gap before about section - Exact 2px gap after LEARN MORE button */
         .consulting-about {
           padding-top: 0;
-          margin-top: -500px;
+          margin-top: -550px;
           position: relative;
           z-index: 1;
         }
@@ -1371,7 +1386,7 @@
       /* Desktop: Keep original spacing between hero and about */
       @media (min-width: 769px) {
         .consulting-hero {
-          padding-bottom: 20px;
+          padding-bottom: 0;
           margin-bottom: 0;
         }
         
@@ -1385,7 +1400,7 @@
         }
         
         .consulting-about {
-          padding-top: 10px;
+          padding-top: 0;
           margin-top: 0;
         }
       }
@@ -1430,7 +1445,7 @@
       /* About Section */
       .consulting-about {
         background: linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #ffffff 100%);
-        padding: 40px 0 80px 0;
+        padding: 10px 0 10px 0;
       }
       
       .consulting-about-content {
@@ -1446,7 +1461,7 @@
       .consulting-about h2 {
         font: bold 48px &#39;Arial&#39;, sans-serif;
         color: #000000;
-        margin: 0 0 15px 0;
+        margin: 0 0 5px 0;
         text-align: center;
         grid-column: 1 / -1;
       }
@@ -1470,6 +1485,7 @@
       
       .consulting-about-image img {
         max-width: 100%;
+        width: 100%;
         height: auto;
         max-height: 400px;
         object-fit: contain;
@@ -1478,6 +1494,8 @@
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         background: #ffd700;
         padding: 15px;
+        display: block;
+        box-sizing: border-box;
         animation: fadeIn 1.5s ease-in;
         opacity: 0;
         animation-fill-mode: forwards;
@@ -1528,14 +1546,14 @@
       /* Services Section */
       .consulting-services {
         background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
-        padding: 80px 0;
+        padding: 10px 0;
       }
       
       .consulting-services h2 {
         font: bold 48px &#39;Arial&#39;, sans-serif;
         color: #000000;
         text-align: center;
-        margin: 0 0 50px 0;
+        margin: 0 0 5px 0;
       }
       
       .services-grid {
@@ -2313,14 +2331,14 @@
       /* Contact Section */
       .consulting-contact {
         background: linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #ffffff 100%);
-        padding: 80px 0;
+        padding: 10px 0;
         text-align: center;
       }
       
       .consulting-contact h2 {
         font: bold 48px &#39;Arial&#39;, sans-serif;
         color: #000000;
-        margin: 0 0 15px 0;
+        margin: 0 0 5px 0;
       }
       
       .consulting-contact p {
@@ -3757,6 +3775,11 @@
           grid-template-columns: 1fr 1fr;
           gap: 20px;
         }
+        
+        .services-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 25px;
+        }
       }
       
       @media (max-width: 768px) {
@@ -3770,6 +3793,7 @@
           gap: 10px;
         }
         
+        /* Hero Section Mobile */
         .consulting-hero {
           min-height: 100vh;
           padding: 40px 0;
@@ -3778,56 +3802,230 @@
         }
         
         .consulting-hero-content {
-          padding: 0 20px;
+          padding: 0 15px;
           max-width: 100%;
+          width: 100%;
+          box-sizing: border-box;
         }
         
         .consulting-hero h1 {
-          font-size: 36px;
-          margin: 0 0 15px 0;
+          font-size: 32px;
+          margin: 0 0 12px 0;
           line-height: 1.2;
+          padding: 0 10px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
+        }
+        
+        .typing-container {
+          gap: 10px;
+          max-width: 100%;
+          padding: 0 10px;
+        }
+        
+        .tagline-text {
+          font-size: 18px;
+          min-height: 24px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
+        }
+        
+        .tagline-cursor {
+          height: 24px;
         }
         
         .consulting-hero .subtitle {
-          font-size: 18px;
-          margin: 0 0 20px 0;
+          font-size: 16px;
+          margin: 0 0 15px 0;
           line-height: 1.3;
+          padding: 0 10px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
         }
         
         .consulting-hero .slogan {
-          font-size: 24px;
+          font-size: 20px;
           margin: 0 0 15px 0;
           line-height: 1.2;
+          padding: 0 10px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
         }
         
         .cta-buttons {
-          flex-direction: column;
+          flex-direction: row;
           align-items: center;
-          gap: 12px;
-          max-width: 300px;
+          gap: 10px;
+          max-width: 100%;
+          justify-content: center;
         }
         
         .cta-button {
-          min-width: 180px;
-          padding: 10px 20px;
+          min-width: 140px;
+          padding: 12px 18px;
           font-size: 13px;
-          max-width: 250px;
+          max-width: 180px;
+          flex: 1;
         }
         
-        .issues-grid,
-        .updates-grid {
+        /* Services Section Mobile */
+        .consulting-services {
+          padding: 60px 0;
+        }
+        
+        .consulting-services h2 {
+          font-size: 36px;
+          margin-bottom: 30px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 15px;
+          max-width: 100%;
+        }
+        
+        .services-grid {
           grid-template-columns: 1fr;
+          gap: 25px;
+          padding: 0 15px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .service-card {
+          height: 320px;
+          min-height: 320px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+          overflow: hidden;
+        }
+        
+        .service-card h3 {
+          font-size: 22px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 10px;
+        }
+        
+        .service-card p {
+          font-size: 15px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 10px;
+        }
+        
+        /* About Section Mobile */
+        .consulting-about {
+          padding: 60px 0;
+        }
+        
+        .consulting-about h2 {
+          font-size: 36px;
+          margin-bottom: 30px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 15px;
+          max-width: 100%;
+        }
+        
+        .consulting-about-content {
+          grid-template-columns: 1fr;
+          gap: 30px;
+          padding: 0 15px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .consulting-about-text {
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .consulting-about-text h3 {
+          font-size: 22px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 10px;
+        }
+        
+        .consulting-about-text p {
+          font-size: 15px;
+          line-height: 1.7;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 10px;
+        }
+        
+        /* Contact Section Mobile */
+        .consulting-contact {
+          padding: 60px 0;
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+        
+        .consulting-contact h2 {
+          font-size: 36px;
+          margin-bottom: 20px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 15px;
+        }
+        
+        .consulting-contact &gt; p {
+          font-size: 15px;
+          padding: 0 15px;
+          margin-bottom: 30px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
         
         .contact-info {
           grid-template-columns: 1fr;
           gap: 20px;
+          padding: 0 15px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .contact-item {
+          padding: 25px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .contact-item h3 {
+          font-size: 22px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
+        
+        .contact-item p {
+          font-size: 15px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
         
         /* Blog Section Mobile Responsive */
+        .blog-section {
+          padding: 60px 0;
+        }
+        
         .blog-section h2 {
           font-size: 36px;
           margin-bottom: 30px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          padding: 0 15px;
+          max-width: 100%;
         }
         
         .blog-grid {
@@ -3836,75 +4034,232 @@
         }
         
         .blog-post-card {
-          margin-bottom: 30px;
+          margin-bottom: 20px;
         }
         
         .blog-featured-image {
-          height: 250px;
+          height: 220px;
         }
         
         .blog-post-content {
-          padding: 25px;
+          padding: 20px;
         }
         
         .blog-post-title {
-          font-size: 24px;
+          font-size: 22px;
+          margin-bottom: 15px;
         }
         
         .blog-post-meta {
-          flex-direction: column;
-          gap: 10px;
-          align-items: flex-start;
+          flex-direction: row;
+          gap: 15px;
+          align-items: center;
+          flex-wrap: wrap;
+          font-size: 13px;
+        }
+        
+        .blog-post-excerpt {
+          font-size: 15px;
+          margin-bottom: 12px;
         }
         
         .blog-post-tags {
           gap: 8px;
+          margin-bottom: 12px;
         }
         
         .blog-tag {
           font-size: 11px;
-          padding: 4px 10px;
+          padding: 5px 10px;
+        }
+        
+        .blog-read-more {
+          padding: 10px 20px;
+          font-size: 13px;
+        }
+        
+        /* Single Blog Post Mobile */
+        .single-blog-post {
+          padding: 30px 0;
+          margin: 0 10px;
+        }
+        
+        .single-post-image {
+          height: 250px;
+          margin-bottom: 30px;
+        }
+        
+        .single-post-title {
+          font-size: 32px;
+          margin-bottom: 30px;
+        }
+        
+        .single-post-meta {
+          flex-direction: row;
+          gap: 15px;
+          margin-bottom: 30px;
+          flex-wrap: wrap;
+        }
+        
+        .single-post-date,
+        .single-post-author {
+          padding: 10px 16px;
+          font-size: 14px;
+        }
+        
+        .single-post-content {
+          font-size: 17px;
+          padding: 30px 20px;
+        }
+        
+        .single-post-content h1,
+        .single-post-content h2,
+        .single-post-content h3 {
+          font-size: 24px;
+          margin: 30px 0 15px 0;
+        }
+        
+        .single-post-content p {
+          font-size: 16px;
+          margin-bottom: 18px;
+        }
+        
+        .back-to-blog,
+        .back-to-blog-nav {
+          padding: 12px 24px;
+          font-size: 14px;
+        }
+        
+        /* Pictures Section Mobile */
+        .pictures-section {
+          padding: 60px 0;
+        }
+        
+        .pictures-section h2 {
+          font-size: 36px;
+          margin-bottom: 30px;
+        }
+        
+        .pictures-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        
+        .picture-card {
+          margin-bottom: 10px;
+        }
+        
+        .picture-image {
+          height: 220px;
+        }
+        
+        .picture-content {
+          padding: 20px;
+        }
+        
+        .picture-title {
+          font-size: 18px;
+        }
+        
+        /* Videos Section Mobile */
+        .videos-section {
+          padding: 60px 0;
+        }
+        
+        .videos-container h2 {
+          font-size: 36px;
+          margin-bottom: 30px;
+        }
+        
+        .videos-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        
+        .video-embed {
+          height: 220px;
+        }
+        
+        .video-content {
+          padding: 20px;
+        }
+        
+        .video-title {
+          font-size: 17px;
         }
       }
       
-      @media (max-width: 480px) {
+        @media (max-width: 480px) {
+        /* Hero Section Small Mobile */
+        .consulting-hero h1 {
+          font-size: 28px;
+          margin: 0 0 10px 0;
+        }
+        
+        .tagline-text {
+          font-size: 16px;
+          min-height: 22px;
+        }
+        
+        .tagline-cursor {
+          height: 22px;
+        }
+        
+        .consulting-hero .subtitle {
+          font-size: 14px;
+          margin: 0 0 12px 0;
+        }
+        
+        .consulting-hero .slogan {
+          font-size: 18px;
+          margin: 0 0 12px 0;
+        }
+        
+        .cta-button {
+          min-width: 130px;
+          padding: 10px 16px;
+          font-size: 12px;
+          max-width: 160px;
+        }
+        
+        /* Social Icons - Small Mobile */
+        .social-icons-nav {
+          gap: 5px;
+        }
+        
+        .social-icon-nav {
+          width: 27px;
+          height: 27px;
+          border-radius: 50% !important;
+          min-width: 27px;
+          min-height: 27px;
+          max-width: 27px;
+          max-height: 27px;
+        }
+        
+        .social-icon-nav svg {
+          width: 13px;
+          height: 13px;
+        }
+        
+        /* About Section Small Mobile */
         .consulting-about {
-          padding: 0 0 35px 0;
-          margin-top: -500px;
-          padding-top: 0;
-          position: relative;
-          z-index: 1;
-        }
-        
-        .consulting-about-content {
-          margin-top: 0;
-          padding-top: 0;
-        }
-        
-        .consulting-about h2 {
-          margin-top: 2px;
-          padding-top: 0;
-        }
-        
-        .consulting-about-content {
-          padding: 0;
-          gap: 0;
+          padding: 50px 0 35px 0;
         }
         
         .consulting-about h2 {
           font-size: 28px;
-          margin: 0 0 10px 0;
+          margin: 0 0 25px 0;
           padding: 0 15px;
         }
         
-        .consulting-about-image {
-          width: 70%;
-          margin: 0 auto;
-          text-align: center;
+        .consulting-about-content {
+          padding: 0 10px;
+          gap: 0;
         }
         
-        .consulting-about-image img {
-          max-height: 280px;
+        .consulting-about-image {
+          display: none !important;
         }
         
         .consulting-about-text {
@@ -3917,18 +4272,112 @@
         }
         
         .consulting-about-text p {
-          font-size: 15px;
+          font-size: 14px;
           line-height: 1.7;
           margin: 0 0 16px 0;
           padding: 0;
         }
         
+        /* Services Section Small Mobile */
+        .consulting-services {
+          padding: 50px 0;
+        }
+        
+        .consulting-services h2 {
+          font-size: 28px;
+          margin-bottom: 25px;
+        }
+        
+        .services-grid {
+          padding: 0 10px;
+          gap: 20px;
+        }
+        
+        .service-card {
+          height: 300px;
+          min-height: 300px;
+        }
+        
+        .service-card h3 {
+          font-size: 20px;
+          margin-bottom: 12px;
+        }
+        
+        .service-card p {
+          font-size: 14px;
+        }
+        
+        /* Contact Section Small Mobile */
+        .consulting-contact {
+          padding: 50px 0;
+        }
+        
+        .consulting-contact h2 {
+          font-size: 28px;
+          margin-bottom: 15px;
+        }
+        
+        .consulting-contact &gt; p {
+          font-size: 14px;
+          padding: 0 10px;
+          margin-bottom: 25px;
+        }
+        
+        .contact-cards-container {
+          padding: 0 10px;
+          gap: 15px;
+        }
+        
+        .contact-info-card,
+        .contact-form-card {
+          padding: 25px 15px;
+        }
+        
+        .contact-info-card h3,
+        .contact-form-card h3 {
+          font-size: 22px;
+          margin-bottom: 20px;
+        }
+        
+        .contact-info-item h4 {
+          font-size: 16px;
+        }
+        
+        .contact-info-item p {
+          font-size: 14px;
+        }
+        
+        .form-group label {
+          font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+          font-size: 14px;
+          padding: 10px 12px;
+        }
+        
+        .send-email-btn {
+          font-size: 16px;
+          padding: 12px 25px;
+        }
+        
+        /* Blog Section Small Mobile */
         .blog-section {
-          padding: 60px 0;
+          padding: 50px 0;
         }
         
         .blog-section h2 {
           font-size: 28px;
+          margin-bottom: 25px;
+        }
+        
+        .blog-posts-container {
+          padding: 0 10px;
+        }
+        
+        .blog-grid {
+          gap: 15px;
         }
         
         .blog-featured-image {
@@ -3936,145 +4385,271 @@
         }
         
         .blog-post-content {
-          padding: 20px;
+          padding: 18px;
         }
         
         .blog-post-title {
           font-size: 20px;
+          margin-bottom: 12px;
+        }
+        
+        .blog-post-meta {
+          font-size: 12px;
+          gap: 12px;
         }
         
         .blog-post-excerpt {
           font-size: 14px;
+          margin-bottom: 10px;
+        }
+        
+        .blog-tag {
+          font-size: 10px;
+          padding: 4px 8px;
         }
         
         .blog-read-more {
-          padding: 10px 20px;
+          padding: 8px 16px;
           font-size: 12px;
         }
         
-        
-        /* Individual Blog Post Mobile */
+        /* Individual Blog Post Small Mobile */
         .single-blog-post {
           padding: 20px 0;
+          margin: 0 5px;
         }
         
         .single-post-image {
-          height: 250px;
+          height: 220px;
+          margin-bottom: 25px;
         }
         
         .single-post-title {
-          font-size: 28px;
-        }
-        
-        .single-post-content {
-          font-size: 16px;
+          font-size: 26px;
+          margin-bottom: 25px;
         }
         
         .single-post-meta {
           flex-direction: column;
           gap: 10px;
-        }
-      }
-      
-      @media (max-width: 480px) {
-        /* iPhone and Small Mobile Optimization */
-        .consulting-hero {
-          min-height: 100vh;
-          padding: 30px 0;
-          background-size: cover;
-          background-position: center center;
+          margin-bottom: 25px;
         }
         
-        .consulting-hero-content {
-          padding: 0 15px;
-        }
-        
-        .consulting-hero h1 {
-          font-size: 28px;
-          margin: 0 0 10px 0;
-          line-height: 1.1;
-        }
-        
-        .consulting-hero .subtitle {
-          font-size: 16px;
-          margin: 0 0 15px 0;
-          line-height: 1.2;
-        }
-        
-        .consulting-hero .slogan {
-          font-size: 20px;
-          margin: 0 0 15px 0;
-          line-height: 1.1;
-        }
-        
-        .cta-buttons {
-          gap: 10px;
-          max-width: 280px;
-        }
-        
-        .cta-button {
-          min-width: 160px;
-          padding: 12px 20px;
+        .single-post-date,
+        .single-post-author {
+          padding: 8px 14px;
           font-size: 13px;
-          max-width: 250px;
-        }
-        
-        /* Individual Blog Post Small Mobile */
-        .single-blog-post {
-          padding: 15px 0;
-        }
-        
-        .single-post-image {
-          height: 200px;
-        }
-        
-        .single-post-title {
-          font-size: 24px;
         }
         
         .single-post-content {
+          font-size: 16px;
+          padding: 25px 15px;
+        }
+        
+        .single-post-content h1,
+        .single-post-content h2,
+        .single-post-content h3 {
+          font-size: 22px;
+          margin: 25px 0 12px 0;
+          padding: 12px 15px;
+        }
+        
+        .single-post-content p {
+          font-size: 15px;
+          margin-bottom: 16px;
+        }
+        
+        .single-post-content blockquote {
+          padding: 20px;
+          font-size: 16px;
+        }
+        
+        .back-to-blog,
+        .back-to-blog-nav {
+          padding: 10px 20px;
+          font-size: 13px;
+        }
+        
+        /* Pictures Section Small Mobile */
+        .pictures-section {
+          padding: 50px 0;
+        }
+        
+        .pictures-container {
+          padding: 0 10px;
+        }
+        
+        .pictures-section h2 {
+          font-size: 28px;
+          margin-bottom: 25px;
+        }
+        
+        .pictures-grid {
+          gap: 15px;
+        }
+        
+        .picture-image {
+          height: 200px;
+        }
+        
+        .picture-content {
+          padding: 18px;
+        }
+        
+        .picture-title {
+          font-size: 17px;
+          margin-bottom: 12px;
+        }
+        
+        .picture-description {
+          font-size: 13px;
+        }
+        
+        /* Videos Section Small Mobile */
+        .videos-section {
+          padding: 50px 0;
+        }
+        
+        .videos-container {
+          padding: 0 10px;
+        }
+        
+        .videos-container h2 {
+          font-size: 28px;
+          margin-bottom: 25px;
+        }
+        
+        .videos-grid {
+          gap: 15px;
+        }
+        
+        .video-embed {
+          height: 200px;
+        }
+        
+        .video-content {
+          padding: 18px;
+        }
+        
+        .video-title {
+          font-size: 16px;
+          margin-bottom: 12px;
+        }
+        
+        .video-description {
+          font-size: 13px;
+        }
+        
+        /* Service Detail Small Mobile */
+        .service-detail-section {
+          padding: 15px 5px;
+        }
+        
+        .service-detail-container {
+          margin: 5px auto 15px auto;
+        }
+        
+        .service-detail-header {
+          padding: 25px 15px 18px 15px;
+        }
+        
+        .service-detail-title {
+          font-size: 24px;
+          margin: 0 0 10px 0;
+        }
+        
+        .service-detail-subtitle {
+          font-size: 15px;
+        }
+        
+        .service-detail-content {
+          padding: 25px 15px 35px 15px;
+        }
+        
+        .service-detail-content p {
+          font-size: 14px;
+          margin: 0 0 18px 0;
+        }
+        
+        .service-detail-heading {
+          font-size: 20px;
+          margin: 30px 0 12px 0;
+        }
+        
+        .service-detail-list li {
+          padding: 8px 0 8px 32px;
           font-size: 14px;
         }
         
-        .back-to-blog {
-          padding: 10px 20px;
+        .service-contact-btn {
+          padding: 12px 35px;
+          font-size: 15px;
+        }
+        
+        /* Quote Modal Small Mobile */
+        .quote-modal-content {
+          padding: 20px 12px;
+        }
+        
+        .quote-modal-content h2 {
+          font-size: 22px;
+          margin-bottom: 8px;
+        }
+        
+        .quote-modal-content &gt; p {
           font-size: 14px;
+          margin-bottom: 20px;
+        }
+        
+        /* Floating Button Small Mobile */
+        .floating-donation-btn {
+          bottom: 12px;
+          right: 12px;
+          padding: 6px 12px;
+          font-size: 10px;
+        }
+        
+        .floating-donation-btn::before {
+          font-size: 18px;
+        }
+      }
+      
+      /* Additional mobile improvements for better touch targets and readability */
+      @media (max-width: 768px) {
+        /* Improve touch targets */
+        a, button {
+          min-height: 44px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        /* Better spacing for mobile */
+        section {
+          scroll-margin-top: 80px;
+        }
+        
+        /* Improve readability */
+        body {
+          -webkit-text-size-adjust: 100%;
+          text-size-adjust: 100%;
+        }
+        
+        /* Better image loading */
+        img {
+          max-width: 100%;
+          height: auto;
         }
       }
       
       /* iPhone Specific Optimizations */
       @media (max-width: 414px) {
-        .consulting-hero {
-          padding: 25px 0;
-        }
-        
         .consulting-hero h1 {
-          font-size: 24px;
+          font-size: 26px;
         }
         
-        .consulting-hero .subtitle {
-          font-size: 14px;
-        }
-        
-        .consulting-hero .slogan {
-          font-size: 18px;
-        }
-        
-        .cta-button {
-          min-width: 140px;
-          padding: 10px 16px;
-          font-size: 12px;
-        }
-      }
-      
-      /* iPhone SE and Very Small Screens */
-      @media (max-width: 375px) {
-        .consulting-hero {
-          padding: 20px 0;
-        }
-        
-        .consulting-hero h1 {
-          font-size: 22px;
+        .tagline-text {
+          font-size: 15px;
         }
         
         .consulting-hero .subtitle {
@@ -4082,48 +4657,96 @@
         }
         
         .consulting-hero .slogan {
+          font-size: 17px;
+        }
+        
+        .cta-button {
+          min-width: 125px;
+          padding: 10px 14px;
+          font-size: 12px;
+        }
+        
+        .consulting-services h2,
+        .consulting-about h2,
+        .consulting-contact h2,
+        .blog-section h2 {
+          font-size: 26px;
+        }
+        
+        .nav-logo img {
+          height: 40px;
+        }
+        
+        /* Social Icons - 414px */
+        .social-icons-nav {
+          gap: 5px;
+        }
+        
+        .social-icon-nav {
+          width: 27px;
+          height: 27px;
+          border-radius: 50% !important;
+          min-width: 27px;
+          min-height: 27px;
+          max-width: 27px;
+          max-height: 27px;
+        }
+        
+        .social-icon-nav svg {
+          width: 13px;
+          height: 13px;
+        }
+      }
+      
+      /* iPhone SE and Very Small Screens */
+      @media (max-width: 375px) {
+        .consulting-hero h1 {
+          font-size: 24px;
+        }
+        
+        .tagline-text {
+          font-size: 14px;
+          min-height: 20px;
+        }
+        
+        .tagline-cursor {
+          height: 20px;
+          width: 3px;
+        }
+        
+        .consulting-hero .subtitle {
+          font-size: 12px;
+        }
+        
+        .consulting-hero .slogan {
           font-size: 16px;
         }
         
         .cta-button {
-          min-width: 120px;
-          padding: 8px 14px;
+          min-width: 115px;
+          padding: 9px 12px;
           font-size: 11px;
         }
         
         .nav-menu {
           width: 90%;
           max-width: 280px;
+          padding-top: 60px;
         }
         
         .nav-menu a {
-          padding: 16px 18px;
-          font-size: 15px;
+          padding: 14px 16px;
+          font-size: 14px;
         }
         
         .consulting-about {
-          padding: 30px 0;
-        }
-        
-        .consulting-about-content {
-          padding: 0;
-          gap: 0;
+          padding: 40px 0 30px 0;
         }
         
         .consulting-about h2 {
           font-size: 24px;
-          margin: 0 0 10px 0;
+          margin: 0 0 20px 0;
           padding: 0 12px;
-        }
-        
-        .consulting-about-image {
-          width: 70%;
-          margin: 0 auto;
-          text-align: center;
-        }
-        
-        .consulting-about-image img {
-          max-height: 240px;
         }
         
         .consulting-about-text {
@@ -4136,9 +4759,50 @@
         }
         
         .consulting-about-text p {
-          font-size: 14px;
+          font-size: 13px;
           line-height: 1.6;
           margin: 0 0 14px 0;
+        }
+        
+        .consulting-services h2,
+        .consulting-contact h2,
+        .blog-section h2 {
+          font-size: 24px;
+        }
+        
+        .service-card h3 {
+          font-size: 18px;
+        }
+        
+        .service-card p {
+          font-size: 13px;
+        }
+        
+        .blog-post-title {
+          font-size: 18px;
+        }
+        
+        .blog-post-excerpt {
+          font-size: 13px;
+        }
+        
+        .nav-logo img {
+          height: 35px;
+        }
+        
+        .social-icon-nav {
+          width: 26px;
+          height: 26px;
+          border-radius: 50% !important;
+          min-width: 26px;
+          min-height: 26px;
+          max-width: 26px;
+          max-height: 26px;
+        }
+        
+        .social-icon-nav svg {
+          width: 13px;
+          height: 13px;
         }
       }
       
@@ -4488,7 +5152,7 @@
             <p>Our commitment to excellence and client satisfaction has made us a trusted partner for engineering projects worldwide.</p>
           </div>
           <div class='consulting-about-image'>
-            <img alt='AR Consulting Engineers - Professional Engineering Services' src='https://raw.githubusercontent.com/AbdullahWali79/consultancy_images/main/Construction%20Site.png'/>
+            <img alt='AR Consulting Engineers - Professional Engineering Services' src='https://raw.githubusercontent.com/AbdullahWali79/consultancy_images/main/third.webp'/>
           </div>
         </div>
       </section>
