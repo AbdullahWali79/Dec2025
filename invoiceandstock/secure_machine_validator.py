@@ -19,6 +19,8 @@ class SecureMachineValidator:
             "AC090693E5",        # MacBook Client (ac:c9:06:09:93:e5)
             "75B43D8506B99408",  # Previous machine
             "1E9C2B92CB321EAB",  # Current machine (Added: 2025-11-25)
+            "9E8881164E0D2B49",  # Client PC (MAC: A4-1F-72-97-7F-16) (Added: 2025-11-25)
+            "13E87125F001149A",  # Client PC - Actual Machine ID (Added: 2025-12-01)
             # Add more machine IDs here as needed
             # "MACHINE_ID_3",
             # "MACHINE_ID_4",
@@ -115,8 +117,12 @@ def validate_machine_access():
                 print("Please contact the administrator to add this machine.")
                 print("=" * 60)
                 # Only use input if stdin is available (console mode)
-                if sys.stdin and sys.stdin.isatty():
-                    input("Press Enter to exit...")
+                try:
+                    if sys.stdin and sys.stdin.isatty() and hasattr(sys.stdin, 'isatty'):
+                        input("Press Enter to exit...")
+                except (RuntimeError, AttributeError, OSError):
+                    # stdin not available (windowed mode), just exit
+                    pass
             except:
                 # If all else fails, just exit silently
                 pass

@@ -1320,6 +1320,62 @@ class PharmacyInvoiceApp:
                                    f"File: {os.path.abspath(pdf_filename)}\n"
                                    f"Error: {str(e)}")
     
+    def check_thermal_printer(self):
+        """Check if thermal printer is available/connected"""
+        try:
+            import win32print
+            import win32api
+            
+            # Get list of installed printers
+            printers = win32print.EnumPrinters(win32print.PRINTER_ENUM_LOCAL | win32print.PRINTER_ENUM_CONNECTIONS)
+            
+            if not printers:
+                return False, "No printers found"
+            
+            # Check for thermal printers (common thermal printer names/keywords)
+            thermal_keywords = ['thermal', 'receipt', 'pos', 'epson', 'star', 'bixolon', 'citizen', 'zebra', 'tm-', 'tm ', 'tsp', 'rp80', 'rp-', 'xprinter']
+            thermal_printers = []
+            all_printers = []
+            
+            for printer in printers:
+                printer_name = printer[2]
+                all_printers.append(printer_name)
+                printer_name_lower = printer_name.lower()
+                for keyword in thermal_keywords:
+                    if keyword in printer_name_lower:
+                        thermal_printers.append(printer_name)
+                        break
+            
+            if thermal_printers:
+                return True, thermal_printers[0]  # Return first thermal printer found
+            
+            # If no thermal printer found, check default printer
+            try:
+                default_printer = win32print.GetDefaultPrinter()
+                return True, default_printer
+            except:
+                if all_printers:
+                    return True, all_printers[0]  # Return first available printer
+                return False, "No printers available"
+                
+        except ImportError:
+            # win32print not available, try alternative method
+            try:
+                import subprocess
+                # Use wmic to check printers
+                result = subprocess.run(['wmic', 'printer', 'get', 'name'], 
+                                      capture_output=True, text=True, timeout=5)
+                if result.returncode == 0 and 'Name' in result.stdout:
+                    printers = [line.strip() for line in result.stdout.split('\n') 
+                              if line.strip() and line.strip() != 'Name']
+                    if printers:
+                        return True, printers[0]
+                return False, "No printers detected"
+            except:
+                return None, "Cannot check printer status"
+        except Exception as e:
+            return None, f"Error checking printer: {str(e)}"
+    
     def thermal_print(self, event=None):
         """Print thermal receipt directly to printer"""
         customer = self.customer_var.get().strip()
@@ -1336,16 +1392,50 @@ class PharmacyInvoiceApp:
             messagebox.showwarning("Warning", "No items in invoice!")
             return
         
+        # Check if thermal printer is available
+        printer_status, printer_info = self.check_thermal_printer()
+        
+        if printer_status is False:
+            response = messagebox.askyesno(
+                "No Printer Found", 
+                f"❌ No printer detected.\n\n"
+                f"Please connect a thermal printer and try again.\n\n"
+                f"Continue anyway?"
+            )
+            if not response:
+                return
+            printer_info = "Default Printer"
+        elif printer_status is None:
+            # Cannot check, ask user
+            response = messagebox.askyesno(
+                "Printer Check", 
+                f"⚠️ Could not verify printer connection.\n\n"
+                f"Printer Info: {printer_info}\n\n"
+                f"Continue with print?"
+            )
+            if not response:
+                return
+            printer_info = "Default Printer"
+        else:
+            # Printer found, show info
+            response = messagebox.askyesno(
+                "Print Receipt", 
+                f"✅ Printer detected: {printer_info}\n\n"
+                f"Print thermal receipt to this printer?"
+            )
+            if not response:
+                return
+        
         try:
             # Create thermal receipt content
-            receipt_content = self.create_thermal_receipt(customer)
+            receipt_content = self.create_thermal_receipt(customer, customer_phone)
             
-            # Show print dialog
-            if messagebox.askyesno("Print Receipt", "Print thermal receipt to default printer?"):
-                self.print_thermal_receipt(receipt_content)
-                
-                # Clear invoice after successful print
-                self.clear_invoice()
+            # Print the receipt
+            self.print_thermal_receipt(receipt_content, printer_info if printer_status else None)
+            
+            # Clear invoice after successful print
+            self.clear_invoice()
+            messagebox.showinfo("Success", f"✅ Receipt printed successfully!\n\nPrinter: {printer_info}")
                 
         except Exception as e:
             messagebox.showerror("Print Error", f"Failed to print: {str(e)}")
@@ -1484,23 +1574,64 @@ class PharmacyInvoiceApp:
         
         return "\n".join(receipt)
     
-    def print_thermal_receipt(self, receipt_content):
-        """Print thermal receipt to default printer"""
+    def print_thermal_receipt(self, receipt_content, printer_name=None):
+        """Print thermal receipt to specified or default printer"""
         try:
             # Create temporary file
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as temp_file:
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False, encoding='utf-8') as temp_file:
                 temp_file.write(receipt_content)
                 temp_file_path = temp_file.name
             
             # Print using Windows print command
             if os.name == 'nt':  # Windows
-                subprocess.run(['notepad', '/p', temp_file_path], check=True)
+                try:
+                    # Try using win32print for direct printing (if available)
+                    import win32print
+                    import win32api
+                    
+                    if printer_name:
+                        # Use specified printer
+                        printer_handle = win32print.OpenPrinter(printer_name)
+                    else:
+                        # Use default printer
+                        printer_name = win32print.GetDefaultPrinter()
+                        printer_handle = win32print.OpenPrinter(printer_name)
+                    
+                    try:
+                        # Start print job
+                        job_info = ("Pharmacy Receipt", None, "RAW")
+                        job_id = win32print.StartDocPrinter(printer_handle, 1, job_info)
+                        win32print.StartPagePrinter(printer_handle)
+                        
+                        # Write receipt content
+                        win32print.WritePrinter(printer_handle, receipt_content.encode('utf-8'))
+                        
+                        # End print job
+                        win32print.EndPagePrinter(printer_handle)
+                        win32print.EndDocPrinter(printer_handle)
+                    finally:
+                        win32print.ClosePrinter(printer_handle)
+                    
+                except ImportError:
+                    # win32print not available, use notepad method
+                    subprocess.run(['notepad', '/p', temp_file_path], check=True, timeout=10)
+                except Exception as e:
+                    # Fallback to notepad if direct print fails
+                    subprocess.run(['notepad', '/p', temp_file_path], check=True, timeout=10)
             else:  # Linux/Mac
-                subprocess.run(['lp', temp_file_path], check=True)
+                if printer_name:
+                    subprocess.run(['lp', '-d', printer_name, temp_file_path], check=True, timeout=10)
+                else:
+                    subprocess.run(['lp', temp_file_path], check=True, timeout=10)
             
             # Clean up
-            os.unlink(temp_file_path)
+            try:
+                os.unlink(temp_file_path)
+            except:
+                pass  # Ignore cleanup errors
             
+        except subprocess.TimeoutExpired:
+            raise Exception("Print timeout - Printer may not be responding")
         except Exception as e:
             raise Exception(f"Print failed: {str(e)}")
     
