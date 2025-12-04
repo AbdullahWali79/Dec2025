@@ -28,6 +28,9 @@ class PharmacyInvoiceApp:
             # Fallback for systems that don't support zoomed
             self.root.geometry("1200x800")
         
+        # Set minimum window size to prevent overlap
+        self.root.minsize(1000, 700)
+        
         # Store base font sizes for responsive scaling
         self.base_font_sizes = {
             'title': 24,
@@ -41,6 +44,10 @@ class PharmacyInvoiceApp:
         # Base window size for scaling (1200x800)
         self.base_width = 1200
         self.base_height = 800
+        
+        # Store widget references for responsive updates
+        self.button_frame = None
+        self.invoice_tree = None
         
         # Store references to widgets that need resizing
         self.resizable_widgets = []
@@ -271,7 +278,9 @@ class PharmacyInvoiceApp:
         right_panel = tk.Frame(main_container, bg='#1e293b', relief='flat', bd=0)
         right_panel.grid(row=1, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(10, 20), pady=(0, 20))
         right_panel.grid_columnconfigure(0, weight=1)
-        right_panel.grid_rowconfigure(1, weight=1)
+        # Configure rows: invoice_frame gets more space, but customer_frame has minimum space
+        right_panel.grid_rowconfigure(0, weight=2, minsize=200)  # Invoice frame - flexible
+        right_panel.grid_rowconfigure(1, weight=1, minsize=350)  # Customer frame - ensure enough space for buttons
         
         # Add shadow effect for right panel
         right_shadow_frame = tk.Frame(main_container, bg='#334155', height=2)
@@ -294,18 +303,27 @@ class PharmacyInvoiceApp:
         self.invoice_tree = ttk.Treeview(invoice_frame, columns=columns, show='headings', height=10,
                                         style='Modern.Treeview')
         
-        # Configure columns
+        # Configure columns with minimum widths
         self.invoice_tree.heading('Medicine', text='Medicine Name')
         self.invoice_tree.heading('MG', text='MG')
         self.invoice_tree.heading('Qty', text='Quantity')
         self.invoice_tree.heading('Price', text='Price')
         self.invoice_tree.heading('Total', text='Total')
         
-        self.invoice_tree.column('Medicine', width=180, anchor='w')
-        self.invoice_tree.column('MG', width=80, anchor='center')
-        self.invoice_tree.column('Qty', width=70, anchor='center')
-        self.invoice_tree.column('Price', width=90, anchor='e')
-        self.invoice_tree.column('Total', width=90, anchor='e')
+        # Base column widths (will be adjusted on resize)
+        self.base_column_widths = {
+            'Medicine': 180,
+            'MG': 80,
+            'Qty': 70,
+            'Price': 90,
+            'Total': 90
+        }
+        
+        self.invoice_tree.column('Medicine', width=180, anchor='w', minwidth=120)
+        self.invoice_tree.column('MG', width=80, anchor='center', minwidth=50)
+        self.invoice_tree.column('Qty', width=70, anchor='center', minwidth=50)
+        self.invoice_tree.column('Price', width=90, anchor='e', minwidth=70)
+        self.invoice_tree.column('Total', width=90, anchor='e', minwidth=70)
         
         self.invoice_tree.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=15, pady=(0, 15))
         self.invoice_tree.bind('<Delete>', self.delete_selected_item)
@@ -315,6 +333,7 @@ class PharmacyInvoiceApp:
         self.invoice_tree.bind('<BackSpace>', self.delete_selected_item)
         self.invoice_tree.bind('<Double-1>', lambda e: self.edit_selected_item())  # Double-click to edit
         self.invoice_tree.bind('<Button-3>', self.show_context_menu)  # Right-click context menu
+        self.invoice_tree.bind('<Tab>', self.focus_customer_from_tree)  # Tab from tree to customer
         
         # Scrollbar for treeview with modern styling
         scrollbar = ttk.Scrollbar(invoice_frame, orient="vertical", command=self.invoice_tree.yview,
@@ -324,14 +343,20 @@ class PharmacyInvoiceApp:
         
         # Total and Customer Section with modern gradient styling
         total_customer_frame = tk.Frame(right_panel, bg='#334155', relief='flat', bd=1)
-        total_customer_frame.grid(row=1, column=0, sticky=(tk.W, tk.E), padx=20, pady=(0, 20))
+        total_customer_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=20, pady=(0, 20))
         total_customer_frame.grid_columnconfigure(1, weight=1)
+        # Ensure button frame row can expand
+        total_customer_frame.grid_rowconfigure(5, weight=0, minsize=150)  # Button frame row
+        # Ensure row 0 has minimum height for header
+        total_customer_frame.grid_rowconfigure(0, weight=0, minsize=40)
         
         # Customer & Total header
         customer_header = tk.Label(total_customer_frame, text="💳 Customer & Total", 
-                                  font=('Segoe UI', 14, 'bold'), 
-                                  fg='#f8fafc', bg='#334155')
-        customer_header.grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(15, 10), padx=15)
+                                  font=('Segoe UI', 16, 'bold'), 
+                                  fg='#ffffff', bg='#334155',
+                                  anchor='w', justify='left',
+                                  padx=0, pady=5)
+        customer_header.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(20, 10), padx=15)
         
         # Total display with modern gradient styling
         self.total_var = tk.StringVar(value="Total: ₨0.00")
@@ -387,83 +412,103 @@ class PharmacyInvoiceApp:
         self.discount_entry.grid(row=4, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 15))
         self.discount_entry.bind('<Return>', self.generate_receipt)
         self.discount_entry.bind('<KeyRelease>', self.update_total)
-        self.discount_entry.bind('<Tab>', self.focus_generate)
+        self.discount_entry.bind('<Tab>', self.focus_generate_from_discount)
         
-        # Action buttons with modern gradient styling
-        button_frame = tk.Frame(total_customer_frame, bg='#334155')
-        button_frame.grid(row=5, column=0, columnspan=2, pady=15, padx=15)
+        # Action buttons with modern gradient styling - fully responsive grid layout
+        self.button_frame = tk.Frame(total_customer_frame, bg='#334155')
+        self.button_frame.grid(row=5, column=0, columnspan=2, pady=15, padx=15, sticky=(tk.W, tk.E))
+        # Configure grid columns - will adjust based on screen size
+        # Start with 2 columns for better wrapping on small screens
+        for i in range(2):
+            self.button_frame.grid_columnconfigure(i, weight=1, uniform='btn', minsize=100)
+        
+        # Store button configurations for dynamic layout
+        self.button_configs = []
         
         # Generate PDF button with modern gradient
-        self.generate_button = tk.Button(button_frame, text="📄 Generate PDF (F3)", 
+        self.generate_button = tk.Button(self.button_frame, text="📄 Generate PDF (F3)", 
                                         command=self.generate_receipt,
                                         font=('Segoe UI', 10, 'bold'),
                                         bg='#3b82f6', fg='white',
                                         relief='flat', bd=0,
-                                        padx=15, pady=8,
+                                        padx=10, pady=6,
                                         cursor='hand2',
                                         activebackground='#2563eb',
-                                        activeforeground='white')
-        self.generate_button.grid(row=0, column=0, padx=(0, 5))
+                                        activeforeground='white',
+                                        wraplength=120)
+        self.button_configs.append(('generate', self.generate_button, 0, 0))
+        self.generate_button.grid(row=0, column=0, padx=2, pady=2, sticky=(tk.W, tk.E))
+        self.generate_button.bind('<Tab>', self.focus_search_from_generate)  # Tab cycles back to search
         
         # Thermal Print button
-        self.thermal_button = tk.Button(button_frame, text="🖨️ Thermal Print (F5)", 
+        self.thermal_button = tk.Button(self.button_frame, text="🖨️ Thermal Print (F5)", 
                                        command=self.thermal_print,
                                        font=('Segoe UI', 10, 'bold'),
                                        bg='#10b981', fg='white',
                                        relief='flat', bd=0,
-                                       padx=15, pady=8,
+                                       padx=10, pady=6,
                                        cursor='hand2',
                                        activebackground='#059669',
-                                       activeforeground='white')
-        self.thermal_button.grid(row=0, column=1, padx=(0, 5))
+                                       activeforeground='white',
+                                       wraplength=120)
+        self.button_configs.append(('thermal', self.thermal_button, 0, 1))
+        self.thermal_button.grid(row=0, column=1, padx=2, pady=2, sticky=(tk.W, tk.E))
         
         # Preview button
-        self.preview_button = tk.Button(button_frame, text="👁️ Preview (F6)", 
+        self.preview_button = tk.Button(self.button_frame, text="👁️ Preview (F6)", 
                                        command=self.preview_receipt,
                                        font=('Segoe UI', 10, 'bold'),
                                        bg='#06b6d4', fg='white',
                                        relief='flat', bd=0,
-                                       padx=15, pady=8,
+                                       padx=10, pady=6,
                                        cursor='hand2',
                                        activebackground='#0891b2',
-                                       activeforeground='white')
-        self.preview_button.grid(row=0, column=2, padx=(0, 5))
+                                       activeforeground='white',
+                                       wraplength=120)
+        self.button_configs.append(('preview', self.preview_button, 1, 0))
+        self.preview_button.grid(row=1, column=0, padx=2, pady=2, sticky=(tk.W, tk.E))
         
         # WhatsApp Share button
-        self.whatsapp_button = tk.Button(button_frame, text="📱 WhatsApp Share", 
+        self.whatsapp_button = tk.Button(self.button_frame, text="📱 WhatsApp Share", 
                                          command=self.share_whatsapp_direct,
                                          font=('Segoe UI', 10, 'bold'),
                                          bg='#25D366', fg='white',
                                          relief='flat', bd=0,
-                                         padx=15, pady=8,
+                                         padx=10, pady=6,
                                          cursor='hand2',
                                          activebackground='#128C7E',
-                                         activeforeground='white')
-        self.whatsapp_button.grid(row=0, column=3, padx=(0, 5))
+                                         activeforeground='white',
+                                         wraplength=120)
+        self.button_configs.append(('whatsapp', self.whatsapp_button, 1, 1))
+        self.whatsapp_button.grid(row=1, column=1, padx=2, pady=2, sticky=(tk.W, tk.E))
         
         # Clear button
-        self.clear_button = tk.Button(button_frame, text="🗑️ Clear (F4)", 
+        self.clear_button = tk.Button(self.button_frame, text="🗑️ Clear (F4)", 
                                      command=self.clear_invoice,
                                      font=('Segoe UI', 10, 'bold'),
                                      bg='#ef4444', fg='white',
                                      relief='flat', bd=0,
-                                     padx=15, pady=8,
+                                     padx=10, pady=6,
                                      cursor='hand2',
                                      activebackground='#dc2626',
-                                     activeforeground='white')
-        self.clear_button.grid(row=0, column=4, padx=(0, 5))
+                                     activeforeground='white',
+                                     wraplength=120)
+        self.button_configs.append(('clear', self.clear_button, 2, 0))
+        self.clear_button.grid(row=2, column=0, padx=2, pady=2, sticky=(tk.W, tk.E))
         
         # Export Client Data button
-        self.export_button = tk.Button(button_frame, text="📊 Export Clients (F7)", 
+        self.export_button = tk.Button(self.button_frame, text="📊 Export Clients (F7)", 
                                      command=self.export_client_data,
                                      font=('Segoe UI', 10, 'bold'),
                                      bg='#8b5cf6', fg='white',
                                      relief='flat', bd=0,
-                                     padx=15, pady=8,
+                                     padx=10, pady=6,
                                      cursor='hand2',
                                      activebackground='#7c3aed',
-                                     activeforeground='white')
-        self.export_button.grid(row=0, column=5)
+                                     activeforeground='white',
+                                     wraplength=120)
+        self.button_configs.append(('export', self.export_button, 2, 1))
+        self.export_button.grid(row=2, column=1, padx=2, pady=2, sticky=(tk.W, tk.E))
         
         # Global keyboard shortcuts
         self.root.bind('<F1>', lambda e: self.add_to_invoice())
@@ -486,6 +531,9 @@ class PharmacyInvoiceApp:
         # Bind total update
         self.update_total()
         
+        # Set up Tab navigation flow
+        self.setup_tab_navigation()
+        
         # Now enable responsive resizing
         self.setup_responsive = True
         self.root.bind('<Configure>', self.on_window_resize)
@@ -494,6 +542,9 @@ class PharmacyInvoiceApp:
         
         # Initial resize to set proper sizes
         self.root.after(100, self.update_responsive_ui)
+        
+        # Set initial focus to Search Medicine field
+        self.root.after(200, lambda: self.search_entry.focus_set())
     
     def setup_styles(self):
         """Setup modern styling for the application"""
@@ -1647,6 +1698,27 @@ class PharmacyInvoiceApp:
         self.generate_button.focus_set()
         return "break"
     
+    def focus_generate_from_discount(self, event):
+        """Focus on Generate button from discount field"""
+        self.generate_button.focus_set()
+        return "break"
+    
+    def focus_customer_from_tree(self, event):
+        """Focus on Customer Name field from invoice tree"""
+        self.customer_entry.focus_set()
+        return "break"
+    
+    def focus_search_from_generate(self, event):
+        """Cycle back to Search Medicine field from Generate button"""
+        self.search_entry.focus_set()
+        return "break"
+    
+    def setup_tab_navigation(self):
+        """Setup complete Tab navigation flow"""
+        # Tab order is already set up via bindings:
+        # Search -> Quantity -> Add Invoice -> Invoice Tree -> Customer -> Phone -> Discount -> Generate -> (cycle back to Search)
+        pass
+    
     def focus_invoice_tree(self, event):
         """Focus on invoice tree and select first item if available"""
         self.invoice_tree.focus_set()
@@ -2222,25 +2294,33 @@ class PharmacyInvoiceApp:
             pass
     
     def update_responsive_ui(self):
-        """Update UI elements based on current window size"""
+        """Update UI elements based on current window size - prevents overlap"""
         try:
             scale = self.calculate_scale_factor()
+            current_width = self.root.winfo_width()
+            current_height = self.root.winfo_height()
+            
+            # Ensure minimum sizes
+            if current_width < 1000:
+                current_width = 1000
+            if current_height < 700:
+                current_height = 700
             
             # Update title font
             if hasattr(self, 'title_label'):
-                new_size = int(self.base_font_sizes['title'] * scale)
+                new_size = max(18, int(self.base_font_sizes['title'] * scale))
                 self.title_label.config(font=('Segoe UI', new_size, 'bold'))
             
-            # Update all buttons
+            # Update all buttons with proper scaling
             buttons = [
                 self.generate_button, self.thermal_button, self.preview_button,
                 self.whatsapp_button, self.clear_button, self.export_button,
                 self.add_button, self.stock_button
             ]
             
-            button_font_size = int(self.base_font_sizes['button'] * scale)
-            button_padx = int(15 * scale)
-            button_pady = int(8 * scale)
+            button_font_size = max(8, int(self.base_font_sizes['button'] * scale))
+            button_padx = max(8, int(15 * scale))
+            button_pady = max(5, int(8 * scale))
             
             for button in buttons:
                 if button:
@@ -2251,10 +2331,10 @@ class PharmacyInvoiceApp:
                     )
             
             # Update headers
-            header_size = int(self.base_font_sizes['header'] * scale)
-            body_size = int(self.base_font_sizes['body'] * scale)
-            small_size = int(self.base_font_sizes['small'] * scale)
-            total_size = int(self.base_font_sizes['total'] * scale)
+            header_size = max(10, int(self.base_font_sizes['header'] * scale))
+            body_size = max(9, int(self.base_font_sizes['body'] * scale))
+            small_size = max(8, int(self.base_font_sizes['small'] * scale))
+            total_size = max(12, int(self.base_font_sizes['total'] * scale))
             
             # Update entry fields
             entries = [
@@ -2269,11 +2349,102 @@ class PharmacyInvoiceApp:
             # Update listbox
             if hasattr(self, 'suggestions_listbox'):
                 self.suggestions_listbox.config(font=('Segoe UI', small_size))
+                # Adjust listbox height based on scale
+                listbox_height = max(3, int(5 * scale))
+                self.suggestions_listbox.config(height=listbox_height)
             
-            # Update treeview font (via style)
+            # Update treeview font and column widths (via style)
             style = ttk.Style()
             style.configure('Modern.Treeview', font=('Segoe UI', body_size))
             style.configure('Modern.Treeview.Heading', font=('Segoe UI', body_size, 'bold'))
+            
+            # Adjust treeview column widths based on available space
+            if hasattr(self, 'invoice_tree') and self.invoice_tree:
+                try:
+                    # Get available width for treeview (approximate)
+                    # Right panel is about 50% of width, invoice frame has padding
+                    available_width = int((current_width * 0.5) - 100)  # Account for padding
+                    
+                    if available_width > 400:  # Only adjust if reasonable width
+                        # Calculate proportional widths
+                        total_base_width = sum(self.base_column_widths.values())
+                        medicine_ratio = self.base_column_widths['Medicine'] / total_base_width
+                        mg_ratio = self.base_column_widths['MG'] / total_base_width
+                        qty_ratio = self.base_column_widths['Qty'] / total_base_width
+                        price_ratio = self.base_column_widths['Price'] / total_base_width
+                        total_ratio = self.base_column_widths['Total'] / total_base_width
+                        
+                        # Set new widths (leave some space for scrollbar)
+                        tree_width = available_width - 30
+                        self.invoice_tree.column('Medicine', width=max(120, int(tree_width * medicine_ratio)))
+                        self.invoice_tree.column('MG', width=max(50, int(tree_width * mg_ratio)))
+                        self.invoice_tree.column('Qty', width=max(50, int(tree_width * qty_ratio)))
+                        self.invoice_tree.column('Price', width=max(70, int(tree_width * price_ratio)))
+                        self.invoice_tree.column('Total', width=max(70, int(tree_width * total_ratio)))
+                except:
+                    pass  # Keep default widths if calculation fails
+            
+            # Adjust button frame layout dynamically based on screen size
+            if hasattr(self, 'button_frame') and self.button_frame:
+                try:
+                    # Get approximate button frame width (right panel is ~50% of screen)
+                    button_frame_width = int((current_width * 0.5) - 100)  # Account for padding
+                    
+                    # Adjust button padding based on available space
+                    if button_frame_width < 400:
+                        # Very small screen - minimal padding
+                        btn_padx = max(5, int(8 * scale))
+                        btn_pady = max(4, int(5 * scale))
+                        btn_wraplength = 100
+                        num_cols = 2
+                    elif button_frame_width < 600:
+                        # Small screen - reduced padding
+                        btn_padx = max(8, int(10 * scale))
+                        btn_pady = max(5, int(6 * scale))
+                        btn_wraplength = 120
+                        num_cols = 2
+                    else:
+                        # Larger screen - normal padding, can use 3 columns
+                        btn_padx = max(10, int(15 * scale))
+                        btn_pady = max(6, int(8 * scale))
+                        btn_wraplength = 150
+                        num_cols = 3
+                    
+                    # Update button frame column configuration
+                    for i in range(num_cols):
+                        self.button_frame.grid_columnconfigure(i, weight=1, uniform='btn', minsize=80)
+                    
+                    # Update all buttons with new padding
+                    buttons = [
+                        self.generate_button, self.thermal_button, self.preview_button,
+                        self.whatsapp_button, self.clear_button, self.export_button
+                    ]
+                    
+                    for button in buttons:
+                        if button:
+                            button.config(padx=btn_padx, pady=btn_pady, wraplength=btn_wraplength)
+                    
+                    # Reorganize buttons for larger screens (3 columns)
+                    if num_cols == 3 and button_frame_width >= 600:
+                        # Row 0: Generate, Thermal, Preview
+                        self.generate_button.grid(row=0, column=0, padx=2, pady=2, sticky=(tk.W, tk.E))
+                        self.thermal_button.grid(row=0, column=1, padx=2, pady=2, sticky=(tk.W, tk.E))
+                        self.preview_button.grid(row=0, column=2, padx=2, pady=2, sticky=(tk.W, tk.E))
+                        # Row 1: WhatsApp, Clear, Export
+                        self.whatsapp_button.grid(row=1, column=0, padx=2, pady=2, sticky=(tk.W, tk.E))
+                        self.clear_button.grid(row=1, column=1, padx=2, pady=2, sticky=(tk.W, tk.E))
+                        self.export_button.grid(row=1, column=2, padx=2, pady=2, sticky=(tk.W, tk.E))
+                    else:
+                        # Keep 2-column layout for smaller screens
+                        self.generate_button.grid(row=0, column=0, padx=2, pady=2, sticky=(tk.W, tk.E))
+                        self.thermal_button.grid(row=0, column=1, padx=2, pady=2, sticky=(tk.W, tk.E))
+                        self.preview_button.grid(row=1, column=0, padx=2, pady=2, sticky=(tk.W, tk.E))
+                        self.whatsapp_button.grid(row=1, column=1, padx=2, pady=2, sticky=(tk.W, tk.E))
+                        self.clear_button.grid(row=2, column=0, padx=2, pady=2, sticky=(tk.W, tk.E))
+                        self.export_button.grid(row=2, column=1, padx=2, pady=2, sticky=(tk.W, tk.E))
+                        
+                except Exception as e:
+                    pass  # Keep default layout if adjustment fails
             
         except Exception as e:
             # Silently fail to avoid disrupting UI
