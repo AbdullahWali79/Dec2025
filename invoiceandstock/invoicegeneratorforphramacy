@@ -1372,7 +1372,7 @@ class PharmacyInvoiceApp:
                                    f"Error: {str(e)}")
     
     def check_thermal_printer(self):
-        """Check if thermal printer is available/connected"""
+        """Check if thermal printer is available/connected and return detailed info"""
         try:
             import win32print
             import win32api
@@ -1381,10 +1381,10 @@ class PharmacyInvoiceApp:
             printers = win32print.EnumPrinters(win32print.PRINTER_ENUM_LOCAL | win32print.PRINTER_ENUM_CONNECTIONS)
             
             if not printers:
-                return False, "No printers found"
+                return False, "No printers found", []
             
             # Check for thermal printers (common thermal printer names/keywords)
-            thermal_keywords = ['thermal', 'receipt', 'pos', 'epson', 'star', 'bixolon', 'citizen', 'zebra', 'tm-', 'tm ', 'tsp', 'rp80', 'rp-', 'xprinter']
+            thermal_keywords = ['thermal', 'receipt', 'pos', 'epson', 'star', 'bixolon', 'citizen', 'zebra', 'tm-', 'tm ', 'tsp', 'rp80', 'rp-', 'xprinter', 'xprinter', 'bixolon', 'citizen', 'epson tm', 'star micronics']
             thermal_printers = []
             all_printers = []
             
@@ -1397,17 +1397,41 @@ class PharmacyInvoiceApp:
                         thermal_printers.append(printer_name)
                         break
             
+            # Build detailed message
             if thermal_printers:
-                return True, thermal_printers[0]  # Return first thermal printer found
-            
-            # If no thermal printer found, check default printer
-            try:
-                default_printer = win32print.GetDefaultPrinter()
-                return True, default_printer
-            except:
-                if all_printers:
-                    return True, all_printers[0]  # Return first available printer
-                return False, "No printers available"
+                message = f"✅ Thermal Receipt Printer Detected!\n\n"
+                message += f"Thermal Printer: {thermal_printers[0]}\n"
+                message += f"✅ Thermal receipt printing is POSSIBLE on this printer.\n\n"
+                if len(all_printers) > 1:
+                    message += f"All Printers ({len(all_printers)}):\n"
+                    for i, p in enumerate(all_printers, 1):
+                        is_thermal = "🔥 THERMAL" if p in thermal_printers else "📄 Regular"
+                        message += f"  {i}. {p} ({is_thermal})\n"
+                return True, message, all_printers
+            else:
+                # No thermal printer found, but printers exist
+                try:
+                    default_printer = win32print.GetDefaultPrinter()
+                    message = f"⚠️ No Thermal Printer Detected\n\n"
+                    message += f"Default Printer: {default_printer}\n"
+                    message += f"⚠️ This may be a regular printer (not thermal).\n"
+                    message += f"Thermal receipt printing may NOT work properly.\n\n"
+                    message += f"All Printers ({len(all_printers)}):\n"
+                    for i, p in enumerate(all_printers, 1):
+                        message += f"  {i}. {p}\n"
+                    return True, message, all_printers
+                except:
+                    if all_printers:
+                        message = f"⚠️ No Thermal Printer Detected\n\n"
+                        message += f"Available Printer: {all_printers[0]}\n"
+                        message += f"⚠️ This may be a regular printer (not thermal).\n"
+                        message += f"Thermal receipt printing may NOT work properly.\n\n"
+                        if len(all_printers) > 1:
+                            message += f"All Printers ({len(all_printers)}):\n"
+                            for i, p in enumerate(all_printers, 1):
+                                message += f"  {i}. {p}\n"
+                        return True, message, all_printers
+                    return False, "No printers available", []
                 
         except ImportError:
             # win32print not available, try alternative method
@@ -1420,12 +1444,46 @@ class PharmacyInvoiceApp:
                     printers = [line.strip() for line in result.stdout.split('\n') 
                               if line.strip() and line.strip() != 'Name']
                     if printers:
-                        return True, printers[0]
-                return False, "No printers detected"
+                        message = f"⚠️ Printer Detection (Basic Mode)\n\n"
+                        message += f"Detected Printer: {printers[0]}\n"
+                        message += f"⚠️ Cannot verify if thermal printer.\n"
+                        message += f"Thermal receipt printing may work.\n\n"
+                        if len(printers) > 1:
+                            message += f"All Printers ({len(printers)}):\n"
+                            for i, p in enumerate(printers, 1):
+                                message += f"  {i}. {p}\n"
+                        return True, message, printers
+                return False, "No printers detected", []
             except:
-                return None, "Cannot check printer status"
+                return None, "Cannot check printer status", []
         except Exception as e:
-            return None, f"Error checking printer: {str(e)}"
+            return None, f"Error checking printer: {str(e)}", []
+    
+    def check_printer_on_startup(self):
+        """Check and display printer status when application starts"""
+        printer_status, printer_info, all_printers = self.check_thermal_printer()
+        
+        if printer_status is False:
+            messagebox.showinfo(
+                "Printer Status", 
+                f"❌ No printer detected.\n\n"
+                f"Please connect a thermal printer for receipt printing.\n\n"
+                f"You can still use the application, but thermal printing will not be available."
+            )
+        elif printer_status is None:
+            messagebox.showinfo(
+                "Printer Status", 
+                f"⚠️ Could not verify printer connection.\n\n"
+                f"Printer Info: {printer_info}\n\n"
+                f"Please ensure your printer is connected and try printing a receipt."
+            )
+        else:
+            # Show printer info (non-blocking, just informational)
+            messagebox.showinfo(
+                "Printer Status", 
+                f"{printer_info}\n\n"
+                f"Application is ready to use!"
+            )
     
     def thermal_print(self, event=None):
         """Print thermal receipt directly to printer"""
@@ -1444,7 +1502,7 @@ class PharmacyInvoiceApp:
             return
         
         # Check if thermal printer is available
-        printer_status, printer_info = self.check_thermal_printer()
+        printer_status, printer_info, all_printers = self.check_thermal_printer()
         
         if printer_status is False:
             response = messagebox.askyesno(
@@ -1468,11 +1526,11 @@ class PharmacyInvoiceApp:
                 return
             printer_info = "Default Printer"
         else:
-            # Printer found, show info
+            # Printer found, show detailed info
             response = messagebox.askyesno(
-                "Print Receipt", 
-                f"✅ Printer detected: {printer_info}\n\n"
-                f"Print thermal receipt to this printer?"
+                "Printer Detection Result", 
+                f"{printer_info}\n\n"
+                f"Print thermal receipt now?"
             )
             if not response:
                 return
@@ -2457,4 +2515,8 @@ if __name__ == "__main__":
     
     root = tk.Tk()
     app = PharmacyInvoiceApp(root)
+    
+    # Check printer status on startup (after UI is ready)
+    root.after(500, lambda: app.check_printer_on_startup())
+    
     root.mainloop()

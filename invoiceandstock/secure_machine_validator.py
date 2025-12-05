@@ -21,6 +21,7 @@ class SecureMachineValidator:
             "1E9C2B92CB321EAB",  # Current machine (Added: 2025-11-25)
             "9E8881164E0D2B49",  # Client PC (MAC: A4-1F-72-97-7F-16) (Added: 2025-11-25)
             "13E87125F001149A",  # Client PC - Actual Machine ID (Added: 2025-12-01)
+            "EE24C38488A5A5B7",  # New Client Machine (Added: 2025-12-01)
             # Add more machine IDs here as needed
             # "MACHINE_ID_3",
             # "MACHINE_ID_4",
